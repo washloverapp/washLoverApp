@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We use your photos so you can upload images of your laundry or delivery location to help our staff provide accurate service.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Washlover uses your location to display the nearest laundry services and branches on the map and to calculate distances or estimate accurate pickup/delivery times while you are actively using the app. For example, to allow you to select the branch closest to your home, or to see how long it will take for the laundry pickup staff to arrive.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Washlover uses your location to display nearby laundry services, manage pickups/deliveries, and provide accurate estimates for service times while you are actively using the app. Although this permission requests "Always" access, Washlover does not continuously track your location in the background for purposes unrelated to your active service, nor does it collect location data when the app is not in use. This permission is requested to facilitate a seamless user experience for location-based features when the app is active, and it is a requirement from a third-party library or framework utilized within the app.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Washlover does not use the microphone to record audio, make calls, or collect any personal data. This alert is triggered by a third-party library included in the app that references microphone access.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Washlover does not directly access or collect information from your contacts. This alert is triggered by a third-party library included in the app that references contacts access.</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Washlover</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>my_flutter_mapwash</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GMSApiKey</key>
+	<string>AIzaSyDEds_3tBG5jdPMRLZyBl1EJFo196mjNgs</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+</dict>
+</plist>

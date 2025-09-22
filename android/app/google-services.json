@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "576948336548",
+    "firebase_url": "https://android-dcbef-default-rtdb.firebaseio.com",
+    "project_id": "android-dcbef",
+    "storage_bucket": "android-dcbef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576948336548:android:27570c8ee6d4d3893d7331",
+        "android_client_info": {
+          "package_name": "com.mplus.my_flutter_mapwash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwHq2zA_56I8xF10gOrfk5GnZYPvsczl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576948336548:android:481408d8e1f99aea3d7331",
+        "android_client_info": {
+          "package_name": "my_washlover.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwHq2zA_56I8xF10gOrfk5GnZYPvsczl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
