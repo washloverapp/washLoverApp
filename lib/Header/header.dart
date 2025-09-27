@@ -84,7 +84,7 @@ class Header extends StatelessWidget {
                             minHeight: 16,
                           ),
                           child: Text(
-                            '5',
+                            '8',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
