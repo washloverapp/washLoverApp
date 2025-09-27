@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>washlover_driver.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+				<key>dateExpires</key>
+				<string>13/5/2569 BE</string>
+				<key>type</key>
+				<string>Cloud Managed Apple Distribution</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1.0</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>App.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>1.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>CryptoSwift.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>1.8.4</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>FBLPromises.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>2.4.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>FirebaseCore.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>12.2.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>FirebaseCoreInternal.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>12.2.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>FirebaseInstallations.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>12.2.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>FirebaseMessaging.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>12.2.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1.0</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>Flutter.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>1.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>GoogleDataTransport.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>10.1.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>GoogleUtilities.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>8.1.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>flutter_callkit_incoming.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>0.0.1</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>flutter_local_notifications.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>0.0.1</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>geolocator_apple.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>1.2.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>nanopb.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>3.30910.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>package_info_plus.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>0.4.5</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>9AE04597CC7F4577E83A607792D34AF9E79C1803</string>
+						<key>dateExpires</key>
+						<string>13/5/2569 BE</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>path_provider_foundation.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>V2MSNYJRGX</string>
+						<key>name</key>
+						<string>Arthid Raisangad</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>0.0.1</string>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>V2MSNYJRGX.com.washloverdriver.biker</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>V2MSNYJRGX</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>Runner.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>ef48a168-3090-4921-a8bf-6116e841c04c</string>
+				<key>dateExpires</key>
+				<string>13/5/2569 BE</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: com.washloverdriver.biker</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>V2MSNYJRGX</string>
+				<key>name</key>
+				<string>Arthid Raisangad</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.0.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>

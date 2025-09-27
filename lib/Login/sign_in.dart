@@ -28,17 +28,17 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    // _checkLoginStatus();
   }
 
   @override
-  void dispose() {
-    _phoneController.dispose();
-    _passwordController.dispose();
-    _focusPhone.dispose();
-    _focusPassword.dispose();
-    super.dispose();
-  }
+  // void dispose() {
+  //   // _phoneController.dispose();
+  //   // _passwordController.dispose();
+  //   // _focusPhone.dispose();
+  //   // _focusPassword.dispose();
+  //   // super.dispose();
+  // }
 
   void _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
@@ -47,11 +47,11 @@ class _SignInState extends State<SignIn> {
      Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => const MainLayout()));
     // It's better practice to check for a session token instead of raw credentials.
-    if (phone != null && password != null) {
-      if (!mounted) return; // Check if the widget is still in the tree.
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => const MainLayout()));
-    }
+    // if (phone != null && password != null) {
+    //   if (!mounted) return; // Check if the widget is still in the tree.
+    //   Navigator.pushReplacement(
+    //       context, MaterialPageRoute(builder: (_) => const MainLayout()));
+    // }
   }
 
   void _handleLogin() async {

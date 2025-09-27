@@ -21,19 +21,19 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
-        freeCompilerArgs += "-Xlint:deprecation"
+        jvmTarget = JavaVersion.VERSION_17
+        freeCompilerArgs += "-Xlint:-options"
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.mplus.my_flutter_mapwash"
-        minSdk = 23  // เปลี่ยนจาก flutter.minSdkVersion เป็น 23
+        minSdkVersion = flutter.minSdkVersion  // เปลี่ยนจาก flutter.minSdkVersion เป็น 23
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // minSdk = flutter.minSdkVersion
@@ -81,3 +81,8 @@ flutter {
     source = "../.."
 }
 apply plugin: 'com.google.gms.google-services'  // ต้องใส่บรรทัดนี้เพื่อให้ Firebase ทำงาน
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ["-Xlint:-options"]
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}

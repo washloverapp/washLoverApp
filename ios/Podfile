@@ -1,4 +1,4 @@
-platform :ios, '17.0'
+platform :ios, '15.0'
 
 # Uncomment this line to define a global platform for your project
 # platform :ios, '13.0'
@@ -30,7 +30,7 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
+  use_frameworks! :linkage => :static
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
   

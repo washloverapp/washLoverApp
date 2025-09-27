@@ -67,7 +67,7 @@ class _StatusOrderState extends State<StatusOrder> {
   LatLng orderLocation = LatLng(16.243998, 103.249047);
   LatLng branLocation = LatLng(16.243998, 103.249047);
   late GoogleMapController _mapController;
-  final OrderService _orderService = OrderService();
+  // final OrderService _orderService = OrderService();
   Set<Marker> _markers = {};
   Map<String, dynamic>? _orderDetails;
 
@@ -142,247 +142,247 @@ class _StatusOrderState extends State<StatusOrder> {
       });
 
       if (mounted) {
-        _loadMapData();
+        // _loadMapData();
       }
     } else {
       print('Phone is not available.');
     }
   }
 
-  Future<void> _loadMapData() async {
-    // _showSingleAnimationDialog(Indicator.ballScale, true);
+  // Future<void> _loadMapData() async {
+  //   // _showSingleAnimationDialog(Indicator.ballScale, true);
 
-    try {
-      Map<String, dynamic> mapData = await _orderService.getMapData(phone!, widget.orderId);
-      print('mapData : $mapData');
-      Map<String, dynamic> orderDetails = await _orderService.getOrderDetails(phone!, widget.orderId);
+  //   try {
+  //     Map<String, dynamic> mapData = await _orderService.getMapData(phone!, widget.orderId);
+  //     print('mapData : $mapData');
+  //     Map<String, dynamic> orderDetails = await _orderService.getOrderDetails(phone!, widget.orderId);
 
-      setState(() {
-        _orderDetails = orderDetails;
-        currentStatus = orderDetails['status'];
-        statusDescription = deliveryStatuses.firstWhere((status) => status['status'].contains(currentStatus), orElse: () => {'description': 'สถานะไม่พบ'})['description'].toString();
-        LatLngBounds? bounds;
-        // ตำแหน่งของคนขับ
-        if (currentStatus == 'pending' || currentStatus == 'accepted' || currentStatus == 'receive' || currentStatus == 'delivering') {
-          if (mapData['driverLat'] != null && mapData['driverLon'] != null) {
-            _markers.add(Marker(
-              markerId: const MarkerId('driver'),
-              position: LatLng(
-                double.tryParse(mapData['driverLat'].toString()) ?? 0.0,
-                double.tryParse(mapData['driverLon'].toString()) ?? 0.0,
-              ),
-              infoWindow: const InfoWindow(title: 'Driver Location'),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-            ));
-          } else {
-            print('Driver location not available');
-          }
-        }
-        if (currentStatus == 'accepted_return' || currentStatus == 'Ready_return' || currentStatus == 'Picked_Up' || currentStatus == 'send_return') {
-          if (mapData['BackdriverLat'] != null && mapData['BackdriverLon'] != null) {
-            _markers.add(Marker(
-              markerId: const MarkerId('driver'),
-              position: LatLng(
-                double.tryParse(mapData['BackdriverLat'].toString()) ?? 0.0,
-                double.tryParse(mapData['BackdriverLon'].toString()) ?? 0.0,
-              ),
-              infoWindow: const InfoWindow(title: 'Driver Location'),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-            ));
-          } else {
-            print('Driver location not available');
-          }
-        }
+  //     setState(() {
+  //       _orderDetails = orderDetails;
+  //       currentStatus = orderDetails['status'];
+  //       statusDescription = deliveryStatuses.firstWhere((status) => status['status'].contains(currentStatus), orElse: () => {'description': 'สถานะไม่พบ'})['description'].toString();
+  //       LatLngBounds? bounds;
+  //       // ตำแหน่งของคนขับ
+  //       if (currentStatus == 'pending' || currentStatus == 'accepted' || currentStatus == 'receive' || currentStatus == 'delivering') {
+  //         if (mapData['driverLat'] != null && mapData['driverLon'] != null) {
+  //           _markers.add(Marker(
+  //             markerId: const MarkerId('driver'),
+  //             position: LatLng(
+  //               double.tryParse(mapData['driverLat'].toString()) ?? 0.0,
+  //               double.tryParse(mapData['driverLon'].toString()) ?? 0.0,
+  //             ),
+  //             infoWindow: const InfoWindow(title: 'Driver Location'),
+  //             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+  //           ));
+  //         } else {
+  //           print('Driver location not available');
+  //         }
+  //       }
+  //       if (currentStatus == 'accepted_return' || currentStatus == 'Ready_return' || currentStatus == 'Picked_Up' || currentStatus == 'send_return') {
+  //         if (mapData['BackdriverLat'] != null && mapData['BackdriverLon'] != null) {
+  //           _markers.add(Marker(
+  //             markerId: const MarkerId('driver'),
+  //             position: LatLng(
+  //               double.tryParse(mapData['BackdriverLat'].toString()) ?? 0.0,
+  //               double.tryParse(mapData['BackdriverLon'].toString()) ?? 0.0,
+  //             ),
+  //             infoWindow: const InfoWindow(title: 'Driver Location'),
+  //             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+  //           ));
+  //         } else {
+  //           print('Driver location not available');
+  //         }
+  //       }
 
-        // ตำแหน่งของคำสั่ง
-        if (currentStatus == 'accepted' || currentStatus == 'receive' || currentStatus == 'accepted_return') {
-          _markers.removeWhere((marker) => marker.markerId == const MarkerId('order'));
-          if (currentStatus == 'accepted') {
-            _markers.add(Marker(
-              markerId: const MarkerId('order'),
-              position: LatLng(
-                double.parse(mapData['orderLat'].toString()),
-                double.parse(mapData['orderLon'].toString()),
-              ),
-              infoWindow: const InfoWindow(title: 'Order Location'),
-            ));
-          }
-          if (currentStatus == 'receive') {
-            _markers.add(Marker(
-              markerId: const MarkerId('order'),
-              position: LatLng(
-                double.parse(mapData['branchLat'].toString()),
-                double.parse(mapData['branchLon'].toString()),
-              ),
-              infoWindow: const InfoWindow(title: 'Order Location'),
-            ));
-          }
-          if (currentStatus == 'accepted_return') {
-            _markers.add(Marker(
-              markerId: const MarkerId('order'),
-              position: LatLng(
-                double.parse(mapData['branchLat'].toString()),
-                double.parse(mapData['branchLon'].toString()),
-              ),
-              infoWindow: const InfoWindow(title: 'Order Location'),
-            ));
-            _markers.add(Marker(
-              markerId: const MarkerId('order'),
-              position: LatLng(
-                double.parse(mapData['orderLat'].toString()),
-                double.parse(mapData['orderLon'].toString()),
-              ),
-              infoWindow: const InfoWindow(title: 'Order Location'),
-            ));
-          }
-        } else {
-          print('Order location not available');
-        }
-        // คำนวณ LatLngBounds หากมีทั้งตำแหน่ง driver และ order
-        if (mapData['driverLat'] != null && mapData['driverLon'] != null && mapData['orderLat'] != null && mapData['orderLon'] != null) {
-          LatLng driverPosition = LatLng(
-            double.parse(mapData['driverLat'].toString()),
-            double.parse(mapData['driverLon'].toString()),
-          );
-          LatLng orderPosition = LatLng(
-            double.parse(mapData['orderLat'].toString()),
-            double.parse(mapData['orderLon'].toString()),
-          );
-          LatLng branPosition = LatLng(
-            double.parse(mapData['branchLat'].toString()),
-            double.parse(mapData['branchLon'].toString()),
-          );
-          LatLng backdriverPosition = LatLng(
-            double.tryParse(mapData['BackdriverLat']?.toString() ?? '') ?? 0.0,
-            double.tryParse(mapData['BackdriverLon']?.toString() ?? '') ?? 0.0,
-          );
+  //       // ตำแหน่งของคำสั่ง
+  //       if (currentStatus == 'accepted' || currentStatus == 'receive' || currentStatus == 'accepted_return') {
+  //         _markers.removeWhere((marker) => marker.markerId == const MarkerId('order'));
+  //         if (currentStatus == 'accepted') {
+  //           _markers.add(Marker(
+  //             markerId: const MarkerId('order'),
+  //             position: LatLng(
+  //               double.parse(mapData['orderLat'].toString()),
+  //               double.parse(mapData['orderLon'].toString()),
+  //             ),
+  //             infoWindow: const InfoWindow(title: 'Order Location'),
+  //           ));
+  //         }
+  //         if (currentStatus == 'receive') {
+  //           _markers.add(Marker(
+  //             markerId: const MarkerId('order'),
+  //             position: LatLng(
+  //               double.parse(mapData['branchLat'].toString()),
+  //               double.parse(mapData['branchLon'].toString()),
+  //             ),
+  //             infoWindow: const InfoWindow(title: 'Order Location'),
+  //           ));
+  //         }
+  //         if (currentStatus == 'accepted_return') {
+  //           _markers.add(Marker(
+  //             markerId: const MarkerId('order'),
+  //             position: LatLng(
+  //               double.parse(mapData['branchLat'].toString()),
+  //               double.parse(mapData['branchLon'].toString()),
+  //             ),
+  //             infoWindow: const InfoWindow(title: 'Order Location'),
+  //           ));
+  //           _markers.add(Marker(
+  //             markerId: const MarkerId('order'),
+  //             position: LatLng(
+  //               double.parse(mapData['orderLat'].toString()),
+  //               double.parse(mapData['orderLon'].toString()),
+  //             ),
+  //             infoWindow: const InfoWindow(title: 'Order Location'),
+  //           ));
+  //         }
+  //       } else {
+  //         print('Order location not available');
+  //       }
+  //       // คำนวณ LatLngBounds หากมีทั้งตำแหน่ง driver และ order
+  //       if (mapData['driverLat'] != null && mapData['driverLon'] != null && mapData['orderLat'] != null && mapData['orderLon'] != null) {
+  //         LatLng driverPosition = LatLng(
+  //           double.parse(mapData['driverLat'].toString()),
+  //           double.parse(mapData['driverLon'].toString()),
+  //         );
+  //         LatLng orderPosition = LatLng(
+  //           double.parse(mapData['orderLat'].toString()),
+  //           double.parse(mapData['orderLon'].toString()),
+  //         );
+  //         LatLng branPosition = LatLng(
+  //           double.parse(mapData['branchLat'].toString()),
+  //           double.parse(mapData['branchLon'].toString()),
+  //         );
+  //         LatLng backdriverPosition = LatLng(
+  //           double.tryParse(mapData['BackdriverLat']?.toString() ?? '') ?? 0.0,
+  //           double.tryParse(mapData['BackdriverLon']?.toString() ?? '') ?? 0.0,
+  //         );
 
-          double minLat = min(driverPosition.latitude, orderPosition.latitude);
-          double maxLat = max(driverPosition.latitude, orderPosition.latitude);
-          double minLon = min(driverPosition.longitude, orderPosition.longitude);
-          double maxLon = max(driverPosition.longitude, orderPosition.longitude);
+  //         double minLat = min(driverPosition.latitude, orderPosition.latitude);
+  //         double maxLat = max(driverPosition.latitude, orderPosition.latitude);
+  //         double minLon = min(driverPosition.longitude, orderPosition.longitude);
+  //         double maxLon = max(driverPosition.longitude, orderPosition.longitude);
 
-          double minLatBran = min(driverPosition.latitude, branPosition.latitude);
-          double maxLatBran = max(driverPosition.latitude, branPosition.latitude);
-          double minxLonBran = min(driverPosition.longitude, branPosition.longitude);
-          double maxnLonBran = max(driverPosition.longitude, branPosition.longitude);
+  //         double minLatBran = min(driverPosition.latitude, branPosition.latitude);
+  //         double maxLatBran = max(driverPosition.latitude, branPosition.latitude);
+  //         double minxLonBran = min(driverPosition.longitude, branPosition.longitude);
+  //         double maxnLonBran = max(driverPosition.longitude, branPosition.longitude);
 
-          double minLatDBack = min(branPosition.latitude, orderPosition.latitude);
-          double maxLatDBack = max(branPosition.latitude, orderPosition.latitude);
-          double minLonDBack = min(branPosition.longitude, orderPosition.longitude);
-          double maxLonDBack = max(branPosition.longitude, orderPosition.longitude);
+  //         double minLatDBack = min(branPosition.latitude, orderPosition.latitude);
+  //         double maxLatDBack = max(branPosition.latitude, orderPosition.latitude);
+  //         double minLonDBack = min(branPosition.longitude, orderPosition.longitude);
+  //         double maxLonDBack = max(branPosition.longitude, orderPosition.longitude);
 
-          bounds = LatLngBounds(
-            southwest: LatLng(minLat, minLon),
-            northeast: LatLng(maxLat, maxLon),
-          );
-          if (currentStatus == 'receive' || currentStatus == 'delivering') {
-            bounds = LatLngBounds(
-              southwest: LatLng(minLatBran, minxLonBran),
-              northeast: LatLng(maxLatBran, maxnLonBran),
-            );
-          }
-          if (currentStatus == 'Ready_return') {
-            bounds = LatLngBounds(
-              southwest: LatLng(minLatDBack, minLonDBack),
-              northeast: LatLng(maxLatDBack, maxLonDBack),
-            );
-          }
-          driverLocation = LatLng(driverPosition.latitude, driverPosition.longitude);
-          driverLocationBack = LatLng(backdriverPosition.latitude, backdriverPosition.longitude);
-          orderLocation = LatLng(orderPosition.latitude, orderPosition.longitude);
-          branLocation = LatLng(branPosition.latitude, branPosition.longitude);
-        } else if (mapData['orderLat'] != null && mapData['orderLon'] != null) {
-          // ถ้าไม่มีตำแหน่งของ driver ให้ตั้งค่า bounds สำหรับแค่ order
-          LatLng orderPosition = LatLng(
-            double.parse(mapData['orderLat'].toString()),
-            double.parse(mapData['orderLon'].toString()),
-          );
-        }
+  //         bounds = LatLngBounds(
+  //           southwest: LatLng(minLat, minLon),
+  //           northeast: LatLng(maxLat, maxLon),
+  //         );
+  //         if (currentStatus == 'receive' || currentStatus == 'delivering') {
+  //           bounds = LatLngBounds(
+  //             southwest: LatLng(minLatBran, minxLonBran),
+  //             northeast: LatLng(maxLatBran, maxnLonBran),
+  //           );
+  //         }
+  //         if (currentStatus == 'Ready_return') {
+  //           bounds = LatLngBounds(
+  //             southwest: LatLng(minLatDBack, minLonDBack),
+  //             northeast: LatLng(maxLatDBack, maxLonDBack),
+  //           );
+  //         }
+  //         driverLocation = LatLng(driverPosition.latitude, driverPosition.longitude);
+  //         driverLocationBack = LatLng(backdriverPosition.latitude, backdriverPosition.longitude);
+  //         orderLocation = LatLng(orderPosition.latitude, orderPosition.longitude);
+  //         branLocation = LatLng(branPosition.latitude, branPosition.longitude);
+  //       } else if (mapData['orderLat'] != null && mapData['orderLon'] != null) {
+  //         // ถ้าไม่มีตำแหน่งของ driver ให้ตั้งค่า bounds สำหรับแค่ order
+  //         LatLng orderPosition = LatLng(
+  //           double.parse(mapData['orderLat'].toString()),
+  //           double.parse(mapData['orderLon'].toString()),
+  //         );
+  //       }
 
-        setState(() {
-          this.driverLocation = driverLocation;
-          this.orderLocation = orderLocation;
-          if (orderDetails['status'] == 'receive' || orderDetails['status'] == 'delivering') {
-            this.orderLocation = branLocation;
-          }
+  //       setState(() {
+  //         this.driverLocation = driverLocation;
+  //         this.orderLocation = orderLocation;
+  //         if (orderDetails['status'] == 'receive' || orderDetails['status'] == 'delivering') {
+  //           this.orderLocation = branLocation;
+  //         }
 
-          if (currentStatus == 'Ready_return' || currentStatus == 'Picked_Up') {
-            this.driverLocation = branLocation;
-            this.orderLocation = orderLocation;
-          }
-        });
-        if (orderDetails['status'] != 'pending') {
-          if (currentStatus == 'Ready_return') {
-            _markers.add(Marker(
-              markerId: const MarkerId('order'),
-              position: LatLng(
-                double.parse(mapData['orderLat'].toString()),
-                double.parse(mapData['orderLon'].toString()),
-              ),
-              infoWindow: const InfoWindow(title: 'order Location'),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-            ));
-          }
-          if (currentStatus == 'completed' || currentStatus == 'success' || currentStatus == 'accepted_return') {
-            this.travelTime = 'สถานะ';
-            _removePolyline();
-            _markers.removeWhere((marker) => marker.markerId == const MarkerId('order'));
-            _markers.removeWhere((marker) => marker.markerId == const MarkerId('driver'));
-            _markers.add(Marker(
-              markerId: const MarkerId('branch'),
-              position: LatLng(
-                double.parse(mapData['branchLat'].toString()),
-                double.parse(mapData['branchLon'].toString()),
-              ),
-              infoWindow: const InfoWindow(title: 'branch Location'),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-            ));
-            _mapController.animateCamera(
-              CameraUpdate.newLatLngZoom(
-                LatLng(double.parse(mapData['branchLat'].toString()), double.parse(mapData['branchLon'].toString())),
-                16.0,
-              ),
-            );
-          } else {
-            _calculateDistanceAndTime();
-            if (bounds != null) {
-              _mapController.animateCamera(
-                CameraUpdate.newLatLngBounds(bounds, 80.0),
-              );
-              print('Zooming to show both markers or order only');
-            } else {
-              _mapController.animateCamera(
-                CameraUpdate.newLatLngZoom(
-                  LatLng(0.0, 0.0),
-                  5.0,
-                ),
-              );
-            }
-          }
-        } else {
-          _markers.add(Marker(
-            markerId: const MarkerId('order'),
-            position: LatLng(
-              double.parse(mapData['orderLat'].toString()),
-              double.parse(mapData['orderLon'].toString()),
-            ),
-            infoWindow: const InfoWindow(title: 'order Location'),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-          ));
-          _mapController.animateCamera(
-            CameraUpdate.newLatLngZoom(
-              LatLng(double.parse(mapData['orderLat'].toString()), double.parse(mapData['orderLon'].toString())),
-              16.0,
-            ),
-          );
-        }
-      });
-    } catch (e) {
-      print('Error loading map data: $e');
-    }
-    // Navigator.pop(context);
-  }
+  //         if (currentStatus == 'Ready_return' || currentStatus == 'Picked_Up') {
+  //           this.driverLocation = branLocation;
+  //           this.orderLocation = orderLocation;
+  //         }
+  //       });
+  //       if (orderDetails['status'] != 'pending') {
+  //         if (currentStatus == 'Ready_return') {
+  //           _markers.add(Marker(
+  //             markerId: const MarkerId('order'),
+  //             position: LatLng(
+  //               double.parse(mapData['orderLat'].toString()),
+  //               double.parse(mapData['orderLon'].toString()),
+  //             ),
+  //             infoWindow: const InfoWindow(title: 'order Location'),
+  //             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+  //           ));
+  //         }
+  //         if (currentStatus == 'completed' || currentStatus == 'success' || currentStatus == 'accepted_return') {
+  //           this.travelTime = 'สถานะ';
+  //           _removePolyline();
+  //           _markers.removeWhere((marker) => marker.markerId == const MarkerId('order'));
+  //           _markers.removeWhere((marker) => marker.markerId == const MarkerId('driver'));
+  //           _markers.add(Marker(
+  //             markerId: const MarkerId('branch'),
+  //             position: LatLng(
+  //               double.parse(mapData['branchLat'].toString()),
+  //               double.parse(mapData['branchLon'].toString()),
+  //             ),
+  //             infoWindow: const InfoWindow(title: 'branch Location'),
+  //             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+  //           ));
+  //           _mapController.animateCamera(
+  //             CameraUpdate.newLatLngZoom(
+  //               LatLng(double.parse(mapData['branchLat'].toString()), double.parse(mapData['branchLon'].toString())),
+  //               16.0,
+  //             ),
+  //           );
+  //         } else {
+  //           _calculateDistanceAndTime();
+  //           if (bounds != null) {
+  //             _mapController.animateCamera(
+  //               CameraUpdate.newLatLngBounds(bounds, 80.0),
+  //             );
+  //             print('Zooming to show both markers or order only');
+  //           } else {
+  //             _mapController.animateCamera(
+  //               CameraUpdate.newLatLngZoom(
+  //                 LatLng(0.0, 0.0),
+  //                 5.0,
+  //               ),
+  //             );
+  //           }
+  //         }
+  //       } else {
+  //         _markers.add(Marker(
+  //           markerId: const MarkerId('order'),
+  //           position: LatLng(
+  //             double.parse(mapData['orderLat'].toString()),
+  //             double.parse(mapData['orderLon'].toString()),
+  //           ),
+  //           infoWindow: const InfoWindow(title: 'order Location'),
+  //           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+  //         ));
+  //         _mapController.animateCamera(
+  //           CameraUpdate.newLatLngZoom(
+  //             LatLng(double.parse(mapData['orderLat'].toString()), double.parse(mapData['orderLon'].toString())),
+  //             16.0,
+  //           ),
+  //         );
+  //       }
+  //     });
+  //   } catch (e) {
+  //     print('Error loading map data: $e');
+  //   }
+  //   // Navigator.pop(context);
+  // }
 
   // คำนวณระยะทางและเวลาโดยใช้ Google Directions API
   void _calculateDistanceAndTime() async {

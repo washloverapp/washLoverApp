@@ -27,7 +27,7 @@ buildscript {
     dependencies {
         // อัพเดตเวอร์ชันของ Google Services plugin ให้เป็นเวอร์ชันใหม่
         classpath 'com.google.gms:google-services:4.4.2'  // หรือเวอร์ชันใหม่ล่าสุดที่ Firebase แนะนำ
-        classpath 'com.android.tools.build:gradle:7.4.0'  // ตรวจสอบเวอร์ชั่นให้เป็นเวอร์ชั่นที่รองรับกับ Kotlin 1.8.0
+        classpath 'com.android.tools.build:gradle:8.10.0'  // ตรวจสอบเวอร์ชั่นให้เป็นเวอร์ชั่นที่รองรับกับ Kotlin 1.8.0
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
