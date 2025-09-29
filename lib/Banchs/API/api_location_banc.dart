@@ -1,0 +1,102 @@
+// branch_service.dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class BranchService {
+  static Future<List<Map<String, dynamic>>> fetchBranches() async {
+    try {
+      final response = await http
+          .get(Uri.parse('https://washlover.com/api/branch?get=2'))
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load branches: ${response.statusCode}');
+      }
+
+      final Map<String, dynamic> data = json.decode(response.body);
+      final branchData = data['data'];
+
+      if (data['status'] == 'success' &&
+          branchData is List &&
+          branchData.isNotEmpty) {
+        return List<Map<String, dynamic>>.from(branchData);
+      } else {
+        // API สำเร็จแต่ไม่มีข้อมูล → ใช้ mock
+        print('No branches from API. Using mock data.');
+        return _createMockBranches();
+      }
+    } catch (e) {
+      print('Error fetching branches: $e. Using mock data.');
+      return _createMockBranches();
+    }
+  }
+
+  static List<Map<String, dynamic>> _createMockBranches() {
+    return [
+      {
+        'id': 'mock_1',
+        'name': 'สาขาจำลอง 1 (ลาดกระบัง)',
+        'latitude': '13.727895',
+        'longitude': '100.775833',
+        'code': 'mock001',
+        'address': 'ใกล้สถาบันเทคโนโลยีฯ ลาดกระบัง'
+      },
+      {
+        'id': 'mock_2',
+        'name': 'สาขาจำลอง 2 (สยาม)',
+        'latitude': '13.746242',
+        'longitude': '100.534729',
+        'code': 'mock002',
+        'address': 'ใจกลางสยามสแควร์'
+      },
+      {
+        'id': 'mock_3',
+        'name': 'สาขาจำลอง 3 (บางนา)',
+        'latitude': '13.668221',
+        'longitude': '100.633239',
+        'code': 'mock003',
+        'address': 'ใกล้เซ็นทรัลบางนา'
+      },
+    ];
+  }
+
+//   static Future<List<Map<String, dynamic>>> fetchMachineCounts(
+//       List<Map<String, dynamic>> branches) async {
+//     try {
+//       final response = await http.get(
+//         Uri.parse(
+//             'https://android-dcbef-default-rtdb.firebaseio.com/machines.json'),
+//       );
+
+//       final data = json.decode(response.body) as Map<String, dynamic>?;
+//       if (data == null) return branches;
+
+//       for (var branch in branches) {
+//         final code = branch['code']?.toString()?.toLowerCase();
+
+//         if (data.containsKey(code)) {
+//           final washList = data[code]['wash'] as List?;
+//           final dryerList = data[code]['dryer'] as List?;
+
+//           int washCount = (washList != null)
+//               ? washList.where((e) => e != null).length
+//               : 0;
+//           int dryerCount = (dryerList != null)
+//               ? dryerList.where((e) => e != null).length
+//               : 0;
+
+//           branch['washCount'] = washCount;
+//           branch['dryerCount'] = dryerCount;
+//         } else {
+//           branch['washCount'] = 0;
+//           branch['dryerCount'] = 0;
+//         }
+//       }
+
+//       return branches;
+//     } catch (e) {
+//       print('Error fetching machine counts: $e');
+//       return branches;
+//     }
+//   }
+}

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Home/home.dart';
 // import 'package:my_flutter_mapwash/pages/banc.dart';
 import 'package:my_flutter_mapwash/Home/dddd.dart' hide HomeScreen;
+import 'package:my_flutter_mapwash/Oders/a_clothes.dart';
 import 'package:my_flutter_mapwash/pages/locatio_banch_page.dart';
-import 'package:my_flutter_mapwash/pages/location_banc.dart';
+import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
 import 'package:my_flutter_mapwash/pages/order_step.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_flutter_mapwash/pages/status.dart';
@@ -88,7 +89,8 @@ class _MainLayoutState extends State<MainLayout> {
       Wallet(),
       home(),
       LaundrySelection(),
-      Status(),
+      // Status(),
+      a_clothes(),
     ];
 
     return Scaffold(

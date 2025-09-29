@@ -85,12 +85,12 @@ class _LaundrySelectionState extends State<LaundrySelection> {
   }
 
   Future<List<Map<String, dynamic>>> fetchBranches() async {
-    // final response =
-    //     await http.get(Uri.parse('https://washlover.com/api/branch?get=2'));
     final response =
         await http.get(Uri.parse('https://android-dcbef-default-rtdb.firebaseio.com/branch.json'));
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
+      print(response.body);
+      fetchData(codeBranch);
       if (data['status'] == 'success' && data['data'] != null) {
         return List<Map<String, dynamic>>.from(data['data']);
       } else {

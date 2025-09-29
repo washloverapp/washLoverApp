@@ -4,6 +4,9 @@ import 'package:my_flutter_mapwash/Home/account.dart';
 import 'package:my_flutter_mapwash/Home/affiat.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
 import 'package:my_flutter_mapwash/Home/promotion.dart';
+import 'package:my_flutter_mapwash/pages/add_address_screen.dart';
+import 'package:my_flutter_mapwash/pages/addressLocation.dart';
+import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
 
 class home extends StatefulWidget {
   const home({super.key});
@@ -128,7 +131,7 @@ class _homeState extends State<home> {
                         _menuItem(Icons.check_circle_outline, "จุดบริการ", () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => account()),
+                            MaterialPageRoute(builder: (context) => location_banc()),
                           );
                         }),
                         _menuItem(Icons.group_add_outlined, "แนะนำเพื่อน", () {

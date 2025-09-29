@@ -11,6 +11,7 @@ import 'package:my_flutter_mapwash/Login/login_page.dart';
 // import 'package:my_flutter_mapwash/pages/totalOder2.dart';
 // import 'package:my_flutter_mapwash/pages/totalOrder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_flutter_mapwash/features/washing/washing_flow_screen.dart';
 // import 'firebase_options.dart';
 
 void main() async {
@@ -36,12 +37,12 @@ class MyApp extends StatelessWidget {
       // home: select_Promotion(),
       // home: ShareFriendScreen(),
       // home: LoginPage(),
-      home: MainLayout(),
+      // home: MainLayout(),
       // home: MyHomePage(),
       // home: TotalOrder(),
       // home: AddressLocation(),
       // home: TotalOrder222(), MyApp222 Promotion CheckoutPage
-      // home: MyApp222(),
+      home: WashingFlowScreen(),
     );
   }
 }
