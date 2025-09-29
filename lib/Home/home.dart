@@ -1,5 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:my_flutter_mapwash/Home/account.dart';
+import 'package:my_flutter_mapwash/Home/affiat.dart';
+import 'package:my_flutter_mapwash/Home/history.dart';
+import 'package:my_flutter_mapwash/Home/promotion.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SizedBox(height: 12),
             Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(20),
               margin: EdgeInsets.symmetric(horizontal: 15), // ขยับด้านซ้าย-ขวา
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 250, 250, 250),
@@ -27,15 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 5,
-                    spreadRadius: 2,
-                    offset: Offset(0, 2),
+                    spreadRadius: 0,
+                    offset: Offset(0, 0),
                   ),
                 ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _walletItem(
+                  _walletItem2(
                     Icons.account_balance_wallet,
                     "ยอดเงิน",
                     "0฿",
@@ -111,22 +115,69 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisSpacing: 10,
                       children: [
                         _menuItem(
-                            Icons.local_laundry_service_outlined, "ซัก อบ พับ"),
-                        _menuItem(Icons.check_circle_outline, "เช็คสถานะ"),
-                        _menuItem(Icons.group_add_outlined, "แนะนำเพื่อน"),
-                        _menuItem(Icons.history, "ประวัติการใช้งาน"),
-                        _menuItem(
-                            Icons.local_shipping_outlined, "บริการรีดผ้า"),
-                        _menuItem(Icons.report_problem, "แจ้งปัญหา"),
-                        _menuItem(Icons.phone, "ติดต่อเรา"),
-                        _menuItem(Icons.card_membership_outlined, "พี่วัวคลับ"),
+                          Icons.account_box_outlined,
+                          "ตัวฉัน",
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Account()),
+                            );
+                          },
+                        ),
+                        _menuItem(Icons.check_circle_outline, "จุดบริการ", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Account()),
+                          );
+                        }),
+                        _menuItem(Icons.group_add_outlined, "แนะนำเพื่อน", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ShareFriendScreen()),
+                          );
+                        }),
+                        _menuItem(Icons.production_quantity_limits_outlined,
+                            "โปรโมชั่น", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Promotion()),
+                          );
+                        }),
+                        _menuItem(Icons.star_border_outlined, "สะสมแต้ม", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Account()),
+                          );
+                        }),
+                        _menuItem(Icons.history, "ประวัติใช้งาน", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => History()),
+                          );
+                        }),
+                        _menuItem(Icons.help_center_outlined, "คู่มือใช้งาน",
+                            () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Account()),
+                          );
+                        }),
+                        _menuItem(Icons.call, "แจ้งปัญหา", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Account()),
+                          );
+                        }),
                       ],
                     ),
                   ],
                 ),
               ),
             ),
-
+            // SizedBox(height: 40),
             Container(
               margin: EdgeInsets.all(0),
               padding: EdgeInsets.all(0),
@@ -316,15 +367,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _walletItem(IconData icon, String title, String value) {
+  Widget _walletItem2(IconData icon, String title, String value) {
     return Column(
       children: [
         CircleAvatar(
-          radius: 26,
+          radius: 22,
           backgroundColor: Colors.white,
           child: Icon(
             icon,
-            color: Colors.blue[800],
+            color: Colors.blue,
           ),
         ),
         SizedBox(height: 6),
@@ -337,25 +388,21 @@ class _HomeScreenState extends State<HomeScreen> {
           value,
           textAlign: TextAlign.center,
           style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              color: Colors.blue[800]),
+              fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blue),
         ),
       ],
     );
   }
 
-  Widget _menuItem(IconData icon, String title) {
+  Widget _walletItem(IconData icon, String title, String value) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
         CircleAvatar(
-          radius: 26,
-          backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+          radius: 22,
+          backgroundColor: Colors.white,
           child: Icon(
             icon,
-            color: Colors.blue[800],
-            size: 30, // <<< กำหนดขนาดของไอคอนที่นี่
+            color: Colors.blue,
           ),
         ),
         SizedBox(height: 6),
@@ -364,7 +411,39 @@ class _HomeScreenState extends State<HomeScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
+        Text(
+          value,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blue),
+        ),
       ],
+    );
+  }
+
+  Widget _menuItem(IconData icon, String title, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+            child: Icon(
+              icon,
+              color: Colors.blue,
+              size: 22,
+            ),
+          ),
+          SizedBox(height: 6),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
     );
   }
 

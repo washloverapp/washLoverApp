@@ -6,11 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart'; // เพิ่ม http package
 
 class Promotion extends StatefulWidget {
-  // final String price;
-  // final String detail;
-
-  // Promotion({Key? key, required this.price, required this.detail})
-  //     : super(key: key);
   final Map<String, dynamic>? selectedCoupons; // ใช้ Map ที่รองรับค่าที่เป็น null
 
   Promotion({this.selectedCoupons}); // ไม่มีค่าเริ่มต้นกำหนด

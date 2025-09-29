@@ -84,11 +84,10 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
-      // LocationBanc(),
-      // BranchDetailPage2(),
-      // ddd(),
+    
       HomeScreen(),
       Wallet(),
+      HomeScreen(),
       LaundrySelection(),
       Status(),
     ];
@@ -105,12 +104,7 @@ class _MainLayoutState extends State<MainLayout> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _onItemTapped(2), // Index 2 is the 'Scan' button
-        backgroundColor: Color.fromARGB(
-          255,
-          8,
-          119,
-          210,
-        ), // A blue color like in the image
+        backgroundColor: Colors.blue, // A blue color like in the image
         shape: CircleBorder(),
         child: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 40),
         elevation: 8.0,
@@ -130,7 +124,7 @@ class _MainLayoutState extends State<MainLayout> {
         child: BottomNavigationBar(
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
-            selectedItemColor: Color(0xFF7bb0d8),
+            selectedItemColor: Colors.blue,
             unselectedItemColor: Color(0xFFadacac),
             backgroundColor: Colors.white,
             type: BottomNavigationBarType.fixed,
@@ -160,6 +154,7 @@ class _MainLayoutState extends State<MainLayout> {
               BottomNavigationBarItem(
                 icon: Stack(
                   clipBehavior: Clip.none,
+                  
                   children: [
                     Icon(Icons.online_prediction_rounded), // Icon ของคำสั่งซื้อ
                     if (hasUnreadOrders) // ถ้ามีคำสั่งซื้อที่ยังไม่ได้อ่าน

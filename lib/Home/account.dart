@@ -27,55 +27,12 @@ class _AccountState extends State<Account> {
   String address = "ที่อยู่สำหรับการจัดส่ง";
   String phoneT = "Loading...";
 
-  Future<void> loadPhoneData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? phone = prefs.getString('phone');
-
-    if (phone != null) {
-      phoneT = phone;
-      fetchUserData();
-    } else {
-      print('Phone is not available.');
-    }
-  }
-
-  Future<void> fetchUserData() async {
-    try {
-      final response = await http
-          .get(Uri.parse('https://washlover.com/api/member?phone=$phoneT'));
-      if (response.statusCode == 200) {
-        final dataAll = json.decode(response.body);
-        final data = dataAll['data'];
-        setState(() {
-          username = data['nickname'] ?? "";
-          userPhone = data['phone'] ?? '09xxxxxxx';
-          credit = data['credit'].toString();
-          point = data['point'].toString();
-          userImageUrl = data['profile_image_url'] ?? userImageUrl;
-          password = data['password'] ?? password;
-          // address = data['address'] ?? address;
-          if (userPhone.length > 3) {
-            userPhone = '${userPhone.substring(0, 3)}xxxxxxx';
-          } else {
-            userPhone = 'xxxxxxx';
-          }
-        });
-      } else {
-        throw Exception('Failed to load user data');
-      }
-    } catch (e) {
-      print(e);
-      setState(() {
-        username = 'Error loading user data';
-        userPhone = 'Please try again later';
-      });
-    }
-  }
+ 
 
   @override
   void initState() {
     super.initState();
-    loadPhoneData();
+    // loadPhoneData();
   }
 
   @override
