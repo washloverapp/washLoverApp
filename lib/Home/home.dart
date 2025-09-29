@@ -5,14 +5,14 @@ import 'package:my_flutter_mapwash/Home/affiat.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
 import 'package:my_flutter_mapwash/Home/promotion.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class home extends StatefulWidget {
+  const home({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _homeState createState() => _homeState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _homeState extends State<home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,14 +121,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Account()),
+                                  builder: (context) => account()),
                             );
                           },
                         ),
                         _menuItem(Icons.check_circle_outline, "จุดบริการ", () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Account()),
+                            MaterialPageRoute(builder: (context) => account()),
                           );
                         }),
                         _menuItem(Icons.group_add_outlined, "แนะนำเพื่อน", () {
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _menuItem(Icons.star_border_outlined, "สะสมแต้ม", () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Account()),
+                            MaterialPageRoute(builder: (context) => account()),
                           );
                         }),
                         _menuItem(Icons.history, "ประวัติใช้งาน", () {
@@ -162,13 +162,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Account()),
+                            MaterialPageRoute(builder: (context) => account()),
                           );
                         }),
                         _menuItem(Icons.call, "แจ้งปัญหา", () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Account()),
+                            MaterialPageRoute(builder: (context) => account()),
                           );
                         }),
                       ],

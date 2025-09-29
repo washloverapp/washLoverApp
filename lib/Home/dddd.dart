@@ -521,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (title == "สะสมแต้ม") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Account()),
+            MaterialPageRoute(builder: (context) => account()),
           );
         }
         if (title == "ประวัติ") {

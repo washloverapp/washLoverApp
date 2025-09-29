@@ -56,10 +56,6 @@ dependencies:
   loading_indicator: ^3.1.1
   flutter_polyline_points: ^2.1.0
 
-
- 
-
-
   
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3

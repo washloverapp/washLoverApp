@@ -8,15 +8,16 @@ import 'package:my_flutter_mapwash/pages/address_list_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:my_flutter_mapwash/Home/API/api_account.dart';
 
-class Account extends StatefulWidget {
-  const Account({super.key});
+class account extends StatefulWidget {
+  const account({super.key});
 
   @override
-  _AccountState createState() => _AccountState();
+  _accountState createState() => _accountState();
 }
 
-class _AccountState extends State<Account> {
+class _accountState extends State<account> {
   // Variables to hold API data
   String username = "Loading...";
   String userPhone = "Loading...";
@@ -27,12 +28,23 @@ class _AccountState extends State<Account> {
   String address = "ที่อยู่สำหรับการจัดส่ง";
   String phoneT = "Loading...";
 
- 
-
   @override
   void initState() {
     super.initState();
-    // loadPhoneData();
+    loadUserData();
+  }
+
+  Future<void> loadUserData() async {
+    var userData = await API_account.fetchapiaccount();
+    if (userData != null) {
+      setState(() {
+        username = userData['name'] ?? 'ไม่ทราบชื่อ';
+        userPhone = userData['phone'] ?? 'ไม่ทราบเบอร์';
+        credit = userData['credit'].toString();
+        point = userData['point'].toString();
+        userImageUrl = userData['image_url'] ?? userImageUrl;
+      });
+    }
   }
 
   @override

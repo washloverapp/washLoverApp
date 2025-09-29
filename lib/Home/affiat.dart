@@ -39,43 +39,6 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
   @override
   void initState() {
     super.initState();
-    fetchData();
-  }
-
-  Future<void> fetchData() async {
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String phone = prefs.getString('phone') ??
-          'defaultPhone'; // ค่า defaultPhone เป็นค่า fallback
-      if (phone == 'defaultPhone') {
-        print('ไม่พบหมายเลขโทรศัพท์ใน SharedPreferences');
-        return;
-      }
-      final String apiUrl = 'https://washlover.com/api/affiliate?phone=$phone';
-      final response = await http.get(Uri.parse(apiUrl));
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = json.decode(response.body);
-        if (jsonResponse['status'] == 'success') {
-          final List<dynamic> jsonData = jsonResponse['data'];
-          print(jsonData);
-          setState(() {
-            data = jsonData.map((item) {
-              return {
-                'name': '${item['firstname']} ${item['lastname']}',
-                'date': item['date'] ?? '',
-                // 'point': item['point']?.toString() ?? '0',
-              };
-            }).toList();
-          });
-        } else {
-          throw Exception('Failed to load data');
-        }
-      } else {
-        throw Exception('Failed to load data');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
   }
 
   @override

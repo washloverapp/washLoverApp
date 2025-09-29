@@ -24,7 +24,7 @@ class _MainLayoutState extends State<MainLayout> {
   String workStatus = '';
   String? phone;
   bool hasUnreadOrders = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -84,15 +84,13 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
-    
-      HomeScreen(),
+      home(),
       Wallet(),
-      HomeScreen(),
+      home(),
       LaundrySelection(),
       Status(),
     ];
 
-   
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(80),
@@ -122,68 +120,67 @@ class _MainLayoutState extends State<MainLayout> {
           ],
         ),
         child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Color(0xFFadacac),
-            backgroundColor: Colors.white,
-            type: BottomNavigationBarType.fixed,
-            items: <BottomNavigationBarItem>[
-              // 0: หน้าหลัก (Home)
-              BottomNavigationBarItem(
-                icon: Icon(Icons.house),
-                label: 'หน้าหลัก',
-              ),
-              // 1: เติมเงิน (Top-up/Wallet)
-              BottomNavigationBarItem(
-                icon: Icon(Icons.wallet),
-                label: 'เติมเงิน',
-              ),
-              // 2: สแกน (Scan) - Placeholder icon, the FAB is the main visual
-              BottomNavigationBarItem(
-                // Use a non-visible icon for the notched item
-                icon: Icon(Icons.circle, color: Colors.transparent),
-                label: 'สแกน',
-              ),
-              // 3: ส่งซัก (Send Laundry)
-              BottomNavigationBarItem(
-                icon: Icon(Icons.send_and_archive_rounded),
-                label: 'ส่งซัก',
-              ),
-              // 4: สถานะ (Status) - Has the notification badge logic
-              BottomNavigationBarItem(
-                icon: Stack(
-                  clipBehavior: Clip.none,
-                  
-                  children: [
-                    Icon(Icons.online_prediction_rounded), // Icon ของคำสั่งซื้อ
-                    if (hasUnreadOrders) // ถ้ามีคำสั่งซื้อที่ยังไม่ได้อ่าน
-                      Positioned(
-                        right: -5, // Adjust position to look like a badge
-                        top: -5,
-                        child: Container(
-                          padding: EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          constraints: BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ),
-                          child: Icon(
-                            Icons.notifications,
-                            size: 12,
-                            color: Colors.white,
-                          ),
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          selectedItemColor: Colors.blue,
+          unselectedItemColor: Color(0xFFadacac),
+          backgroundColor: Colors.white,
+          type: BottomNavigationBarType.fixed,
+          items: <BottomNavigationBarItem>[
+            // 0: หน้าหลัก (Home)
+            BottomNavigationBarItem(
+              icon: Icon(Icons.house),
+              label: 'หน้าหลัก',
+            ),
+            // 1: เติมเงิน (Top-up/Wallet)
+            BottomNavigationBarItem(
+              icon: Icon(Icons.wallet),
+              label: 'เติมเงิน',
+            ),
+            // 2: สแกน (Scan) - Placeholder icon, the FAB is the main visual
+            BottomNavigationBarItem(
+              // Use a non-visible icon for the notched item
+              icon: Icon(Icons.circle, color: Colors.transparent),
+              label: 'สแกน',
+            ),
+            // 3: ส่งซัก (Send Laundry)
+            BottomNavigationBarItem(
+              icon: Icon(Icons.send_and_archive_rounded),
+              label: 'ส่งซัก',
+            ),
+            // 4: สถานะ (Status) - Has the notification badge logic
+            BottomNavigationBarItem(
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(Icons.online_prediction_rounded), // Icon ของคำสั่งซื้อ
+                  if (hasUnreadOrders) // ถ้ามีคำสั่งซื้อที่ยังไม่ได้อ่าน
+                    Positioned(
+                      right: -5, // Adjust position to look like a badge
+                      top: -5,
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        constraints: BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Icon(
+                          Icons.notifications,
+                          size: 12,
+                          color: Colors.white,
                         ),
                       ),
-                  ],
-                ),
-                label: 'สถานะ',
+                    ),
+                ],
               ),
-            ],
-          ),
+              label: 'สถานะ',
+            ),
+          ],
+        ),
       ),
     );
   }
