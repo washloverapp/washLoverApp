@@ -37,12 +37,12 @@ class MyApp extends StatelessWidget {
       // home: select_Promotion(),
       // home: ShareFriendScreen(),
       // home: LoginPage(),
-      // home: MainLayout(),
+      home: MainLayout(),
       // home: MyHomePage(),
       // home: TotalOrder(),
       // home: AddressLocation(),
       // home: TotalOrder222(), MyApp222 Promotion CheckoutPage
-      home: WashingFlowScreen(),
+      // home: WashingFlowScreen(),
     );
   }
 }

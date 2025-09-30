@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Home/home.dart';
 // import 'package:my_flutter_mapwash/pages/banc.dart';
 import 'package:my_flutter_mapwash/Home/dddd.dart' hide HomeScreen;
-import 'package:my_flutter_mapwash/Oders/a_clothes.dart';
+import 'package:my_flutter_mapwash/Oders/sendwash.dart';
 import 'package:my_flutter_mapwash/pages/locatio_banch_page.dart';
 import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
 import 'package:my_flutter_mapwash/pages/order_step.dart';
@@ -45,18 +45,18 @@ class _MainLayoutState extends State<MainLayout> {
     });
   }
 
-  Future<void> loadPhoneData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? phonex = prefs.getString('phone');
+  // Future<void> loadPhoneData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? phonex = prefs.getString('phone');
 
-    if (phonex != null) {
-      setState(() {
-        phone = phonex;
-      });
-    } else {
-      print('Phone is not available.');
-    }
-  }
+  //   if (phonex != null) {
+  //     setState(() {
+  //       phone = phonex;
+  //     });
+  //   } else {
+  //     print('Phone is not available.');
+  //   }
+  // }
 
   // Future<void> fetchOrders(String phone) async {
   //   final response = await http.get(Uri.parse(
@@ -90,7 +90,7 @@ class _MainLayoutState extends State<MainLayout> {
       home(),
       LaundrySelection(),
       // Status(),
-      a_clothes(),
+      sendwash(),
     ];
 
     return Scaffold(
