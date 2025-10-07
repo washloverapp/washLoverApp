@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       //   textTheme:
       //       GoogleFonts.kanitTextTheme(), // กำหนดฟอนต์ Lato ให้กับ textTheme
       // ),
-      home: MainLayout(),
+      home: MainLayout(), 
     );
   }
 }
