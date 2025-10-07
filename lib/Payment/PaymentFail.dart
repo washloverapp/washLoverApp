@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
-import 'package:my_flutter_mapwash/pages/status.dart';
+import 'package:my_flutter_mapwash/Status/status.dart';
 
 class PaymentFailScreen extends StatelessWidget {
   final String amount;

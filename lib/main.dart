@@ -27,22 +27,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        textTheme:
-            GoogleFonts.kanitTextTheme(), // กำหนดฟอนต์ Lato ให้กับ textTheme
-      ),
-      // home: StatusOrder(
-      //   orderId: '666615574-WL',
+      // theme: ThemeData(
+      //   textTheme:
+      //       GoogleFonts.kanitTextTheme(), // กำหนดฟอนต์ Lato ให้กับ textTheme
       // ),
-      // home: select_Promotion(),
-      // home: ShareFriendScreen(),
-      // home: LoginPage(),
       home: MainLayout(),
-      // home: MyHomePage(),
-      // home: TotalOrder(),
-      // home: AddressLocation(),
-      // home: TotalOrder222(), MyApp222 Promotion CheckoutPage
-      // home: WashingFlowScreen(),
     );
   }
 }

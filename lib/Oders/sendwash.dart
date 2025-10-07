@@ -19,10 +19,6 @@ class sendwash extends StatefulWidget {
   _sendwashState createState() => _sendwashState();
 }
 
-const List<Color> _kDefaultRainbowColors = const [
-  Colors.blue,
-];
-
 class _sendwashState extends State<sendwash> {
   TextEditingController noteController = TextEditingController();
   final PageController _pageController = PageController();
@@ -144,9 +140,10 @@ class _sendwashState extends State<sendwash> {
     });
   }
 
-Widget _buildClothingType() {
-  // ✅ เรียกจากไฟล์ api_sendwash.dart
-  List<Map<String, dynamic>> clothingTypes = API_sendwash().getClothingTypes();
+  Widget _buildClothingType() {
+    // ✅ เรียกจากไฟล์ api_sendwash.dart
+    List<Map<String, dynamic>> clothingTypes =
+        API_sendwash().getClothingTypes();
     return GridView.builder(
       padding: EdgeInsets.all(10),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -233,14 +230,15 @@ Widget _buildClothingType() {
     );
   }
 
- Widget _buildDetergentSoftenerList(String type, String key) {
-  List<dynamic> options =
-      _items.where((item) => item['type'] == type).toList();
+  Widget _buildDetergentSoftenerList(String type, String key) {
+    List<dynamic> options =
+        _items.where((item) => item['type'] == type).toList();
 
-  if (options.isEmpty) {
-    // ✅ เรียกใช้เมท็อดจากคลาส
-    options = API_sendwash().getDefaultOptions(type);
-  }
+    if (options.isEmpty) {
+      // เรียกใช้เมท็อดจากคลาส
+      options = API_sendwash().getDefaultOptions(type);
+    }
+
     return GridView.builder(
       padding: EdgeInsets.all(10),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -252,9 +250,7 @@ Widget _buildClothingType() {
       itemCount: options.length,
       itemBuilder: (context, index) {
         var item = options[index];
-        int quantity = (selectedOptions[key][item['id']] is int)
-            ? selectedOptions[key][item['id']]
-            : 0;
+        int quantity = selectedOptions[key]?[item['id']] ?? 0;
 
         return Container(
           decoration: BoxDecoration(
@@ -280,8 +276,12 @@ Widget _buildClothingType() {
                         height: 120,
                         fit: BoxFit.contain,
                       )
-                    : Image.asset(item['image'],
-                        width: 120, height: 120, fit: BoxFit.contain),
+                    : Image.asset(
+                        item['image'],
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.contain,
+                      ),
               ),
               Padding(
                 padding: const EdgeInsets.all(0),
@@ -329,17 +329,21 @@ Widget _buildClothingType() {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.remove),
-                    onPressed: item['id'].toString().startsWith('sample_')
-                        ? null
-                        : () => _updateQuantity(key, item['id'], -1),
+                    icon: Icon(
+                      Icons.remove,
+                      color: quantity > 0 ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: quantity > 0
+                        ? () => _updateQuantity(key, item['id'], -1)
+                        : null,
                   ),
                   Text(quantity.toString()),
                   IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: item['id'].toString().startsWith('sample_')
-                        ? null
-                        : () => _updateQuantity(key, item['id'], 1),
+                    icon: Icon(
+                      Icons.add,
+                      color: Colors.green,
+                    ),
+                    onPressed: () => _updateQuantity(key, item['id'], 1),
                   ),
                 ],
               ),
@@ -355,29 +359,7 @@ Widget _buildClothingType() {
         _items.where((item) => item['type'] == type).toList();
 
     if (options.isEmpty) {
-      String sampleImage;
-      switch (type) {
-        case 'washing':
-          sampleImage = 'assets/images/sakpa.png';
-          break;
-        case 'temperature':
-          sampleImage = 'assets/images/water01.png';
-          break;
-        case 'dryer':
-          sampleImage = 'assets/images/ooppa2.png';
-          break;
-        default:
-          sampleImage = 'assets/images/notag.png';
-      }
-      options = List.generate(
-          4,
-          (index) => {
-                'id': 'sample_${index + 1}',
-                'name': 'กรุณาเพิ่มจากหลังบ้าน',
-                'image': sampleImage,
-                'price': 0,
-                'type': type,
-              });
+      options = API_sendwash().getwashing(type);
     }
 
     return GridView.builder(

@@ -35,4 +35,31 @@ class API_sendwash {
       };
     });
   }
+
+  List<Map<String, dynamic>> getwashing(String type) {
+    return List.generate(4, (index) {
+      String sampleImage;
+      switch (type) {
+        case 'washing':
+          sampleImage = 'assets/images/sakpa.png';
+          break;
+        case 'temperature':
+          sampleImage = 'assets/images/water01.png';
+          break;
+        case 'dryer':
+          sampleImage = 'assets/images/ooppa2.png';
+          break;
+        default:
+          sampleImage = 'assets/images/notag.png';
+      }
+
+      return {
+        'id': 'sample_${index + 1}',
+        'name': 'กรุณาเพิ่มจากหลังบ้าน',
+        'image': sampleImage,
+        'price': 0,
+        'type': type,
+      };
+    });
+  }
 }

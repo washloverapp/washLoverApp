@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
-import 'package:my_flutter_mapwash/pages/status.dart';
+import 'package:my_flutter_mapwash/Status/status.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {

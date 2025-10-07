@@ -15,10 +15,6 @@ class QrcodeAddCredit extends StatefulWidget {
   _QrcodeAddCreditState createState() => _QrcodeAddCreditState();
 }
 
-const List<Color> _kDefaultRainbowColors = const [
-  Colors.blue,
-];
-
 class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
   String displayMessageStatus = "รอดำเนินการ...";
 
@@ -42,80 +38,6 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
     });
   }
 
-  _showSingleAnimationDialog(Indicator indicator, bool showPathBackground) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          fullscreenDialog: false,
-          builder: (ctx) {
-            return Scaffold(
-              body: Padding(
-                padding: const EdgeInsets.all(64),
-                child: Center(
-                  child: LoadingIndicator(
-                    indicatorType: indicator,
-                    colors: _kDefaultRainbowColors,
-                    strokeWidth: 4.0,
-                    pathBackgroundColor:
-                        showPathBackground ? Colors.black45 : null,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      );
-    });
-  }
-
-  Future<void> CheckPayment() async {
-    String ref_no = refID;
-    final url = Uri.parse(
-        'https://api.all123th.com/payment-swiftpay/' + ref_no + '?type=json');
-    try {
-      // ส่ง HTTP GET request ไปยัง URL
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data['data']['status'] == 'success') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PaymentSuccessScreen(
-                amount: amount,
-                detail: detail,
-                username: username,
-                status: status,
-                ref: ref,
-              ),
-            ),
-          );
-        } else {
-          _showErrorDialog(context, 'กรุณาชำระเงิน');
-        }
-        // if (data['data']['status'] == 'failed') {
-        //   Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => PaymentFailScreen(
-        //         amount: amount,
-        //         detail: detail,
-        //         username: username,
-        //         status: status,
-        //         ref: ref,
-        //       ),
-        //     ),
-        //   );
-        // }
-      } else {
-        print('Failed to fetch data. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error555: $e');
-    }
-  }
-
   String urlLink = "";
   String idWorking = "";
   String amount = "";
@@ -132,27 +54,6 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
   List<Map<String, dynamic>> addressuser = [];
   List<Map<String, dynamic>> Branch = [];
   late Timer _timer;
-
-  Future<void> _saveUrlToPreferences(String url, String refId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('url', url); // เก็บ url เป็น String
-    await prefs.setString('refID', refId); // เก็บ url เป็น String
-  }
-
-  Future<String?> _getUrlFromPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('url');
-  }
-
-  Future<String?> _getrefIDFromPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('refID');
-  }
-
-  Future<String?> _getPhonePreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('phone');
-  }
 
   String _generateRandomString(int length) {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -174,7 +75,6 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
   }
 
   Future<void> fetchQrcode() async {
-    _showSingleAnimationDialog(Indicator.ballScale, true);
     String getCurrent() {
       DateTime now = DateTime.now(); // ดึงวันที่และเวลาปัจจุบัน
       String year =
@@ -190,37 +90,6 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
       return formattedDate;
     }
 
-    username = await _getPhonePreferences() ?? "";
-    if (username.isEmpty) {
-      print("ไม่พบ username");
-      return;
-    }
-    final arguments = ModalRoute.of(context)?.settings.arguments;
-    // String amount = '';
-    if (arguments is String) {
-      amount = arguments;
-      print('Received amount: $amount');
-    } else {
-      print('Invalid argument format');
-    }
-    final response = await http.get(Uri.parse(
-        'https://merchant.all123th.com/api?amount=$amount&Agent=WASH&username=$username'));
-
-    print('response : $response');
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      refID = data['refId'];
-      setState(() {
-        amount = data['amount'];
-        detail = data['ref1'];
-        username = data['username'];
-        image = data['img'];
-        ref = data['ref1'];
-      });
-      _saveUrlToPreferences(data['url'], data['refId']);
-    } else {
-      throw Exception('Failed to load data');
-    }
     Navigator.pop(context);
   }
 
@@ -413,34 +282,12 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
       onPressed: () {
-        CheckPayment();
         // if (displayMessageStatus == '"Success"') {
         // } else {
         //   _showErrorDialog(context, 'กรุณาชำระเงิน');
         // }
       },
       child: Text(text, style: TextStyle(color: textColor)),
-    );
-  }
-
-  // ฟังก์ชันที่ใช้แสดงการแจ้งเตือน
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('รอดำเนินการ...'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // ปิดการแจ้งเตือน
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

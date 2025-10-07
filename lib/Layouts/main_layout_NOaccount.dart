@@ -6,7 +6,7 @@ import 'package:my_flutter_mapwash/Home/dddd.dart';
 import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
 import 'package:my_flutter_mapwash/pages/order_step.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../pages/status.dart';
+import '../Status/status.dart';
 import '../Header/header.dart';
 import 'package:my_flutter_mapwash/Payment/wallet.dart';
 import 'package:http/http.dart' as http;

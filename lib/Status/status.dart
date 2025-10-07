@@ -14,37 +14,7 @@ class Status extends StatefulWidget {
   BalanceScreen createState() => BalanceScreen();
 }
 
-const List<Color> _kDefaultRainbowColors = const [
-  Colors.blue,
-];
-
 class BalanceScreen extends State<Status> {
-  _showSingleAnimationDialog(Indicator indicator, bool showPathBackground) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          fullscreenDialog: false,
-          builder: (ctx) {
-            return Scaffold(
-              body: Padding(
-                padding: const EdgeInsets.all(64),
-                child: Center(
-                  child: LoadingIndicator(
-                    indicatorType: indicator,
-                    colors: _kDefaultRainbowColors,
-                    strokeWidth: 4.0,
-                    pathBackgroundColor: showPathBackground ? Colors.black45 : null,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      );
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -75,25 +45,23 @@ class BalanceScreen extends State<Status> {
 
   String? phone;
   Future<void> loadPhoneData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? phonex = prefs.getString('phone');
-      String? phonex = '0611211910';
-
+    String? phonex = '0611211910';
 
     if (phonex != null) {
       setState(() {
         phone = phonex; // เก็บค่า phone เมื่อโหลดเสร็จ
       });
-      // fetchOrders(phonex);
+      fetchOrders(phonex);
     } else {
       print('Phone is not available.');
     }
   }
 
   Future<List<Map<String, dynamic>>> fetchOrders(String phone) async {
-    _showSingleAnimationDialog(Indicator.ballScale, true);
-    final response = await http.get(Uri.parse('https://android-dcbef-default-rtdb.firebaseio.com/order/$phone.json'));
-    Navigator.pop(context);
+    final response = await http.get(Uri.parse(
+        'https://android-dcbef-default-rtdb.firebaseio.com/order/$phone.json'));
     if (response.statusCode == 200) {
       final Map<String, dynamic>? data = jsonDecode(response.body);
       if (data == null || data.isEmpty) {
@@ -137,7 +105,7 @@ class BalanceScreen extends State<Status> {
             ? Center(child: CircularProgressIndicator())
             : // รอให้ phone ถูกโหลด
             FutureBuilder<List<Map<String, dynamic>>>(
-                future: fetchOrders(phone!), // ส่ง phone ไปที่ fetchOrders
+                future: fetchOrders(phone!),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -151,7 +119,8 @@ class BalanceScreen extends State<Status> {
                       itemCount: orders.length,
                       itemBuilder: (context, index) {
                         final order = orders[index];
-                        String formattedDateTime = formatDate(order['datetime']);
+                        String formattedDateTime =
+                            formatDate(order['datetime']);
                         String formattedTime = formatTime(order['datetime']);
                         return _buildTransactionItem(
                           context,
@@ -160,7 +129,8 @@ class BalanceScreen extends State<Status> {
                           title: order['orderId'],
                           orderId: order['orderId'],
                           subtitle: formattedDateTime,
-                          amount: '฿${(double.tryParse(order['price'] as String) ?? 0.0) < 0 ? 0.0 : (double.tryParse(order['price'] as String) ?? 0.0).toStringAsFixed(2)}',
+                          amount:
+                              '฿${(double.tryParse(order['price'] as String) ?? 0.0) < 0 ? 0.0 : (double.tryParse(order['price'] as String) ?? 0.0).toStringAsFixed(2)}',
                           time: formattedTime,
                         );
                       },
@@ -187,7 +157,8 @@ class BalanceScreen extends State<Status> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => StatusOrder(orderId: orderId), // ส่งค่า amount (orderId)
+            builder: (context) =>
+                StatusOrder(orderId: orderId), // ส่งค่า amount (orderId)
           ),
         );
       },
@@ -214,7 +185,10 @@ class BalanceScreen extends State<Status> {
             children: [
               Text(
                 amount, // แสดง branch
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber[500], fontSize: 16),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amber[500],
+                    fontSize: 16),
               ),
               Text(
                 time, // แสดง note

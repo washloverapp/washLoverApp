@@ -7,8 +7,9 @@ import 'package:my_flutter_mapwash/Oders/sendwash.dart';
 import 'package:my_flutter_mapwash/pages/locatio_banch_page.dart';
 import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
 import 'package:my_flutter_mapwash/pages/order_step.dart';
+import 'package:my_flutter_mapwash/Wallet/wallet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_flutter_mapwash/pages/status.dart';
+import 'package:my_flutter_mapwash/Status/status.dart';
 import 'package:my_flutter_mapwash/Header/header.dart';
 import 'package:my_flutter_mapwash/Payment/wallet.dart';
 import 'package:http/http.dart' as http;
@@ -45,51 +46,14 @@ class _MainLayoutState extends State<MainLayout> {
     });
   }
 
-  // Future<void> loadPhoneData() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? phonex = prefs.getString('phone');
-
-  //   if (phonex != null) {
-  //     setState(() {
-  //       phone = phonex;
-  //     });
-  //   } else {
-  //     print('Phone is not available.');
-  //   }
-  // }
-
-  // Future<void> fetchOrders(String phone) async {
-  //   final response = await http.get(Uri.parse(
-  //       'https://android-dcbef-default-rtdb.firebaseio.com/order/$phone.json'));
-
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic>? data = jsonDecode(response.body);
-
-  //     if (data == null || data.isEmpty) {
-  //       setState(() {
-  //         // hasUnreadOrders = false;
-  //       });
-  //     } else {
-  //       bool hasUnread = data.entries.any((entry) {
-  //         return entry.value['status'] == 'unread';
-  //       });
-  //       setState(() {
-  //         // hasUnreadOrders = true;
-  //       });
-  //     }
-  //   } else {
-  //     throw Exception('Failed to load orders');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
       home(),
-      Wallet(),
+      wallet(),
       home(),
       LaundrySelection(),
-      // Status(),
+      Status(),
       sendwash(),
     ];
 
@@ -131,12 +95,12 @@ class _MainLayoutState extends State<MainLayout> {
           items: <BottomNavigationBarItem>[
             // 0: หน้าหลัก (Home)
             BottomNavigationBarItem(
-              icon: Icon(Icons.house),
+              icon: Icon(Icons.house_outlined),
               label: 'หน้าหลัก',
             ),
             // 1: เติมเงิน (Top-up/Wallet)
             BottomNavigationBarItem(
-              icon: Icon(Icons.wallet),
+              icon: Icon(Icons.account_balance_wallet_outlined),
               label: 'เติมเงิน',
             ),
             // 2: สแกน (Scan) - Placeholder icon, the FAB is the main visual
@@ -147,7 +111,7 @@ class _MainLayoutState extends State<MainLayout> {
             ),
             // 3: ส่งซัก (Send Laundry)
             BottomNavigationBarItem(
-              icon: Icon(Icons.send_and_archive_rounded),
+              icon: Icon(Icons.send_and_archive_outlined),
               label: 'ส่งซัก',
             ),
             // 4: สถานะ (Status) - Has the notification badge logic
