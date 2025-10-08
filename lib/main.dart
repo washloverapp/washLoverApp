@@ -28,8 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        textTheme:
-            GoogleFonts.kanitTextTheme(), // กำหนดฟอนต์ Lato ให้กับ textTheme
+        fontFamily: 'Kanit', // <<< ใช้ฟอนต์ที่เราตั้งไว้ใน pubspec.yaml
       ),
       home: MainLayout(),
     );
