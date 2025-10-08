@@ -27,11 +27,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // theme: ThemeData(
-      //   textTheme:
-      //       GoogleFonts.kanitTextTheme(), // กำหนดฟอนต์ Lato ให้กับ textTheme
-      // ),
-      home: MainLayout(), 
+      theme: ThemeData(
+        textTheme:
+            GoogleFonts.kanitTextTheme(), // กำหนดฟอนต์ Lato ให้กับ textTheme
+      ),
+      home: MainLayout(),
     );
   }
 }
