@@ -6,11 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Oders/API/api_sendwash.dart';
+import 'package:my_flutter_mapwash/Oders/address_user.dart';
+import 'package:my_flutter_mapwash/Oders/location_helper.dart';
 import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_flutter_mapwash/pages/totalOrder.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+// import 'package:geolocator/geolocator.dart';
 
 class sendwash extends StatefulWidget {
   const sendwash({super.key});
@@ -37,11 +41,14 @@ class _sendwashState extends State<sendwash> {
   String closestBranch = 'กำลังค้นหาสาขาที่ใกล้ที่สุด...';
   String codeBranch = '';
   bool isLoading = true; // สถานะการโหลด
-  late Position currentPosition;
+  // late Position currentPosition;
+  String selectedAddress = ''; // ✅ ตัวแปรที่อยู่
+  LatLng? selectedLatLng; // ✅ ตัวแปรพิกัด (nullable)
 
   @override
   void initState() {
     super.initState();
+    _GeoLocator();
   }
 
   @override
@@ -140,93 +147,158 @@ class _sendwashState extends State<sendwash> {
     });
   }
 
+  Future<void> _GeoLocator() async {
+    final result = await LocationHelper.getCurrentLocation();
+    if (result != null) {
+      setState(() {
+        selectedAddress = result['address'];
+        selectedLatLng = result['latlng'];
+      });
+    }
+  }
+
   Widget _buildClothingType() {
-    // ✅ เรียกจากไฟล์ api_sendwash.dart
+    // ✅ ดึงข้อมูลประเภทเสื้อผ้า
     List<Map<String, dynamic>> clothingTypes =
         API_sendwash().getClothingTypes();
-    return GridView.builder(
-      padding: EdgeInsets.all(10),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: 0.8,
-      ),
-      itemCount: clothingTypes.length,
-      itemBuilder: (context, index) {
-        var item = clothingTypes[index];
-        bool isSelected = selectedOptions['clothingType'] == item['value'];
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              selectedOptions['clothingType'] = item['value'];
-            });
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.blue[50] : Colors.white,
-                  border: Border.all(
-                    color: isSelected
-                        ? Colors.blue
-                        : const Color.fromARGB(255, 227, 227, 227),
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
+
+    return Column(
+      children: [
+        // ✅ ที่อยู่ (GestureDetector)
+        GestureDetector(
+          onTap: () async {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LocationPickerPage(
+                  onLocationPicked: (String address, LatLng location) {
+                    setState(() {
+                      selectedAddress = address;
+                      selectedLatLng = location;
+                    });
+                  },
                 ),
+              ),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.shade100),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.location_on, color: Colors.green),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    selectedAddress.isNotEmpty
+                        ? selectedAddress
+                        : 'กำลังค้นหาตำแหน่ง...',
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                  ),
+                ),
+                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.red[200]),
+              ],
+            ),
+          ),
+        ),
+
+        // ✅ GridView แบบจำกัดความสูง (ใช้ใน Column ได้)
+        Expanded(
+          child: GridView.builder(
+            padding: EdgeInsets.all(10),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 0.8,
+            ),
+            itemCount: clothingTypes.length,
+            itemBuilder: (context, index) {
+              var item = clothingTypes[index];
+              bool isSelected =
+                  selectedOptions['clothingType'] == item['value'];
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedOptions['clothingType'] = item['value'];
+                  });
+                },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.blue[50] : Colors.white,
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.blue
+                              : const Color.fromARGB(255, 227, 227, 227),
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Image.asset(
-                        item['image'],
-                        width: 200,
-                        height: 150,
-                        fit: BoxFit.contain,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
+                            child: Image.asset(
+                              item['image'],
+                              width: 200,
+                              height: 150,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              item['name'],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                        ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        item['name'],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                  ],
-                ),
-              ),
-              if (item['text'] != '1')
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: Row(
-                    children: [
-                      Icon(Icons.water_drop_sharp,
-                          color: Colors.blue[200], size: 16),
-                      SizedBox(width: 2),
-                      Expanded(
-                        child: Text(
-                          closestBranch,
-                          style: TextStyle(fontSize: 13, color: Colors.grey),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                    if (item['text'] != '1')
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.water_drop_sharp,
+                                color: Colors.blue[200], size: 16),
+                            SizedBox(width: 2),
+                            Expanded(
+                              child: Text(
+                                closestBranch,
+                                style:
+                                    TextStyle(fontSize: 13, color: Colors.grey),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
-            ],
+              );
+            },
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 

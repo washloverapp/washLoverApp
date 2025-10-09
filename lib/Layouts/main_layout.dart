@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Home/home.dart';
 // import 'package:my_flutter_mapwash/pages/banc.dart';
 import 'package:my_flutter_mapwash/Home/dddd.dart' hide HomeScreen;
+import 'package:my_flutter_mapwash/Oders/address_user.dart';
 import 'package:my_flutter_mapwash/Oders/sendwash.dart';
 import 'package:my_flutter_mapwash/pages/locatio_banch_page.dart';
 import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
@@ -13,7 +14,6 @@ import 'package:my_flutter_mapwash/Status/status.dart';
 import 'package:my_flutter_mapwash/Header/header.dart';
 import 'package:my_flutter_mapwash/Payment/wallet.dart';
 import 'package:http/http.dart' as http;
-
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -53,9 +53,10 @@ class _MainLayoutState extends State<MainLayout> {
       home(),
       wallet(),
       home(),
-      LaundrySelection(),
-      Status(),
+      // LaundrySelection(),
       sendwash(),
+      // LocationPickerPage(onLocationPicked: (address, location) => {}),
+      Status(),
     ];
 
     return Scaffold(

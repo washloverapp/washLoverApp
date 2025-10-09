@@ -18,37 +18,7 @@ class TotalOrder extends StatefulWidget {
   _TotalOrderState createState() => _TotalOrderState();
 }
 
-// const List<Color> _kDefaultRainbowColors = const [
-//   Colors.blue,
-// ];
-
 class _TotalOrderState extends State<TotalOrder> {
-  // _showSingleAnimationDialog(Indicator indicator, bool showPathBackground) {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         fullscreenDialog: false,
-  //         builder: (ctx) {
-  //           return Scaffold(
-  //             body: Padding(
-  //               padding: const EdgeInsets.all(64),
-  //               child: Center(
-  //                 child: LoadingIndicator(
-  //                   indicatorType: indicator,
-  //                   colors: _kDefaultRainbowColors,
-  //                   strokeWidth: 4.0,
-  //                   pathBackgroundColor: showPathBackground ? Colors.black45 : null,
-  //                 ),
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //     );
-  //   });
-  // }
-
   List<Map<String, dynamic>> jsonData = [];
   List<Map<String, dynamic>> address = []; // ประกาศเป็น Map แทน List
   List<Map<String, dynamic>> addressBranch = []; // ประกาศเป็น Map แทน List
@@ -191,11 +161,14 @@ class _TotalOrderState extends State<TotalOrder> {
   }
 
   Future<Map<String, dynamic>?> getAddressFromApi(String phone) async {
-    final response = await http.get(Uri.parse('https://washlover.com/api/getaddress/phone?phone=$phone'));
+    final response = await http.get(
+        Uri.parse('https://washlover.com/api/getaddress/phone?phone=$phone'));
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       if (data['status'] == 'success') {
-        return data['data'] != null && data['data'].isNotEmpty ? data['data'][0] : null;
+        return data['data'] != null && data['data'].isNotEmpty
+            ? data['data'][0]
+            : null;
       }
     }
     return null;
@@ -203,15 +176,19 @@ class _TotalOrderState extends State<TotalOrder> {
 
   Future<Map<String, dynamic>?> CheckUserCredit() async {
     String? phone = await getPhoneFromPreferences();
-    final response = await http.get(Uri.parse('https://washlover.com/api/member?phone=$phone'));
+    final response = await http
+        .get(Uri.parse('https://washlover.com/api/member?phone=$phone'));
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       print(data);
       if (data['status'] == 'success') {
-        double credit = double.tryParse(data['data']['credit']?.toString() ?? '') ?? 0.0;
+        double credit =
+            double.tryParse(data['data']['credit']?.toString() ?? '') ?? 0.0;
         Total_credit = credit;
 
-        return data['data'] != null && data['data'].isNotEmpty ? data['data'][0] : null;
+        return data['data'] != null && data['data'].isNotEmpty
+            ? data['data'][0]
+            : null;
       }
     }
     return null;
@@ -272,7 +249,9 @@ class _TotalOrderState extends State<TotalOrder> {
       return sum + (price + totalPrice);
     });
 
-    if (selectedCouponPromotion != null && selectedCouponPromotion!['amount'] != null && selectedCouponPromotion!['amount'] != '0.0') {
+    if (selectedCouponPromotion != null &&
+        selectedCouponPromotion!['amount'] != null &&
+        selectedCouponPromotion!['amount'] != '0.0') {
       totalPrice_discount -= double.parse(selectedCouponPromotion!['amount']);
     }
 
@@ -298,7 +277,8 @@ class _TotalOrderState extends State<TotalOrder> {
               ),
               color: Colors.grey[100],
 
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // ลดระยะห่างตรงนี้
+              margin: EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 8), // ลดระยะห่างตรงนี้
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
                 child: Row(
@@ -354,7 +334,9 @@ class _TotalOrderState extends State<TotalOrder> {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        branchName.isNotEmpty ? "สาขา : $branchName" : "กรุณาเลือกที่อยู่สาขา",
+                        branchName.isNotEmpty
+                            ? "สาขา : $branchName"
+                            : "กรุณาเลือกที่อยู่สาขา",
                         style: TextStyle(fontSize: 14),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -381,7 +363,8 @@ class _TotalOrderState extends State<TotalOrder> {
                 borderRadius: BorderRadius.circular(10), // มุมโค้ง
               ),
               color: Colors.grey[100], // กำหนดสีพื้นหลังให้กับ Card (สีเทาอ่อน)
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 0), // เพิ่ม margin ซ้ายขวา
+              margin: EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 0), // เพิ่ม margin ซ้ายขวา
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
                 child: Row(
@@ -445,7 +428,8 @@ class _TotalOrderState extends State<TotalOrder> {
               color: const Color.fromARGB(54, 160, 190, 255), // สีของเส้น
               boxShadow: [
                 BoxShadow(
-                  color: const Color.fromARGB(255, 230, 230, 230).withOpacity(0.2), // สีเงา
+                  color: const Color.fromARGB(255, 230, 230, 230)
+                      .withOpacity(0.2), // สีเงา
                   blurRadius: 10, // ความเบลอของเงา
                   offset: Offset(0, 2), // ทิศทางของเงา (ด้านล่าง)
                 ),
@@ -469,8 +453,12 @@ class _TotalOrderState extends State<TotalOrder> {
                       Text(
                         (selectedCouponPromotion != null &&
                                 selectedCouponPromotion!['amount'] != null &&
-                                double.tryParse(selectedCouponPromotion!['amount']) != null &&
-                                double.parse(selectedCouponPromotion!['amount']) > 0)
+                                double.tryParse(
+                                        selectedCouponPromotion!['amount']) !=
+                                    null &&
+                                double.parse(
+                                        selectedCouponPromotion!['amount']) >
+                                    0)
                             ? 'ใช้คูปองส่วนลด ${selectedCouponPromotion!['amount']} บาท'
                             : 'คูปองส่วนลด', // ถ้ามีการเลือกคูปองจะเปลี่ยนข้อความ
                         style: TextStyle(fontSize: 16),
@@ -481,7 +469,8 @@ class _TotalOrderState extends State<TotalOrder> {
                     children: [
                       Text(
                         "เลือก", // คำว่า "เลือก"
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Icon(Icons.arrow_forward_ios, size: 24), // ลูกศร
                     ],
@@ -492,7 +481,8 @@ class _TotalOrderState extends State<TotalOrder> {
           ),
           Divider(),
           Padding(
-            padding: const EdgeInsets.only(top: 0.0, bottom: 40.0, left: 20.0, right: 20.0),
+            padding: const EdgeInsets.only(
+                top: 0.0, bottom: 40.0, left: 20.0, right: 20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -500,7 +490,10 @@ class _TotalOrderState extends State<TotalOrder> {
                   children: [
                     const Text(
                       "ทั้งหมด ",
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 155, 155, 155)),
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 155, 155, 155)),
                     ),
                     Text(
                       "฿${(totalPrice_discount < 0 ? 0.0 : totalPrice_discount).toStringAsFixed(2)}",
@@ -514,45 +507,33 @@ class _TotalOrderState extends State<TotalOrder> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                      TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // ปิด dialog
-                                },
-                                child: Text('ตกลง'),
-                              );
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // ปิด dialog
+                      },
+                      child: Text('ตกลง'),
+                    );
                     if (address != null || address.isEmpty) {
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (context) {
-                      //     return AlertDialog(
-                      //       title: Text('คำเตือน'),
-                      //       content: Text('กรุณาเลือกที่อยู่'),
-                      //       actions: [
-                      //         TextButton(
-                      //           onPressed: () {
-                      //             Navigator.of(context).pop(); // ปิด dialog
-                      //           },
-                      //           child: Text('ตกลง'),
-                      //         ),
-                      //       ],
-                      //     );
-                      //   },
-                      // );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Qrcode(),
-                            settings: RouteSettings(
-                              arguments: {
-                                'totalPrice': totalPrice_discount.toStringAsFixed(2)?? 0.00,
-                                'address': address ?? 'ไม่พบที่อยู่',
-                                'addressBranch': addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
-                                'coupon': (selectedCouponPromotion?['amount']?.toString() ?? '0.00'),
-                                'payment': 'manual',
-                              },
-                            ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Qrcode(),
+                          settings: RouteSettings(
+                            arguments: {
+                              'totalPrice':
+                                  totalPrice_discount.toStringAsFixed(2) ??
+                                      0.00,
+                              'address': address ?? 'ไม่พบที่อยู่',
+                              'addressBranch':
+                                  addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
+                              'coupon': (selectedCouponPromotion?['amount']
+                                      ?.toString() ??
+                                  '0.00'),
+                              'payment': 'manual',
+                            },
                           ),
-                        );
+                        ),
+                      );
                     } else {
                       if (Total_credit < totalPrice_discount) {
                         Navigator.push(
@@ -561,10 +542,15 @@ class _TotalOrderState extends State<TotalOrder> {
                             builder: (context) => Qrcode(),
                             settings: RouteSettings(
                               arguments: {
-                                'totalPrice': totalPrice_discount.toStringAsFixed(2)?? 0.00,
+                                'totalPrice':
+                                    totalPrice_discount.toStringAsFixed(2) ??
+                                        0.00,
                                 'address': address ?? 'ไม่พบที่อยู่',
-                                'addressBranch': addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
-                                'coupon': (selectedCouponPromotion?['amount']?.toString() ?? '0.00'),
+                                'addressBranch':
+                                    addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
+                                'coupon': (selectedCouponPromotion?['amount']
+                                        ?.toString() ??
+                                    '0.00'),
                                 'payment': 'manual',
                               },
                             ),
@@ -577,10 +563,13 @@ class _TotalOrderState extends State<TotalOrder> {
                             builder: (context) => Qrcode(),
                             settings: RouteSettings(
                               arguments: {
-                                'totalPrice': totalPrice_discount.toStringAsFixed(2),
+                                'totalPrice':
+                                    totalPrice_discount.toStringAsFixed(2),
                                 'address': address,
                                 'addressBranch': addressBranch,
-                                'coupon': (selectedCouponPromotion?['amount']?.toString() ?? '0.00'),
+                                'coupon': (selectedCouponPromotion?['amount']
+                                        ?.toString() ??
+                                    '0.00'),
                                 'payment': 'credit',
                               },
                             ),
@@ -591,7 +580,8 @@ class _TotalOrderState extends State<TotalOrder> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -716,7 +706,10 @@ class OrderCard extends StatelessWidget {
                       ),
                       Text(
                         "฿$totalPrice.00", // แสดงราคาด้านซ้าย
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.yellow[800]),
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.yellow[800]),
                       ),
                     ],
                   ),
@@ -782,11 +775,13 @@ Future<Map<String, dynamic>> findClosestBranch(dynamic address) async {
     double myLon = double.parse('${address[0]['longitude']}');
   }
 
-  final response = await http.get(Uri.parse('https://washlover.com/api/branch?get=2'));
+  final response =
+      await http.get(Uri.parse('https://washlover.com/api/branch?get=2'));
   if (response.statusCode == 200) {
     Map<String, dynamic> jsonData = json.decode(response.body);
     if (jsonData['status'] == 'success' && jsonData['data'] != null) {
-      List<Map<String, dynamic>> branches = List<Map<String, dynamic>>.from(jsonData['data']);
+      List<Map<String, dynamic>> branches =
+          List<Map<String, dynamic>>.from(jsonData['data']);
       for (var currentBranch in branches) {
         double distance = haversineDistance(
           myLat,
@@ -826,7 +821,11 @@ double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
   const double radius = 6371;
   final double dLat = _toRadians(lat2 - lat1);
   final double dLon = _toRadians(lon2 - lon1);
-  final double a = sin(dLat / 2) * sin(dLat / 2) + cos(_toRadians(lat1)) * cos(_toRadians(lat2)) * sin(dLon / 2) * sin(dLon / 2);
+  final double a = sin(dLat / 2) * sin(dLat / 2) +
+      cos(_toRadians(lat1)) *
+          cos(_toRadians(lat2)) *
+          sin(dLon / 2) *
+          sin(dLon / 2);
   final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
   return radius * c * 1000;
 }
