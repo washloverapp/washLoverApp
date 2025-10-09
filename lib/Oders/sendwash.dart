@@ -148,7 +148,7 @@ class _sendwashState extends State<sendwash> {
   }
 
   Future<void> _GeoLocator() async {
-    final result = await LocationHelper.getCurrentLocation();
+    final result = await location_helper.getCurrentLocation();
     if (result != null) {
       setState(() {
         selectedAddress = result['address'];
@@ -170,7 +170,7 @@ class _sendwashState extends State<sendwash> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => LocationPickerPage(
+                builder: (context) => address_user(
                   onLocationPicked: (String address, LatLng location) {
                     setState(() {
                       selectedAddress = address;
@@ -231,6 +231,7 @@ class _sendwashState extends State<sendwash> {
                   });
                 },
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
@@ -245,6 +246,7 @@ class _sendwashState extends State<sendwash> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ClipRRect(
@@ -252,11 +254,14 @@ class _sendwashState extends State<sendwash> {
                               topLeft: Radius.circular(8),
                               topRight: Radius.circular(8),
                             ),
-                            child: Image.asset(
-                              item['image'],
-                              width: 200,
-                              height: 150,
-                              fit: BoxFit.contain,
+                            child: AspectRatio(
+                              aspectRatio:
+                                  4 / 3, // ✅ กำหนดอัตราส่วนภาพให้เหมาะสม
+                              child: Image.asset(
+                                item['image'],
+                                fit: BoxFit.contain,
+                                width: double.infinity,
+                              ),
                             ),
                           ),
                           Padding(
@@ -273,13 +278,14 @@ class _sendwashState extends State<sendwash> {
                       ),
                     ),
                     if (item['text'] != '1')
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
+                      Container(
+                        margin: const EdgeInsets.only(top: 12.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Row(
                           children: [
                             Icon(Icons.water_drop_sharp,
                                 color: Colors.blue[200], size: 16),
-                            SizedBox(width: 2),
+                            SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 closestBranch,

@@ -5,17 +5,17 @@ import 'package:geocoding/geocoding.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 import 'package:my_flutter_mapwash/Oders/location_helper.dart';
 
-class LocationPickerPage extends StatefulWidget {
+class address_user extends StatefulWidget {
   final Function(String address, LatLng location) onLocationPicked;
 
-  const LocationPickerPage({Key? key, required this.onLocationPicked})
+  const address_user({Key? key, required this.onLocationPicked})
       : super(key: key);
 
   @override
-  State<LocationPickerPage> createState() => _LocationPickerScreenState();
+  State<address_user> createState() => _LocationPickerScreenState();
 }
 
-class _LocationPickerScreenState extends State<LocationPickerPage> {
+class _LocationPickerScreenState extends State<address_user> {
   GoogleMapController? mapController;
   LatLng? _selectedLocation;
   String _selectedAddress = "แตะบนแผนที่เพื่อเลือกตำแหน่ง";
@@ -29,7 +29,7 @@ class _LocationPickerScreenState extends State<LocationPickerPage> {
   }
 
   Future<void> _loadCurrentLocation() async {
-    final locationData = await LocationHelper.getCurrentLocation();
+    final locationData = await location_helper.getCurrentLocation();
     if (!mounted) return; // ✅ ป้องกัน setState หลัง dispose
     if (locationData != null) {
       final LatLng currentLatLng = locationData['latlng'];

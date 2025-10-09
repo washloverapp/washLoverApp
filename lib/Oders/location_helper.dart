@@ -2,7 +2,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class LocationHelper {
+class location_helper {
   static Future<Map<String, dynamic>?> getCurrentLocation() async {
     try {
       LocationPermission permission = await Geolocator.checkPermission();
@@ -34,7 +34,7 @@ class LocationHelper {
 
       return null;
     } catch (e) {
-      print('📍 Error in LocationHelper: $e');
+      print('📍 Error in location_helper: $e');
       return null;
     }
   }
