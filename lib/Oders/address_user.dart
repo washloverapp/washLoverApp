@@ -29,7 +29,7 @@ class _LocationPickerScreenState extends State<address_user> {
   }
 
   Future<void> _loadCurrentLocation() async {
-    final locationData = await location_helper.getCurrentLocation();
+    final locationData = await location_helper.getCurrentLocationUser();
     if (!mounted) return; // ✅ ป้องกัน setState หลัง dispose
     if (locationData != null) {
       final LatLng currentLatLng = locationData['latlng'];

@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:my_flutter_mapwash/Help/help.dart';
 import 'package:my_flutter_mapwash/Home/account.dart';
 import 'package:my_flutter_mapwash/Home/affiat.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
@@ -51,7 +52,14 @@ class _homeState extends State<home> {
                   ),
                   _walletItem(Icons.star_border, "Points", "0"),
                   _walletItem(Icons.card_giftcard, "คูปอง", "0"),
-                  _walletItem(Icons.leak_remove_outlined, "เก็บเวล", "0"),
+                  _duckItem(
+                      Image.asset(
+                        "assets/images/duck.png",
+                        width: 24,
+                        height: 24,
+                      ),
+                      "เก็บเวล",
+                      "0"),
                 ],
               ),
             ),
@@ -133,7 +141,8 @@ class _homeState extends State<home> {
                         _menuItem(Icons.check_circle_outline, "จุดบริการ", () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => location_banc()),
+                            MaterialPageRoute(
+                                builder: (context) => location_banc()),
                           );
                         }),
                         _menuItem(Icons.group_add_outlined, "แนะนำเพื่อน", () {
@@ -173,7 +182,7 @@ class _homeState extends State<home> {
                         _menuItem(Icons.call, "แจ้งปัญหา", () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => account()),
+                            MaterialPageRoute(builder: (context) => Help()),
                           );
                         }),
                       ],
@@ -421,6 +430,34 @@ class _homeState extends State<home> {
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blue),
+        ),
+      ],
+    );
+  }
+
+  Widget _duckItem(Widget img, String title, String value) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CircleAvatar(
+          radius: 22,
+          backgroundColor: Colors.white,
+          child: img,
+        ),
+        SizedBox(height: 6),
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        Text(
+          value,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w900,
+            color: Colors.blue,
+          ),
         ),
       ],
     );

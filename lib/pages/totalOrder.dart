@@ -265,51 +265,51 @@ class _TotalOrderState extends State<TotalOrder> {
       ),
       body: Column(
         children: [
-          GestureDetector(
-            onTap: () {
-              _navigateAndDisplaySelection(context);
-              print("ที่อยู่");
-            },
-            child: Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              color: Colors.grey[100],
+          // GestureDetector(
+          //   onTap: () {
+          //     _navigateAndDisplaySelection(context);
+          //     print("ที่อยู่");
+          //   },
+          //   child: Card(
+          //     elevation: 0,
+          //     shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.circular(10),
+          //     ),
+          //     color: Colors.grey[100],
 
-              margin: EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 8), // ลดระยะห่างตรงนี้
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.location_pin,
-                      color: Colors.green[400],
-                      size: 25,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        address.isNotEmpty
-                            ? "${address[0]['name']}, ${address[0]['detail']}, ${address[0]['subdistrict']}, ${address[0]['district']}, ${address[0]['province']}, ${address[0]['postcode']}"
-                            : "กรุณาเลือกที่อยู่",
-                        style: TextStyle(fontSize: 14),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.red[300],
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          //     margin: EdgeInsets.symmetric(
+          //         horizontal: 16, vertical: 8), // ลดระยะห่างตรงนี้
+          //     child: Padding(
+          //       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+          //       child: Row(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           Icon(
+          //             Icons.location_pin,
+          //             color: Colors.green[400],
+          //             size: 25,
+          //           ),
+          //           const SizedBox(width: 6),
+          //           Expanded(
+          //             child: Text(
+          //               address.isNotEmpty
+          //                   ? "${address[0]['name']}, ${address[0]['detail']}, ${address[0]['subdistrict']}, ${address[0]['district']}, ${address[0]['province']}, ${address[0]['postcode']}"
+          //                   : "กรุณาเลือกที่อยู่",
+          //               style: TextStyle(fontSize: 14),
+          //               maxLines: 3,
+          //               overflow: TextOverflow.ellipsis,
+          //             ),
+          //           ),
+          //           Icon(
+          //             Icons.arrow_forward_ios,
+          //             color: Colors.red[300],
+          //             size: 20,
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
           GestureDetector(
             onTap: () {
               print("สาขา");

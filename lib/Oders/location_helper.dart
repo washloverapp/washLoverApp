@@ -3,17 +3,29 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class location_helper {
-  static Future<Map<String, dynamic>?> getCurrentLocation() async {
+  static Future<Map<String, dynamic>?> getCurrentLocationUser() async {
     try {
       LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
+      print("Current permission: $permission");
+
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        print("🚫 Permission denied or denied forever.");
         permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) return null;
+
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          print("🚫 Permission denied permanently or denied.");
+          return null;
+        }
       }
 
+      print("🔐 Permission: $permission");
+
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        desiredAccuracy: LocationAccuracy.low,
       );
+      print("🔐 position: $position");
 
       final placemarks = await placemarkFromCoordinates(
         position.latitude,
@@ -39,3 +51,5 @@ class location_helper {
     }
   }
 }
+
+

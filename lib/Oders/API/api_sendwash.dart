@@ -28,7 +28,7 @@ class API_sendwash {
     return List.generate(6, (index) {
       return {
         'id': 'sample_${index + 1}',
-        'name': 'กรุณาเพิ่มจากหลังบ้าน',
+        'name': 'ข้อมูลจำลอง',
         'image': 'assets/images/notag.png',
         'price': 5,
         'type': type,
@@ -55,7 +55,7 @@ class API_sendwash {
 
       return {
         'id': 'sample_${index + 1}',
-        'name': 'กรุณาเพิ่มจากหลังบ้าน',
+        'name': 'ข้อมูลจำลอง',
         'image': sampleImage,
         'price': 0,
         'type': type,

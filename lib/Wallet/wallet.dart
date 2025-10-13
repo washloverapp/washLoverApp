@@ -4,12 +4,10 @@ import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 // STEP 1: เลือกธนาคาร
 class wallet extends StatelessWidget {
   final List<Map<String, dynamic>> banks = [
-    {"name": "K PLUS", "image": "assets/images/scb.jpg"},
-    {"name": "SCB", "image": "assets/images/scb.jpg"},
-    {"name": "พร้อมเพย์", "image": "assets/images/scb.jpg"},
-    {"name": "ทรูวอลเล็ท", "image": "assets/images/scb.jpg"},
-    {"name": "กรุงเทพ", "image": "assets/images/scb.jpg"},
-    {"name": "Shopee Pay", "image": "assets/images/scb.jpg"},
+    {"name": "K PLUS", "image": "assets/images/KBANK.png"},
+    {"name": "SCB", "image": "assets/images/SCB.png"},
+    {"name": "กรุงเทพ", "image": "assets/images/BBL.png"},
+    {"name": "กรุงศรี", "image": "assets/images/BAY.png"},
   ];
 
   @override
@@ -94,12 +92,12 @@ class wallet extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 8),
+                            SizedBox(height: 4),
                             Text(
                               banks[index]["name"],
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16, // ขนาดข้อความ
+                                fontSize: 14, // ขนาดข้อความ
                               ),
                             ),
                           ],
@@ -299,7 +297,10 @@ class SummaryPage extends StatelessWidget {
               ),
               child: Text(
                 "ยืนยัน",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(

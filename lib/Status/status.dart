@@ -5,7 +5,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_flutter_mapwash/pages/map_screen.dart';
+import 'package:my_flutter_mapwash/Status/realtime_status.dart';
 
 class Status extends StatefulWidget {
   const Status({super.key});
@@ -157,8 +157,8 @@ class BalanceScreen extends State<Status> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                StatusOrder(orderId: orderId), // ส่งค่า amount (orderId)
+            builder: (context) => realtime_status(), // ส่งค่า amount (orderId)
+            // StatusOrder(orderId: orderId), // ส่งค่า amount (orderId)
           ),
         );
       },

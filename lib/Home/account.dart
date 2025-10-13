@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
-import 'package:my_flutter_mapwash/pages/help.dart';
+import 'package:my_flutter_mapwash/Help/help.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
 import 'package:my_flutter_mapwash/Login/login_page.dart';
 import 'package:my_flutter_mapwash/pages/address_list_screen.dart';

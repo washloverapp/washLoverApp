@@ -148,7 +148,7 @@ class _sendwashState extends State<sendwash> {
   }
 
   Future<void> _GeoLocator() async {
-    final result = await location_helper.getCurrentLocation();
+    final result = await location_helper.getCurrentLocationUser();
     if (result != null) {
       setState(() {
         selectedAddress = result['address'];
