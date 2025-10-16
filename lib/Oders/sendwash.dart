@@ -3,13 +3,9 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:loading_indicator/loading_indicator.dart';
-import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Oders/API/api_sendwash.dart';
 import 'package:my_flutter_mapwash/Oders/address_user.dart';
 import 'package:my_flutter_mapwash/Oders/location_helper.dart';
-import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_flutter_mapwash/pages/totalOrder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -432,14 +428,12 @@ class _sendwashState extends State<sendwash> {
     );
   }
 
+  Map<String, dynamic> selectedItems = {}; // เก็บ item ที่เลือก
+
   Widget _buildOptionList(String type, String key) {
     List<dynamic> options =
         _items.where((item) => item['type'] == type).toList();
-
-    if (options.isEmpty) {
-      options = API_sendwash().getwashing(type);
-    }
-
+    options = API_sendwash().getwashing(type);
     return GridView.builder(
       padding: EdgeInsets.all(10),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -452,15 +446,14 @@ class _sendwashState extends State<sendwash> {
       itemBuilder: (context, index) {
         var item = options[index];
         bool isSelected = selectedOptions[key] == item['id'];
-
         return GestureDetector(
-          onTap: item['id'].toString().startsWith('sample_')
-              ? null
-              : () {
-                  setState(() {
-                    selectedOptions[key] = item['id'];
-                  });
-                },
+          onTap: () {
+            setState(() {
+              selectedOptions['washingMachine'] = item['value'];
+              selectedOptions[key] = item['id'];
+              selectedItems[item['id']] = item;
+            });
+          },
           child: Container(
             decoration: BoxDecoration(
               color: isSelected ? Colors.blue[50] : Colors.white,
@@ -471,13 +464,6 @@ class _sendwashState extends State<sendwash> {
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 5,
-                  offset: Offset(0, 0),
-                ),
-              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,

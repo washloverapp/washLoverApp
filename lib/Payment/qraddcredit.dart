@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Payment/PaymentFail.dart';
 import 'package:my_flutter_mapwash/Payment/PaymentSuccess.dart';
 import 'package:my_flutter_mapwash/pages/send_confirm_oder.dart';
@@ -109,20 +110,6 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedTime = DateFormat('HH:mm').format(now);
-    if (status == 'success') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PaymentSuccessScreen(
-            amount: amount,
-            detail: detail,
-            username: username,
-            status: status,
-            ref: ref,
-          ),
-        ),
-      );
-    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -197,7 +184,7 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
                     buildButtonCancle(
                         "ยกเลิก", Colors.grey, Colors.black, context),
                     buildButtonSuccess(
-                        "โอนสำเร็จ", Colors.lightGreen, Colors.white),
+                        "โอนสำเร็จ", Colors.lightGreen, Colors.white, context),
                   ],
                 ),
               ],
@@ -274,7 +261,7 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
     );
   }
 
-  Widget buildButtonSuccess(String text, Color bgColor, Color textColor) {
+  Widget buildButtonSuccess(String text, Color bgColor, Color textColor ,BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: bgColor,
@@ -282,10 +269,11 @@ class _QrcodeAddCreditState extends State<QrcodeAddCredit> {
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
       onPressed: () {
-        // if (displayMessageStatus == '"Success"') {
-        // } else {
-        //   _showErrorDialog(context, 'กรุณาชำระเงิน');
-        // }
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainLayout()),
+          (Route<dynamic> route) => false,
+        );
       },
       child: Text(text, style: TextStyle(color: textColor)),
     );

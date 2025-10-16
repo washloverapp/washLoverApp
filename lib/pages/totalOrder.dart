@@ -2,15 +2,9 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:loading_indicator/loading_indicator.dart';
-import 'package:my_flutter_mapwash/pages/addressLocation.dart';
-import 'package:my_flutter_mapwash/pages/address_list_screen.dart';
 import 'package:my_flutter_mapwash/Home/promotion.dart';
-import 'package:my_flutter_mapwash/pages/send_confirm_oder.dart';
 import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 class TotalOrder extends StatefulWidget {
@@ -44,71 +38,6 @@ class _TotalOrderState extends State<TotalOrder> {
     }
   ];
 
-  Future<void> loadConvertedData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? savedData = prefs.getString('convertedSelectedOptions');
-    String? clothingTypeStr = prefs.getString('selectedOptions');
-
-    if (clothingTypeStr != null) {
-      var loadedData = jsonDecode(clothingTypeStr);
-      if (loadedData is Map<String, dynamic>) {
-        var clothingType = loadedData['clothingType'];
-        if (clothingType == 2) {
-          // ถ้าเป็นชุดเครื่องนอน
-          if (savedData != null) {
-            Map<String, dynamic> loadedData = jsonDecode(savedData);
-            List<Map<String, dynamic>> items = [];
-            String? noteData;
-
-            if (loadedData['items'] != null) {
-              List<Map<String, dynamic>> allItems =
-                  List<Map<String, dynamic>>.from(loadedData['items']);
-              // กรองข้อมูลที่ไม่รวม type = 'washing', 'temperature', หรือ 'dryer'
-              items = allItems.where((item) {
-                return item['type'] != 'washing' &&
-                    item['type'] != 'temperature' &&
-                    item['type'] != 'dryer';
-              }).toList();
-            }
-            noteData = loadedData['note'];
-
-            Map<String, dynamic> newItem = {
-              'id': 101,
-              'code': 'PD9999999999',
-              'name': 'ชุดเครื่องนอน/ผ้านวม',
-              'detail': 'ชุดเครื่องนอน/ผ้านวม',
-              'price': 120.00,
-              'type': 'panum',
-              'image': 'https://washlover.com/image/nuam22.png',
-              'quantity': 1
-            };
-            items.add(newItem);
-            setState(() {
-              jsonData = items;
-              note = noteData;
-            });
-          }
-        } else {
-          // ชุดเสื้อผ้า
-          if (savedData != null) {
-            Map<String, dynamic> loadedData = jsonDecode(savedData);
-            List<Map<String, dynamic>> items = [];
-            String? noteData;
-            if (loadedData['items'] != null) {
-              items = List<Map<String, dynamic>>.from(loadedData['items']);
-            }
-            noteData = loadedData['note'];
-
-            setState(() {
-              jsonData = items;
-              note = noteData;
-            });
-          }
-        }
-      } else {}
-    } else {}
-  }
-
   void _navigateAndDisplaySelectionPromotion(BuildContext context) async {
     final selectedPromotion = await Navigator.push(
       context,
@@ -123,138 +52,51 @@ class _TotalOrderState extends State<TotalOrder> {
     });
   }
 
-  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
-    final selectedAddress = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddressListScreen(),
-      ),
-    );
-
-    if (selectedAddress != null) {
-      // _showSingleAnimationDialog(Indicator.ballScale, true);
-      setState(() {
-        address = [selectedAddress];
-      });
-      var result = await findClosestBranch(address);
-      setState(() {
-        branchName = result['closestBranch'] ?? "ไม่พบสาขาที่ใกล้ที่สุด";
-        addressBranch = [
-          {
-            'closestDistance': result['closestDistance'],
-            'closestBranch': result['closestBranch'],
-            'code': result['code'],
-            'address': result['address'],
-            'latitude': result['latitude'],
-            'longitude': result['longitude'],
-            'branch': result['branch'],
-          }
-        ];
-      });
-      // Navigator.pop(context);
-    }
-  }
-
-  Future<String?> getPhoneFromPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('phone');
-  }
-
-  Future<Map<String, dynamic>?> getAddressFromApi(String phone) async {
-    final response = await http.get(
-        Uri.parse('https://washlover.com/api/getaddress/phone?phone=$phone'));
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      if (data['status'] == 'success') {
-        return data['data'] != null && data['data'].isNotEmpty
-            ? data['data'][0]
-            : null;
-      }
-    }
-    return null;
-  }
-
-  Future<Map<String, dynamic>?> CheckUserCredit() async {
-    String? phone = await getPhoneFromPreferences();
-    final response = await http
-        .get(Uri.parse('https://washlover.com/api/member?phone=$phone'));
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      print(data);
-      if (data['status'] == 'success') {
-        double credit =
-            double.tryParse(data['data']['credit']?.toString() ?? '') ?? 0.0;
-        Total_credit = credit;
-
-        return data['data'] != null && data['data'].isNotEmpty
-            ? data['data'][0]
-            : null;
-      }
-    }
-    return null;
-  }
-
-  void fetchData() async {
-    // _showSingleAnimationDialog(Indicator.ballScale, true);
-    String? phone = await getPhoneFromPreferences();
-    if (phone != null) {
-      var addressFromApi = await getAddressFromApi(phone);
-      if (addressFromApi != null) {
-        setState(() {
-          address = [addressFromApi];
-        });
-        var result = await findClosestBranch(address);
-        setState(() {
-          branchName = result['closestBranch'] ?? "ไม่พบสาขาที่ใกล้ที่สุด";
-          addressBranch = [
-            {
-              'closestDistance': result['closestDistance'],
-              'closestBranch': result['closestBranch'],
-              'code': result['code'],
-              'address': result['address'],
-              'latitude': result['latitude'],
-              'longitude': result['longitude'],
-              'branch': result['branch'],
-            }
-          ];
-        });
-      } else {}
-    } else {
-      print("Phone number not found.");
-    }
-    // Navigator.pop(context);
-  }
-
   @override
   void initState() {
     super.initState();
-    loadConvertedData();
-    fetchData();
-    CheckUserCredit();
   }
+
+  List<Map<String, dynamic>> items = [
+    {
+      "name": "เครื่องซักผ้า",
+      "detail": "ขนาด 16 km.",
+      "price": "50",
+      "quantity": "2",
+      "image": "assets/images/sakpa.png"
+    },
+    {
+      "name": "เครื่องอบผ้า",
+      "detail": "ขนาด 16 km.",
+      "price": "70",
+      "quantity": "1",
+      "image": "assets/images/ooppa2.png"
+    },
+    {
+      "name": "น้ำยาซักผ้า",
+      "detail": "น้ำยาซักผ้าอย่างอ่อนโยน",
+      "price": "120",
+      "quantity": "1",
+      "image": "assets/images/notag.png"
+    },
+    {
+      "name": "น้ำยาปรับผ้านุ่ม",
+      "detail": "น้ำยาอย่างอ่อนโยน",
+      "price": "30",
+      "quantity": "3",
+      "image": "assets/images/notag.png"
+    },
+    {
+      "name": "อุณหภูมิน้ำ",
+      "detail": "อุณหภูมิน้ำเย็น",
+      "price": "30",
+      "quantity": "3",
+      "image": "assets/images/water01.png"
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> items = jsonData.isNotEmpty ? jsonData : [];
-    List<Map<String, dynamic>> discount = jsonDataDiscount[0]["discount"];
-
-    double totalPrice = items.fold(0.0, (sum, item) {
-      double price = double.tryParse(item['price'].toString()) ?? 0.0;
-      int quantity = int.tryParse(item['quantity'].toString()) ?? 0;
-      return sum + (price * quantity);
-    });
-
-    double totalPrice_discount = discount.fold(0.0, (sum, item) {
-      double price = double.tryParse(item['price'].toString()) ?? 0.0;
-      return sum + (price + totalPrice);
-    });
-
-    if (selectedCouponPromotion != null &&
-        selectedCouponPromotion!['amount'] != null &&
-        selectedCouponPromotion!['amount'] != '0.0') {
-      totalPrice_discount -= double.parse(selectedCouponPromotion!['amount']);
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: headerOrder(
@@ -265,51 +107,6 @@ class _TotalOrderState extends State<TotalOrder> {
       ),
       body: Column(
         children: [
-          // GestureDetector(
-          //   onTap: () {
-          //     _navigateAndDisplaySelection(context);
-          //     print("ที่อยู่");
-          //   },
-          //   child: Card(
-          //     elevation: 0,
-          //     shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.circular(10),
-          //     ),
-          //     color: Colors.grey[100],
-
-          //     margin: EdgeInsets.symmetric(
-          //         horizontal: 16, vertical: 8), // ลดระยะห่างตรงนี้
-          //     child: Padding(
-          //       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
-          //       child: Row(
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: [
-          //           Icon(
-          //             Icons.location_pin,
-          //             color: Colors.green[400],
-          //             size: 25,
-          //           ),
-          //           const SizedBox(width: 6),
-          //           Expanded(
-          //             child: Text(
-          //               address.isNotEmpty
-          //                   ? "${address[0]['name']}, ${address[0]['detail']}, ${address[0]['subdistrict']}, ${address[0]['district']}, ${address[0]['province']}, ${address[0]['postcode']}"
-          //                   : "กรุณาเลือกที่อยู่",
-          //               style: TextStyle(fontSize: 14),
-          //               maxLines: 3,
-          //               overflow: TextOverflow.ellipsis,
-          //             ),
-          //           ),
-          //           Icon(
-          //             Icons.arrow_forward_ios,
-          //             color: Colors.red[300],
-          //             size: 20,
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
           GestureDetector(
             onTap: () {
               print("สาขา");
@@ -397,26 +194,22 @@ class _TotalOrderState extends State<TotalOrder> {
             endIndent: 0, // ระยะห่างจากขอบขวา
           ),
 
-          // List of orders dynamically generated from jsonData
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               itemCount: items.length,
               itemBuilder: (context, index) {
                 var item = items[index];
-
                 double price = double.tryParse(item['price'].toString()) ?? 0.0;
                 int quantity = int.tryParse(item['quantity'].toString()) ?? 0;
-
                 String imageUrl = item['image'];
-                // String imageUrlCount = 'assets/images/pha1.jpg';
                 return OrderCard(
-                  title: item['name'], // ชื่อสินค้าจาก jsonData
-                  subtitle: item['detail'], // รายละเอียดสินค้า
-                  price: item['price'].toString(), // ราคาสินค้า
-                  image: imageUrl, // ใช้ path ของภาพที่อยู่ใน jsonData
-                  quantity: item['quantity'], // จำนวน
-                  totalPrice: (price * quantity).toInt(), // คำนวณราคาทั้งหมด
+                  title: item['name'],
+                  subtitle: item['detail'],
+                  price: item['price'].toString(),
+                  image: imageUrl,
+                  quantity: quantity, // ✅ ใช้ตัวที่แปลงเป็น int แล้ว
+                  totalPrice: (price * quantity).toInt(),
                 );
               },
             ),
@@ -496,7 +289,7 @@ class _TotalOrderState extends State<TotalOrder> {
                           color: Color.fromARGB(255, 155, 155, 155)),
                     ),
                     Text(
-                      "฿${(totalPrice_discount < 0 ? 0.0 : totalPrice_discount).toStringAsFixed(2)}",
+                      "฿0.00",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -507,76 +300,24 @@ class _TotalOrderState extends State<TotalOrder> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // ปิด dialog
-                      },
-                      child: Text('ตกลง'),
-                    );
-                    if (address != null || address.isEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Qrcode(),
-                          settings: RouteSettings(
-                            arguments: {
-                              'totalPrice':
-                                  totalPrice_discount.toStringAsFixed(2) ??
-                                      0.00,
-                              'address': address ?? 'ไม่พบที่อยู่',
-                              'addressBranch':
-                                  addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
-                              'coupon': (selectedCouponPromotion?['amount']
-                                      ?.toString() ??
-                                  '0.00'),
-                              'payment': 'manual',
-                            },
-                          ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Qrcode(),
+                        settings: RouteSettings(
+                          arguments: {
+                            'totalPrice': 0.00,
+                            'address': address ?? 'ไม่พบที่อยู่',
+                            'addressBranch':
+                                addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
+                            'coupon': (selectedCouponPromotion?['amount']
+                                    ?.toString() ??
+                                '0.00'),
+                            'payment': 'manual',
+                          },
                         ),
-                      );
-                    } else {
-                      if (Total_credit < totalPrice_discount) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Qrcode(),
-                            settings: RouteSettings(
-                              arguments: {
-                                'totalPrice':
-                                    totalPrice_discount.toStringAsFixed(2) ??
-                                        0.00,
-                                'address': address ?? 'ไม่พบที่อยู่',
-                                'addressBranch':
-                                    addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
-                                'coupon': (selectedCouponPromotion?['amount']
-                                        ?.toString() ??
-                                    '0.00'),
-                                'payment': 'manual',
-                              },
-                            ),
-                          ),
-                        );
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Qrcode(),
-                            settings: RouteSettings(
-                              arguments: {
-                                'totalPrice':
-                                    totalPrice_discount.toStringAsFixed(2),
-                                'address': address,
-                                'addressBranch': addressBranch,
-                                'coupon': (selectedCouponPromotion?['amount']
-                                        ?.toString() ??
-                                    '0.00'),
-                                'payment': 'credit',
-                              },
-                            ),
-                          ),
-                        );
-                      }
-                    }
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -650,7 +391,7 @@ class OrderCard extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(0),
-                child: Image.network(
+                child: Image.asset(
                   image, // ดึงภาพจาก URL ที่เก็บใน jsonData
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
@@ -756,65 +497,6 @@ class CustomTicketClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) {
     return false;
   }
-}
-
-Future<Map<String, dynamic>> findClosestBranch(dynamic address) async {
-  double closestDistance = double.infinity;
-  String closestBranch = '';
-  String code = '';
-  String addressbranch = '';
-  String latitude = '';
-  String longitude = '';
-  String branch = '';
-// ข้อมูลตำแหน่งของคุณ
-  double myLat = double.parse('${address[0]['latitude']}');
-  double myLon = double.parse('${address[0]['longitude']}');
-  // print('addresssssssss: ${address[0]['latitude']}');
-  if (address.isNotEmpty) {
-    double myLat = double.parse('${address[0]['latitude']}');
-    double myLon = double.parse('${address[0]['longitude']}');
-  }
-
-  final response =
-      await http.get(Uri.parse('https://washlover.com/api/branch?get=2'));
-  if (response.statusCode == 200) {
-    Map<String, dynamic> jsonData = json.decode(response.body);
-    if (jsonData['status'] == 'success' && jsonData['data'] != null) {
-      List<Map<String, dynamic>> branches =
-          List<Map<String, dynamic>>.from(jsonData['data']);
-      for (var currentBranch in branches) {
-        double distance = haversineDistance(
-          myLat,
-          myLon,
-          double.parse(currentBranch['latitude']),
-          double.parse(currentBranch['longitude']),
-        );
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestBranch = currentBranch['name'];
-          code = currentBranch['code'];
-          addressbranch = currentBranch['address'];
-          latitude = currentBranch['latitude'];
-          longitude = currentBranch['longitude'];
-          branch = currentBranch['branch'];
-        }
-      }
-      return {
-        'closestDistance': closestDistance,
-        'closestBranch': closestBranch,
-        'code': code,
-        'address': addressbranch,
-        'latitude': latitude,
-        'longitude': longitude,
-        'branch': branch,
-      };
-    } else {
-      print('ไม่สามารถดึงข้อมูลสาขาได้');
-    }
-  } else {
-    throw Exception('ไม่สามารถดึงข้อมูลจาก API');
-  }
-  return {};
 }
 
 double haversineDistance(double lat1, double lon1, double lat2, double lon2) {

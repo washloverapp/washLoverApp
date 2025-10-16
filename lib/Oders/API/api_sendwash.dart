@@ -25,10 +25,10 @@ class API_sendwash {
   }
 
   List<Map<String, dynamic>> getDefaultOptions(String type) {
-    return List.generate(6, (index) {
+    return List.generate(4, (index) {
       return {
         'id': 'sample_${index + 1}',
-        'name': 'ข้อมูลจำลอง',
+        'name': 'น้ำยาซัก&ปรับผ้านุ่ม',
         'image': 'assets/images/notag.png',
         'price': 5,
         'type': type,
@@ -39,25 +39,30 @@ class API_sendwash {
   List<Map<String, dynamic>> getwashing(String type) {
     return List.generate(4, (index) {
       String sampleImage;
+      String typeselect;
       switch (type) {
         case 'washing':
           sampleImage = 'assets/images/sakpa.png';
+          typeselect = 'เครื่องซักผ้า';
           break;
         case 'temperature':
           sampleImage = 'assets/images/water01.png';
+          typeselect = 'อุณหภูมิน้ำ';
           break;
         case 'dryer':
           sampleImage = 'assets/images/ooppa2.png';
+          typeselect = 'เครื่องอบผ้า';
           break;
         default:
           sampleImage = 'assets/images/notag.png';
+          typeselect = 'น้ำยาซัก&ปรับผ้านุ่ม';
       }
 
       return {
         'id': 'sample_${index + 1}',
-        'name': 'ข้อมูลจำลอง',
+        'name': typeselect,
         'image': sampleImage,
-        'price': 0,
+        'price': 40,
         'type': type,
       };
     });

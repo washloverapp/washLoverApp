@@ -417,47 +417,67 @@ class _realtime_statusState extends State<realtime_status> {
                         ),
                       ),
                     ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final product = orderDetails["order_selects"][index];
-
-                          return Card(
-                            color: Colors.white,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.all(12),
-                              leading: Image.asset(
-                                product["image"] ?? 'assets/images/default.png',
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Icon(Icons.image),
-                              ),
-                              title: Text(
-                                product["name"] ?? "ไม่มีชื่อสินค้า",
-                                style: TextStyle(fontSize: 14),
-                                softWrap: true,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              subtitle: Text(
-                                "฿${product["price"] ?? 0} บาท",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text("จำนวน: ${product["qty"] ?? 0}"),
-                                ],
-                              ),
+                    SliverToBoxAdapter(
+                      child: Card(
+                        color: Colors.white,
+                        margin:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            children: List.generate(
+                              orderDetails["order_selects"]?.length ?? 0,
+                              (index) {
+                                final product =
+                                    orderDetails["order_selects"][index];
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: Image.asset(
+                                        product["image"] ??
+                                            'assets/images/default.png',
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Icon(Icons.image),
+                                      ),
+                                      title: Text(
+                                        product["name"] ?? "ไม่มีชื่อสินค้า",
+                                        style: TextStyle(fontSize: 14),
+                                        softWrap: true,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      subtitle: Text(
+                                        "จำนวน: ${product["qty"] ?? 0}",
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 13),
+                                      ),
+                                      trailing: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            "฿${product["price"] ?? 0} ",
+                                            style: TextStyle(
+                                                color: Colors.orange,
+                                                fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // คั่นแต่ละรายการด้วยเส้นแบ่ง
+                                  ],
+                                );
+                              },
                             ),
-                          );
-                        },
-                        childCount: orderDetails["order_selects"]?.length ?? 0,
+                          ),
+                        ),
                       ),
                     ),
                     SliverToBoxAdapter(

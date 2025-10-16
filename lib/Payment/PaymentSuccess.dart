@@ -5,24 +5,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final String amount;
-  final String detail;
-  final String username;
-  final String status;
+  final String orderId;
   final String ref;
-  // Constructor to accept values from the previous page
+  final String note;
+
   PaymentSuccessScreen({
     required this.amount,
-    required this.detail,
-    required this.username,
-    required this.status,
+    required this.orderId,
     required this.ref,
+    required this.note,
   });
-
-  Future<String?> convertedSelectedOptions() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selectedOptions');
-  }
-
   Future<void> removeConvertedSelectedOptions(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('selectedOptions');
@@ -67,17 +59,19 @@ class PaymentSuccessScreen extends StatelessWidget {
               Divider(color: Colors.white54, thickness: 1, height: 20),
               PaymentDetailRow(
                 label: 'จำนวนเงิน',
-                value: '฿${(double.tryParse(amount) ?? 0.0).clamp(0.0, double.infinity).toStringAsFixed(2)}',
+                value:
+                    '฿${(double.tryParse('0.00') ?? 0.0).clamp(0.0, double.infinity).toStringAsFixed(2)}',
               ),
-              PaymentDetailRow(label: 'คำสั่งซื้อ', value: '$detail'),
-              PaymentDetailRow(label: 'หมายเลขอ้างอิง', value: '$ref'),
-              PaymentDetailRow(label: 'หมายเหตุ', value: '$username'),
+              PaymentDetailRow(label: 'คำสั่งซื้อ', value: '#WASSF##@'),
+              PaymentDetailRow(label: 'หมายเลขอ้างอิง', value: 'awsd;sklgls9'),
+              PaymentDetailRow(label: 'หมายเหตุ', value: '0987654321'),
               SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green, // Button background color
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
                 onPressed: () {
                   removeConvertedSelectedOptions(context);
@@ -114,7 +108,8 @@ class PaymentDetailRow extends StatelessWidget {
           ),
           Text(
             value,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ],
       ),
