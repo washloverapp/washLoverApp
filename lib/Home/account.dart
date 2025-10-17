@@ -357,7 +357,6 @@ class _accountState extends State<account> {
             CupertinoDialogAction(
               onPressed: () {
                 Navigator.of(context).pop();
-                _deletePhone();
               },
               isDestructiveAction: true,
               child: Text("ลบ"),
@@ -366,44 +365,5 @@ class _accountState extends State<account> {
         );
       },
     );
-  }
-
-  Future<String?> getPhoneFromPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('phone');
-  }
-
-  Future<void> _deletePhone() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? phone = await getPhoneFromPreferences();
-    if (phone == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("ไม่พบหมายเลขโทรศัพท์")));
-      return;
-    }
-    print('phone : $phone');
-    if (phone != null) {
-      final deleteUrl = Uri.parse(
-          'https://washlover.com/api/member_delete?delete_member=1&phone=${phone}');
-      final response = await http.delete(deleteUrl);
-
-      print('response delete :  $response');
-      if (response.statusCode == 200) {
-        await prefs.clear();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Successfully logged out')),
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("ไม่สามารถลบที่อยู่ได้")));
-      }
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("ไม่พบที่อยู่ที่ต้องการลบ")));
-    }
   }
 }

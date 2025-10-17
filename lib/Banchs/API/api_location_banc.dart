@@ -59,44 +59,4 @@ class BranchService {
       },
     ];
   }
-
-//   static Future<List<Map<String, dynamic>>> fetchMachineCounts(
-//       List<Map<String, dynamic>> branches) async {
-//     try {
-//       final response = await http.get(
-//         Uri.parse(
-//             'https://android-dcbef-default-rtdb.firebaseio.com/machines.json'),
-//       );
-
-//       final data = json.decode(response.body) as Map<String, dynamic>?;
-//       if (data == null) return branches;
-
-//       for (var branch in branches) {
-//         final code = branch['code']?.toString()?.toLowerCase();
-
-//         if (data.containsKey(code)) {
-//           final washList = data[code]['wash'] as List?;
-//           final dryerList = data[code]['dryer'] as List?;
-
-//           int washCount = (washList != null)
-//               ? washList.where((e) => e != null).length
-//               : 0;
-//           int dryerCount = (dryerList != null)
-//               ? dryerList.where((e) => e != null).length
-//               : 0;
-
-//           branch['washCount'] = washCount;
-//           branch['dryerCount'] = dryerCount;
-//         } else {
-//           branch['washCount'] = 0;
-//           branch['dryerCount'] = 0;
-//         }
-//       }
-
-//       return branches;
-//     } catch (e) {
-//       print('Error fetching machine counts: $e');
-//       return branches;
-//     }
-//   }
 }

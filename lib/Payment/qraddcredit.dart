@@ -2,13 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
-import 'package:my_flutter_mapwash/Payment/PaymentFail.dart';
-import 'package:my_flutter_mapwash/Payment/PaymentSuccess.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class QrcodeAddCredit extends StatefulWidget {
   @override
