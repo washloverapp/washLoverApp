@@ -160,7 +160,7 @@ class _homeState extends State<home> {
                         _menuItem(Icons.star_border_outlined, "สะสมแต้ม", () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => account()),
+                            MaterialPageRoute(builder: (context) => point()),
                           );
                         }),
                         _menuItem(Icons.history, "ประวัติใช้งาน", () {
@@ -173,7 +173,7 @@ class _homeState extends State<home> {
                             () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => account()),
+                            MaterialPageRoute(builder: (context) => point()),
                           );
                         }),
                         _menuItem(Icons.call, "แจ้งปัญหา", () {

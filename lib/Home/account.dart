@@ -9,14 +9,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_flutter_mapwash/Home/API/api_account.dart';
 
-class account extends StatefulWidget {
-  const account({super.key});
+class point extends StatefulWidget {
+  const point({super.key});
 
   @override
-  _accountState createState() => _accountState();
+  _pointState createState() => _pointState();
 }
 
-class _accountState extends State<account> {
+class _pointState extends State<point> {
   // Variables to hold API data
   String username = "Loading...";
   String userPhone = "Loading...";
@@ -118,22 +118,6 @@ class _accountState extends State<account> {
                         Column(
                           children: [
                             Text(
-                              point,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'เครดิต',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text(
                               credit,
                               style: TextStyle(
                                 fontSize: 18,
@@ -150,56 +134,37 @@ class _accountState extends State<account> {
                       ],
                     ),
                     SizedBox(height: 20),
-                    // Menu Options Section
                     Expanded(
                       child: ListView(
                         children: [
-                          _buildMenuItemUser(
-                            icon: Icons.people,
-                            text: '$userPhone',
-                          ),
-                          _buildMenuItem(
-                            icon: Icons.location_city,
-                            text: '$address',
-                          ),
-                          _buildMenuItemHistory(
-                            icon: Icons.history,
-                            text: 'ประวัติ',
-                          ),
                           Divider(),
                           _buildMenuItemHepl(
-                            icon: Icons.help_outline,
-                            text: 'ศูนย์ช่วยเหลือ',
+                            icon: Icons.dataset,
+                            date: '10 ตุลาคม 68',
+                            time: '11.00 น.',
+                            point: '0',
                           ),
-                          _buildMenuItemExit(
-                            icon: Icons.exit_to_app_outlined,
-                            text: 'ออกจากระบบ',
-                            context: context, // Pass context here
+                           _buildMenuItemHepl(
+                            icon: Icons.dataset,
+                            date: '10 ตุลาคม 68',
+                            time: '11.00 น.',
+                            point: '0',
                           ),
-                          Divider(),
-                          SizedBox(height: 30),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            onPressed: () {
-                              _confirmDeletePhone();
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => Amount()),
-                              // );
-                            },
-                            child: Text(
-                              'ลบบัญชี',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            _buildMenuItemHepl(
+                            icon: Icons.dataset,
+                            date: '10 ตุลาคม 68',
+                            time: '11.00 น.',
+                            point: '0',
+                          ), _buildMenuItemHepl(
+                            icon: Icons.dataset,
+                            date: '10 ตุลาคม 68',
+                            time: '11.00 น.',
+                            point: '0',
+                          ), _buildMenuItemHepl(
+                            icon: Icons.dataset,
+                            date: '10 ตุลาคม 68',
+                            time: '11.00 น.',
+                            point: '0',
                           ),
                         ],
                       ),
@@ -214,156 +179,34 @@ class _accountState extends State<account> {
     );
   }
 
-  Widget _buildMenuItem({required IconData icon, required String text}) {
+  Widget _buildMenuItemHepl(
+      {required IconData icon,
+      required String date,
+      required String time,
+      required String point}) {
     return ListTile(
       leading: Icon(icon, color: Colors.deepPurple),
       title: Text(
-        text,
+        date,
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      // onTap: () {
-      //   Navigator.push(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => AddressListScreen()),
-      //   );
-      // },
-    );
-  }
-
-  Widget _buildMenuItemHistory({required IconData icon, required String text}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.deepPurple),
-      title: Text(
-        text,
+      subtitle: Text(
+        time,
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.grey,
+        ),
+      ),
+      trailing: Text(
+        point,
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => History()),
-        );
-      },
-    );
-  }
-
-  Widget _buildMenuItemHepl({required IconData icon, required String text}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.deepPurple),
-      title: Text(
-        text,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Help()),
-        );
-      },
-    );
-  }
-
-  Widget _buildMenuItemUser({required IconData icon, required String text}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.deepPurple),
-      title: Text(
-        text,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => AddressListScreen()),
-        // );
-      },
-    );
-  }
-
-  // Function to handle the "Logout" action
-  Widget _buildMenuItemExit({
-    required IconData icon,
-    required String text,
-    required BuildContext context, // Pass context here
-  }) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.deepPurple),
-      title: Text(
-        text,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () async {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Successfully logged out')),
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
-      },
-    );
-  }
-
-  void _confirmDeletePhone() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(
-            "ยืนยันการลบบัญชี",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              "คุณต้องการลบบัญชีนี้หรือไม่?",
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          actions: [
-            CupertinoDialogAction(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              isDefaultAction: true,
-              child: Text(
-                "ยกเลิก",
-                style: TextStyle(color: Colors.blue),
-              ),
-            ),
-            CupertinoDialogAction(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              isDestructiveAction: true,
-              child: Text("ลบ"),
-            ),
-          ],
-        );
-      },
     );
   }
 }

@@ -1,205 +1,116 @@
 import 'package:flutter/material.dart';
-import 'package:my_flutter_mapwash/Header/headerOrder.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-class History extends StatefulWidget {
-  final String userId;
+List<Map<String, dynamic>> otherPageHistory = [
+  {
+    'date': '2025-10-12',
+    'time': '11:20',
+    'status': 'completed',
+    'price_net': 120.50,
+    'phone': '0811223344',
+    'branch_name': 'สาขา สีลม',
+    'address': 'แขวง บางรัก, กรุงเทพมหานคร',
+    'imageUrl': 'https://example.com/branch_silom.jpg',
+  },
+  {
+    'date': '2025-10-10',
+    'time': '15:45',
+    'status': 'completed',
+    'price_net': 95.00,
+    'phone': '0822334455',
+    'branch_name': 'สาขา พญาไท',
+    'address': 'แขวง ถนนพญาไท, เขตราชเทวี',
+    'imageUrl': 'https://example.com/branch_phayathai.jpg',
+  },
+  {
+    'date': '2025-10-08',
+    'time': '08:30',
+    'status': 'cancelled',
+    'price_net': 0.0,
+    'phone': '0833445566',
+    'branch_name': 'สาขา จตุจักร',
+    'address': 'แขวง จตุจักร, เขตจตุจักร',
+    'imageUrl': 'https://example.com/branch_chatuchak.jpg',
+  },
+];
 
-  History({required this.userId});
-
-  @override
-  _HistoryState createState() => _HistoryState();
-}
-
-class _HistoryState extends State<History> {
-  List<dynamic> _historyData = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchHistoryData(); // ดึง API เมื่อเปิดหน้า
-  }
-
-  Future<void> _fetchHistoryData() async {
-    try {
-      final String url = 'https://yourapi.com/history?userId=${widget.userId}';
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        var jsonBody = json.decode(response.body);
-        // สมมุติ API ส่ง {"data": [...]} หรือส่งเป็น list
-        List<dynamic> data = [];
-        if (jsonBody is Map && jsonBody["data"] != null) {
-          data = jsonBody["data"];
-        } else if (jsonBody is List) {
-          data = jsonBody;
-        }
-        setState(() {
-          _historyData = data;
-          _isLoading = false;
-        });
-      } else {
-        // error (status code != 200)
-        setState(() {
-          _isLoading = false;
-        });
-        // แสดง error message
-        print("Error: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Exception fetch history: $e");
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case "สำเร็จ":
-        return Colors.green;
-      case 'กำลังดำเนินการ':
-        return Colors.orange;
-      case "ไม่สำเร็จ":
-        return Colors.red;
-      case 'washing':
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
-  }
+class HistoryPage extends StatelessWidget {
+  const HistoryPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: headerOrder(
-        title: 'ประวัติ',
-        onBackPressed: () {
-          Navigator.pop(context);
-        },
+      appBar: AppBar(
+        title: Text('ประวัติทั้งหมด'),
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _historyData.isEmpty
-              ? Center(
-                  child: Text(
-                    'ยังไม่มีประวัติคำสั่งซื้อ',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-              : SafeArea(
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(12),
-                    itemCount: _historyData.length,
-                    itemBuilder: (context, index) {
-                      var item = _historyData[index];
-                      String date = item['date'] ?? "Unknown";
-                      String time = item['time'] ?? "Unknown";
-                      String status = item['status'] ?? "pending";
-                      String priceNet = item['price_net']?.toString() ?? '0';
-                      String phone = item['phone'] ?? "Unknown";
+      body: ListView.builder(
+        itemCount: otherPageHistory.length,
+        itemBuilder: (context, index) {
+          final h = otherPageHistory[index];
+          String date = h['date'] ?? "Unknown";
+          String time = h['time'] ?? "Unknown";
+          String status = h['status'] ?? "pending";
+          double priceNet = (h['price_net'] is num)
+              ? (h['price_net'] as num).toDouble()
+              : 0.0;
+          String phone = h['phone'] ?? "Unknown";
+          String branchName = h['branch_name'] ?? "";
+          String address = h['address'] ?? "";
+          String imageUrl = h['imageUrl'] ?? "";
 
-                      return Card(
-                        elevation: 0,
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 6.0, horizontal: 0.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.2),
-                          child: Row(
-                            children: [
-                              // Icon / รูปภาพ
-                              Container(
-                                height: 55,
-                                width: 55,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      color: Color.fromARGB(255, 235, 235, 235),
-                                      width: 1.0),
-                                ),
-                                child: ClipOval(
-                                  child: Container(
-                                    color: Colors.grey[300],
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.access_time,
-                                        size: 35,
-                                        color:
-                                            Color.fromARGB(255, 215, 215, 215),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('$date $time',
-                                        style: TextStyle(color: Colors.grey)),
-                                    Text(phone,
-                                        style: TextStyle(color: Colors.grey)),
-                                    SizedBox(height: 6),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 4.0, horizontal: 8.0),
-                                          decoration: BoxDecoration(
-                                            color: _getStatusColor(status),
-                                            borderRadius:
-                                                BorderRadius.circular(4.0),
-                                          ),
-                                          child: Text(
-                                            status,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                        SizedBox(width: 6),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 4.0, horizontal: 8.0),
-                                          decoration: BoxDecoration(
-                                            color: Colors.blue,
-                                            borderRadius:
-                                                BorderRadius.circular(4.0),
-                                          ),
-                                          child: Text(
-                                            'washing',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '฿$priceNet',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+          return Card(
+            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // รูปภาพ (ถ้ามี)
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey[200],
+                      image: imageUrl.isNotEmpty
+                          ? DecorationImage(
+                              image: NetworkImage(imageUrl),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  // ข้อความรายละเอียด
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          branchName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      );
-                    },
+                        SizedBox(height: 4),
+                        Text('วันที่: $date    เวลา: $time'),
+                        SizedBox(height: 4),
+                        Text('สถานะ: $status'),
+                        SizedBox(height: 4),
+                        Text('ยอดสุทธิ: ฿${priceNet.toStringAsFixed(2)}'),
+                        SizedBox(height: 4),
+                        Text('เบอร์โทร: $phone'),
+                        SizedBox(height: 4),
+                        Text('ที่อยู่: $address'),
+                      ],
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

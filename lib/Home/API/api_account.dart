@@ -22,4 +22,6 @@ class API_account {
       return null;
     }
   }
+
+  static Future fetchapipoint() async {}
 }

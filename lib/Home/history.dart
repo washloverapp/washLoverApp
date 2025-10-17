@@ -11,7 +11,30 @@ class History extends StatefulWidget {
 }
 
 class _HistoryState extends State<History> {
-  List<dynamic> _historyData = []; // สตอร์ข้อมูลที่ได้จาก API
+  List<dynamic> _historyData = [
+    {
+      'date': '2025-10-15',
+      'time': '14:30',
+      'status': 'completed',
+      'price_net': 150.75,
+      'phone': '0812345678',
+    },
+    {
+      'date': '2025-10-14',
+      'time': '09:45',
+      'status': 'pending',
+      'price_net': 200.00,
+      'phone': '0898765432',
+    },
+    {
+      'date': '2025-10-13',
+      'time': '18:15',
+      'status': 'cancelled',
+      'price_net': 0.0,
+      'phone': '0865432190',
+    },
+  ];
+
   bool _isLoading = true; // ตัวแปรเช็คสถานะการโหลดข้อมูล
   String username = "";
 
