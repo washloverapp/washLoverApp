@@ -4,7 +4,6 @@ import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Help/help.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
 import 'package:my_flutter_mapwash/Login/login_page.dart';
-import 'package:my_flutter_mapwash/pages/address_list_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -226,12 +225,12 @@ class _accountState extends State<account> {
         ),
       ),
       trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AddressListScreen()),
-        );
-      },
+      // onTap: () {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => AddressListScreen()),
+      //   );
+      // },
     );
   }
 

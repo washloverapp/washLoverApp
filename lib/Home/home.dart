@@ -6,9 +6,6 @@ import 'package:my_flutter_mapwash/Home/affiat.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
 import 'package:my_flutter_mapwash/Home/promotion.dart';
 import 'package:my_flutter_mapwash/Profile/profile.dart';
-import 'package:my_flutter_mapwash/Wallet/wallet.dart';
-import 'package:my_flutter_mapwash/pages/add_address_screen.dart';
-import 'package:my_flutter_mapwash/pages/addressLocation.dart';
 import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
 
 class home extends StatefulWidget {

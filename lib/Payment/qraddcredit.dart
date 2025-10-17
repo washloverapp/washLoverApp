@@ -6,7 +6,6 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Payment/PaymentFail.dart';
 import 'package:my_flutter_mapwash/Payment/PaymentSuccess.dart';
-import 'package:my_flutter_mapwash/pages/send_confirm_oder.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
