@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Home/home.dart';
-// import 'package:my_flutter_mapwash/pages/banc.dart';
-import 'package:my_flutter_mapwash/Home/dddd.dart' hide HomeScreen;
 import 'package:my_flutter_mapwash/Oders/sendwash.dart';
 import 'package:my_flutter_mapwash/Wallet/wallet.dart';
 import 'package:my_flutter_mapwash/Status/status.dart';

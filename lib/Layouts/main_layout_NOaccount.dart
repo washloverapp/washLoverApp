@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/NOaccount/NOaccount_home2.dart';
 import 'package:my_flutter_mapwash/NOaccount/NOaccount_wallet.dart';
-import 'package:my_flutter_mapwash/Home/dddd.dart';
 import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Status/status.dart';
