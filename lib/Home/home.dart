@@ -401,8 +401,7 @@ class _homeState extends State<home> {
         Text(
           value,
           textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blue),
+          style: TextStyle(fontSize: 12, color: Colors.blue),
         ),
       ],
     );
@@ -428,8 +427,7 @@ class _homeState extends State<home> {
         Text(
           value,
           textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 12, fontWeight: FontWeight.w900, color: Colors.blue),
+          style: TextStyle(fontSize: 12, color: Colors.blue),
         ),
       ],
     );
@@ -455,7 +453,6 @@ class _homeState extends State<home> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 12,
-            fontWeight: FontWeight.w900,
             color: Colors.blue,
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 
 import 'package:my_flutter_mapwash/Banchs/API/api_location_banc.dart';
+import 'package:my_flutter_mapwash/pages/locatio_banch_page.dart';
 
 class location_banc extends StatefulWidget {
   @override
@@ -87,24 +88,6 @@ class _location_bancState extends State<location_banc> {
   }
 
   void _toggleTabView() => setState(() => _isMapView = !_isMapView);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: headerOrder(
-        title: 'จุดบริการ',
-        onBackPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-      body: Stack(
-        children: [
-          _isMapView ? _buildMapView() : _buildListView(),
-          _buildOverlayButtons(),
-        ],
-      ),
-    );
-  }
 
   List<Map<String, dynamic>> _getSortedBranches() {
     List<Map<String, dynamic>> sorted = [...branches];
@@ -234,16 +217,16 @@ class _location_bancState extends State<location_banc> {
             ),
             SizedBox(height: 14),
             GestureDetector(
-              // onTap: () => Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => BranchDetailPage2(
-              //       branchCode: branch['code'],
-              //       branchName: branch['name'],
-              //       branchDistant: '$distanceString',
-              //     ),
-              //   ),
-              // ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BranchDetailPage2(
+                    branchCode: branch['code'],
+                    branchName: branch['name'],
+                    branchDistant: '$distanceString',
+                  ),
+                ),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -266,16 +249,16 @@ class _location_bancState extends State<location_banc> {
               ),
             ),
             GestureDetector(
-              // onTap: () => Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => BranchDetailPage2(
-              //       branchCode: branch['code'],
-              //       branchName: branch['name'],
-              //       branchDistant: '$distanceString',
-              //     ),
-              //   ),
-              // ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BranchDetailPage2(
+                    branchCode: branch['code'],
+                    branchName: branch['name'],
+                    branchDistant: '$distanceString',
+                  ),
+                ),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -376,6 +359,24 @@ class _location_bancState extends State<location_banc> {
         child: Text(label,
             style:
                 TextStyle(color: isSelected ? Colors.white : Colors.black54)),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: headerOrder(
+        title: 'จุดบริการ',
+        onBackPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      body: Stack(
+        children: [
+          _isMapView ? _buildMapView() : _buildListView(),
+          _buildOverlayButtons(),
+        ],
       ),
     );
   }

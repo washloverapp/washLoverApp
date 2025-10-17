@@ -28,99 +28,47 @@ class _BranchDetailPage2State extends State<BranchDetailPage2> {
   bool loading = true;
   Timer? timer;
 
-  List<Map<String, dynamic>> machines = [];
-  List<Map<String, dynamic>> dryer = [];
+  List<Map<String, dynamic>> machines = [
+    {
+      'client_id': 'CL001',
+      'isAvailable': true,
+      'imageUrl': 'assets/images/sakpa.png',
+      'number': 0,
+    },
+    {
+      'client_id': 'CL002',
+      'isAvailable': false,
+      'imageUrl': 'assets/images/sakpa.png',
+      'number': 1,
+    },
+    {
+      'client_id': 'CL003',
+      'isAvailable': true,
+      'imageUrl': 'assets/images/sakpa.png',
+      'number': 2,
+    },
+  ];
 
-  Future<void> fetchData() async {
-    final String currentBranch = branch;
-    final washUrl = Uri.parse('https://cdn.all123th.com/wash');
-    final branchUrl = Uri.parse(
-        'https://android-dcbef-default-rtdb.firebaseio.com/machines.json');
-
-    try {
-      final washResponse = await http.get(washUrl);
-      final branchResponse = await http.get(branchUrl);
-
-      if (washResponse.statusCode == 200 && branchResponse.statusCode == 200) {
-        final List<dynamic> machineData =
-            json.decode(utf8.decode(washResponse.bodyBytes));
-        final Map<String, dynamic> branchData =
-            json.decode(utf8.decode(branchResponse.bodyBytes));
-
-        branch = currentBranch; // แก้ตรงนี้หากเปลี่ยนสาขา
-
-        if (!branchData.containsKey(branch)) {
-          throw Exception('ไม่พบข้อมูลสาขา "$branch"');
-        }
-
-        final List<String> washIds =
-            (branchData[branch]["wash"] ?? []).whereType<String>().toList();
-        final List<String> dryerIds =
-            (branchData[branch]["dryer"] ?? []).whereType<String>().toList();
-
-        List<Map<String, dynamic>> machinesTemp = [];
-        List<Map<String, dynamic>> dryerTemp = [];
-
-        // แปลง machineData เป็น Map เพื่อเข้าถึงง่ายด้วย client_id
-        final Map<String, dynamic> allMachinesMap = {
-          for (var item in machineData)
-            if (item['client_id'] != null) item['client_id']: item
-        };
-
-        // เครื่องซัก (เรียงตามลำดับ client_id จาก Firebase)
-        for (int i = 0; i < washIds.length; i++) {
-          final id = washIds[i];
-          if (id == null || !allMachinesMap.containsKey(id)) continue;
-
-          final item = allMachinesMap[id];
-          machinesTemp.add({
-            'name': 'เครื่องซัก',
-            'isAvailable': (item['status'] == 'Standby' &&
-                (item['error_status'] == 'Normal' ||
-                    item['error_status'] == 'normal')),
-            'imageUrl': item['status'] == 'Autorun'
-                ? 'https://cdn.all123th.com/images/autorun2.gif'
-                : 'https://washlover.com/uploads/sakpa2.png',
-            'number': i + 1,
-            'client_id': id,
-          });
-        }
-
-        // เครื่องอบ (เรียงตามลำดับ client_id จาก Firebase)
-        for (int i = 0; i < dryerIds.length; i++) {
-          final id = dryerIds[i];
-          if (id == null || !allMachinesMap.containsKey(id)) continue;
-
-          final item = allMachinesMap[id];
-          dryerTemp.add({
-            'name': 'เครื่องอบ',
-            'isAvailable': (item['status'] == 'Standby' &&
-                (item['error_status'] == 'Normal' ||
-                    item['error_status'] == 'normal')),
-            'imageUrl': 'https://washlover.com/uploads/ooppa2.png',
-            'number': i + 1,
-            'client_id': id,
-          });
-        }
-
-        if (!mounted) return;
-        setState(() {
-          machines = machinesTemp;
-          dryer = dryerTemp;
-          loading = false;
-        });
-      } else {
-        throw Exception(
-            'โหลดข้อมูลล้มเหลว (${washResponse.statusCode}, ${branchResponse.statusCode})');
-      }
-    } catch (e) {
-      print('เกิดข้อผิดพลาด: $e');
-      if (!mounted) return; // หยุดทำงานถ้า widget ถูก dispose แล้ว
-      setState(() {
-        loading = false;
-      });
-    }
-  }
+  List<Map<String, dynamic>> dryer = [
+    {
+      'client_id': 'CL001',
+      'isAvailable': true,
+      'imageUrl': 'assets/images/ooppa2.png',
+      'number': 0,
+    },
+    {
+      'client_id': 'CL002',
+      'isAvailable': false,
+      'imageUrl': 'assets/images/ooppa2.png',
+      'number': 1,
+    },
+    {
+      'client_id': 'CL003',
+      'isAvailable': true,
+      'imageUrl': 'assets/images/ooppa2.png',
+      'number': 2,
+    },
+  ];
 
   @override
   void initState() {
@@ -128,11 +76,6 @@ class _BranchDetailPage2State extends State<BranchDetailPage2> {
     branch = widget.branchCode;
     branchName = widget.branchName;
     branchDistant = widget.branchDistant;
-    fetchData();
-    // เรียกซ้ำทุก 5 วินาที
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
-      fetchData();
-    });
   }
 
   @override
@@ -198,7 +141,7 @@ class _BranchDetailPage2State extends State<BranchDetailPage2> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Text('รายการ (${machines.length})',
+                    Text('รายการ (3)',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     Spacer(),
@@ -240,7 +183,7 @@ class _BranchDetailPage2State extends State<BranchDetailPage2> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Text('รายการ (${dryer.length})',
+                    Text('รายการ (3)',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     Spacer(),
@@ -312,7 +255,7 @@ class _BranchDetailPage2State extends State<BranchDetailPage2> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // รูปภาพฝั่งซ้าย
-              Image.network(
+              Image.asset(
                 imageUrl,
                 width: 90,
                 // height: 80,

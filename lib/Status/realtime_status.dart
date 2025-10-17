@@ -1,17 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:my_flutter_mapwash/order_service.dart';
-// import '../icon_helper.dart';
 import 'dart:typed_data';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'dart:math'; // เพิ่มการนำเข้าคลาส dart:math
 import 'dart:ui' as ui;
