@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Kanit',
       ),
-      home: MainLayout(),
+      home: LoginPage(),
     );
   }
 }

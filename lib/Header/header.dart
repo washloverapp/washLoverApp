@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:my_flutter_mapwash/Notification/notification.dart';
 
 class Header extends StatelessWidget {
   const Header({super.key});
@@ -18,26 +20,72 @@ class Header extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // โลโก้
                   Image.asset('assets/images/logo.png', height: 40),
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    label: Text(
-                      '098xxxx321' ??
-                          'Loading...', // Display the phone number or a loading text
-                      style: TextStyle(color: Color(0xFFfdc607)),
-                    ),
-                    icon: Icon(Icons.account_circle, color: Color(0xFFfdc607)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+
+                  // ส่วนของ Notification กับ User
+                  Row(
+                    children: [
+                      // ปุ่มแจ้งเตือน
+                      badges.Badge(
+                        position: badges.BadgePosition.topEnd(
+                            top: 3, end: 5), // ปรับตำแหน่งจุดแดง
+                        badgeStyle: badges.BadgeStyle(
+                          badgeColor: Colors.red, // สีของจุด
+                          padding: EdgeInsets.all(4), // ขนาดของจุดแดง
+                          elevation: 0,
+                        ),
+                        badgeContent: SizedBox.shrink(), // ไม่มีตัวเลข
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFfdc607),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.notifications,
+                              color: Colors.white,
+                              size: 23,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NotificationScreen()),
+                              );
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                        ),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: Color(0xFFfdc607), width: 2),
+                      SizedBox(width: 8),
+                      // ปุ่ม User
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        label: Text(
+                          '098xxxx321',
+                          style: TextStyle(color: Color(0xFFfdc607)),
+                        ),
+                        icon: Icon(Icons.account_circle,
+                            color: Color(0xFFfdc607)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side:
+                                BorderSide(color: Color(0xFFfdc607), width: 2),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

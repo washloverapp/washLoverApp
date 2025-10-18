@@ -32,84 +32,9 @@ class _SignInState extends State<SignIn> {
   }
 
   @override
-  // void dispose() {
-  //   // _phoneController.dispose();
-  //   // _passwordController.dispose();
-  //   // _focusPhone.dispose();
-  //   // _focusPassword.dispose();
-  //   // super.dispose();
-  // }
-
-  void _checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final phone = prefs.getString('phone');
-    final password = prefs.getString('password');
-     Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => const MainLayout()));
-    // It's better practice to check for a session token instead of raw credentials.
-    // if (phone != null && password != null) {
-    //   if (!mounted) return; // Check if the widget is still in the tree.
-    //   Navigator.pushReplacement(
-    //       context, MaterialPageRoute(builder: (_) => const MainLayout()));
-    // }
-  }
-
   void _handleLogin() async {
-    final phone = _phoneController.text.trim();
-    final password = _passwordController.text.trim();
-
-    if (phone.isEmpty || password.isEmpty) {
-      SnackBarError(context, const Text('กรุณาระบุข้อมูล'));
-      return;
-    }
-
-    // --- SECURITY RECOMMENDATION ---
-    // The entire login flow should be changed.
-    // 1. Use a POST request to send credentials securely.
-    // 2. The server should validate credentials and return a session token, NOT the password.
-    // 3. Store the secure token, not the plain-text password.
-
-    // Example of a more secure approach:
-    // final response = await http.post(
-    //   Uri.parse('https://washlover.com/api/login'),
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: json.encode({'phone': phone, 'password': password}),
-    // );
-
-    // The code below reflects the original logic but with safety checks.
-    // IT IS STILL INSECURE because the API sends the password to the client.
-    final response = await http
-        .get(Uri.parse('https://washlover.com/api/member?phone=$phone'));
-
-    if (!mounted)
-      return; // Check if the widget is still in the tree before using context.
-
-    if (response.statusCode != 200) {
-      SnackBarError(context, const Text('ไม่สามารถเชื่อมต่อฐานข้อมูล'));
-      return;
-    }
-
-    final data = json.decode(response.body);
-    if (data['status'] == 'error' || data['data'] == null) {
-      SnackBarError(context, Text(data['msg']));
-      return;
-    }
-
-    final user = data['data'];
-    // CRITICAL SECURITY FLAW: Comparing plain text password on the client.
-    if (user['phone'] == phone && user['password'] == password) {
-      final prefs = await SharedPreferences.getInstance();
-      // CRITICAL SECURITY FLAW: Storing plain text password. Store a token instead.
-      await prefs.setString('phone', user['phone']);
-      await prefs.setString('name', user['nickname']);
-      await prefs.setString('password', user['password']); // DANGEROUS: Should be a token.
-
-      if (!mounted) return;
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => const MainLayout()));
-    } else {
-      SnackBarError(context, const Text('ข้อมูลไม่ถูกต้อง'));
-    }
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => const MainLayout()));
   }
 
   void _togglePasswordVisibility() {

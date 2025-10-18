@@ -34,7 +34,7 @@
 //     projectId: 'android-dcbef',
 //     storageBucket: 'android-dcbef.firebasestorage.app',
 //     databaseURL: 'https://android-dcbef-default-rtdb.firebaseio.com',
-//     iosBundleId: 'com.mplus.myfluttermapwash',
+//     iosBundleId: 'com.washlover.mobile',
 //   );
 
 //   static const FirebaseOptions web = FirebaseOptions(

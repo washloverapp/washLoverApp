@@ -57,6 +57,7 @@ dependencies:
   loading_indicator: ^3.1.1
   flutter_polyline_points: ^2.1.0
   flutter_google_places_hoc081098: ^2.0.0
+  badges: ^3.1.2
 
   
 dev_dependencies:
