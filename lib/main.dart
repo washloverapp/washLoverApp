@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Login/login_page.dart';
-import 'package:my_flutter_mapwash/features/washing/washing_flow_screen.dart';
+import 'package:my_flutter_mapwash/Notification/Alerts/firebase_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await setupFirebase();
   runApp(MyApp());
 }
 

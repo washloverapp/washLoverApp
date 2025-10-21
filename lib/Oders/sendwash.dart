@@ -44,7 +44,7 @@ class _sendwashState extends State<sendwash> {
   @override
   void initState() {
     super.initState();
-    _GeoLocator();
+    _geoLocator();
   }
 
   @override
@@ -143,8 +143,9 @@ class _sendwashState extends State<sendwash> {
     });
   }
 
-  Future<void> _GeoLocator() async {
+  Future<void> _geoLocator() async {
     final result = await location_helper.getCurrentLocationUser();
+    print(result);
     if (result != null) {
       setState(() {
         selectedAddress = result['address'];

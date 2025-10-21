@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
-// import 'package:geolocator/geolocator.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 import 'package:my_flutter_mapwash/Oders/location_helper.dart';
 
@@ -12,25 +11,24 @@ class address_user extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<address_user> createState() => _LocationPickerScreenState();
+  State<address_user> createState() => _address_userState();
 }
 
-class _LocationPickerScreenState extends State<address_user> {
+class _address_userState extends State<address_user> {
   GoogleMapController? mapController;
   LatLng? _selectedLocation;
   String _selectedAddress = "แตะบนแผนที่เพื่อเลือกตำแหน่ง";
-
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _loadCurrentLocation(); // โหลดตำแหน่งเมื่อเปิดหน้า
+    _loadCurrentLocation();
   }
 
   Future<void> _loadCurrentLocation() async {
     final locationData = await location_helper.getCurrentLocationUser();
-    if (!mounted) return; // ✅ ป้องกัน setState หลัง dispose
+    if (!mounted) return;
     if (locationData != null) {
       final LatLng currentLatLng = locationData['latlng'];
       final String currentAddress = locationData['address'];
@@ -110,14 +108,12 @@ class _LocationPickerScreenState extends State<address_user> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: headerOrder(
-        title: 'เลือกตำแหน่ง', // ใส่ title ที่ต้องการแสดง
-        onBackPressed: () {
-          Navigator.pop(context); // ใช้ Navigator.pop เพื่อย้อนกลับหน้าปัจจุบัน
-        },
+        title: 'เลือกตำแหน่ง',
+        onBackPressed: () => Navigator.pop(context),
       ),
       body: Column(
         children: [
-          // Search bar
+          // Search Bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
@@ -140,7 +136,7 @@ class _LocationPickerScreenState extends State<address_user> {
                 IconButton(
                   icon: Icon(Icons.search),
                   onPressed: _searchLocation,
-                  color: Theme.of(context).primaryColor,
+                  color: Colors.orange[400],
                 ),
               ],
             ),
@@ -170,6 +166,7 @@ class _LocationPickerScreenState extends State<address_user> {
             ),
           ),
 
+          // แสดงที่อยู่
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
@@ -179,14 +176,15 @@ class _LocationPickerScreenState extends State<address_user> {
             ),
           ),
 
+          // ปุ่มยืนยัน
           ElevatedButton.icon(
-            icon: Icon(Icons.check, color: Colors.white), // ไอคอนสีขาว
+            icon: Icon(Icons.check, color: Colors.white),
             label: Text(
               "ยืนยันตำแหน่งนี้",
-              style: TextStyle(color: Colors.white , fontSize: 15), // ตัวอักษรสีขาว
+              style: TextStyle(color: Colors.white, fontSize: 15),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green, // สีพื้นหลังปุ่ม
+              backgroundColor: Colors.green,
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -202,7 +200,6 @@ class _LocationPickerScreenState extends State<address_user> {
                   }
                 : null,
           ),
-
           SizedBox(height: 20),
         ],
       ),

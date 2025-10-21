@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>                 <!-- สำหรับ background fetch -->
+		<string>remote-notification</string>   <!-- สำหรับ remote notifications -->
+	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We use your photos so you can upload images of your laundry or delivery location to help our staff provide accurate service.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
