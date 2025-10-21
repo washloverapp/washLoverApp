@@ -1,137 +1,256 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'dart:async';
+import 'package:google_fonts/google_fonts.dart';
 
 class OtpScreen extends StatefulWidget {
+  const OtpScreen({Key? key}) : super(key: key);
+
   @override
-  _OtpScreenState createState() => _OtpScreenState();
+  State<OtpScreen> createState() => _OtpScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
-  TextEditingController _otpController = TextEditingController();
-  Timer? _timer;
-  int _start = 192; // 3 minutes 12 seconds
+class _OtpScreenState extends State<OtpScreen>
+    with SingleTickerProviderStateMixin {
+  final TextEditingController _otpController = TextEditingController();
+  late AnimationController _fadeCtrl;
+  late Animation<double> _fadeAnim;
 
   @override
   void initState() {
     super.initState();
-    startTimer();
-    _otpController.text = ''; // แสดง OTP ตามภาพ
-  }
-
-  void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_start == 0) {
-        timer.cancel();
-      } else {
-        setState(() {
-          _start--;
-        });
-      }
-    });
-  }
-
-  String get timerText {
-    final minutes = (_start ~/ 60).toString().padLeft(2, '0');
-    final seconds = (_start % 60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
+    _fadeCtrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeInOut);
+    _fadeCtrl.forward();
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
-    _otpController.dispose();
+    _fadeCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    const Color mainBlue = Color(0xFF1976D2);
+    const Color lightBlue = Color(0xFFE3F2FD);
+
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Row(
-                  children: [
-                    Icon(Icons.arrow_back),
-                    SizedBox(width: 8),
-                    Text("Go Back", style: TextStyle(fontSize: 16)),
-                  ],
-                ),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          // 🌈 พื้นหลัง gradient ฟ้าอ่อนนวลตา
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [lightBlue, Colors.white],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              SizedBox(height: 50),
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      "Check your phone",
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      "We’ve sent the code to your phone",
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                    SizedBox(height: 32),
-                    PinCodeTextField(
-                      appContext: context,
-                      controller: _otpController,
-                      length: 4,
-                      keyboardType: TextInputType.number,
-                      animationType: AnimationType.none,
-                      pinTheme: PinTheme(
-                        shape: PinCodeFieldShape.box,
-                        borderRadius: BorderRadius.circular(10),
-                        fieldHeight: 60,
-                        fieldWidth: 50,
-                        activeColor: Colors.black,
-                        selectedColor: Colors.orange,
-                        inactiveColor: Colors.grey,
-                      ),
-                      onChanged: (value) {},
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      "Code expires in: $timerText",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () {
-                        // TODO: handle verify
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text("Verify"),
-                    ),
-                    SizedBox(height: 16),
-                    OutlinedButton(
-                      onPressed: () {
-                        // TODO: resend code
-                      },
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text("Send again"),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+
+          // 🫧 ฟองสบู่โปร่งใสเบาๆ
+          Positioned(
+            top: 120,
+            left: 40,
+            child: _bubble(60),
+          ),
+          Positioned(
+            bottom: 180,
+            right: 60,
+            child: _bubble(90),
+          ),
+          Positioned(
+            bottom: 60,
+            left: 100,
+            child: _bubble(40),
+          ),
+
+          SafeArea(
+            child: FadeTransition(
+              opacity: _fadeAnim,
+              child: Center(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ///////////////////////////////////////// LOGO /////////////////////////////////////////
+                      Image.asset('assets/images/logo.png', height: 110),
+                      const SizedBox(height: 24),
+                      Text(
+                        "ยืนยันรหัส OTP",
+                        style: GoogleFonts.prompt(
+                          color: mainBlue,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "กรอกรหัส 4 หลักที่ส่งไปยังเบอร์\n061 **** 310",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.prompt(
+                          color: Colors.grey[700],
+                          fontSize: 15,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+
+                      ///////////////////////////////////////// card otp /////////////////////////////////////////
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            PinCodeTextField(
+                              appContext: context,
+                              length: 4,
+                              controller: _otpController,
+                              keyboardType: TextInputType.number,
+                              animationType: AnimationType.scale,
+                              pinTheme: PinTheme(
+                                shape: PinCodeFieldShape.box,
+                                borderRadius: BorderRadius.circular(14),
+                                fieldHeight: 55,
+                                fieldWidth: 45,
+                                activeColor: mainBlue,
+                                selectedColor: mainBlue,
+                                inactiveColor: Colors.grey.shade300,
+                                activeFillColor: Colors.white,
+                                selectedFillColor: Colors.white,
+                                inactiveFillColor: Colors.white,
+                              ),
+                              textStyle: GoogleFonts.prompt(
+                                color: mainBlue,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              enableActiveFill: true,
+                              onChanged: (value) {},
+                            ),
+                            const SizedBox(height: 24),
+
+                            ///////////////////////////////////////// ปุ่มยืนยัน /////////////////////////////////////////
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  elevation: 5,
+                                  backgroundColor: mainBlue,
+                                  shadowColor: mainBlue.withOpacity(0.4),
+                                ),
+                                child: Text(
+                                  "ยืนยันรหัส",
+                                  style: GoogleFonts.prompt(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      ///////////////////////////////////////// ขอรับรหัสอีกครั้ง /////////////////////////////////////////
+                      Column(
+                        children: [
+                          Text(
+                            "ยังไม่ได้รับรหัส OTP?",
+                            style: GoogleFonts.prompt(
+                                color: Colors.grey[700], fontSize: 14),
+                          ),
+                          const SizedBox(height: 6),
+                          GestureDetector(
+                            onTap: () {
+                              // TODO: resend OTP
+                            },
+                            child: Text(
+                              "ขอรับรหัสอีกครั้ง",
+                              style: GoogleFonts.prompt(
+                                color: mainBlue,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 60),
+
+                      ///////////////////////////////////////// โลโก้ล่าง /////////////////////////////////////////
+                      // Opacity(
+                      //   opacity: 0.8,
+                      //   child: Image.asset('assets/images/logo.png',
+                      //       height: 36),
+                      // ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "WASHLOVER",
+                        style: GoogleFonts.prompt(
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bubble(double size) {
+    final icons = [
+      Icons.favorite,
+      Icons.star_rounded,
+      Icons.circle,
+    ];
+    final icon = (icons..shuffle()).first;
+
+    final colors = [
+      const Color.fromARGB(255, 62, 122, 172),
+      const Color.fromARGB(255, 68, 191, 207),
+      const Color.fromARGB(255, 214, 132, 140), 
+      const Color.fromARGB(255, 230, 216, 93), 
+    ];
+    final color = (colors..shuffle()).first.withOpacity(0.25);
+
+    final rotation = ([-0.2, 0.1, 0.3]..shuffle()).first;
+
+    return Transform.rotate(
+      angle: rotation,
+      child: Icon(
+        icon,
+        color: color,
+        size: size,
       ),
     );
   }
