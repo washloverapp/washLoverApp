@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Login/login_page.dart';
-import 'package:my_flutter_mapwash/Login/sign_login_opt.dart';
 import 'package:my_flutter_mapwash/Notification/Alerts/firebase_config.dart';
 
 void main() async {
@@ -16,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Kanit',
       ),
-      home: OtpScreen(),
+      home: LoginPage(),
     );
   }
 }
