@@ -51,9 +51,9 @@ class _homeState extends State<home> {
                   _walletItem(Icons.card_giftcard, "คูปอง", "0"),
                   _duckItem(
                       Image.asset(
-                        "assets/images/duck.png",
-                        width: 24,
-                        height: 24,
+                        "assets/images/duck1.jpg",
+                        width: 32,
+                        height: 32,
                       ),
                       "เก็บเวล",
                       "0"),
