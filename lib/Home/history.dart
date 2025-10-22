@@ -285,7 +285,7 @@ class _HistoryState extends State<History> {
                   ),
                 ],
                 image: const DecorationImage(
-                  image: AssetImage('assets/images/pattern_light.png'),
+                  image: AssetImage('assets/images/news.png'),
                   fit: BoxFit.cover,
                   opacity: 0.05,
                 ),
