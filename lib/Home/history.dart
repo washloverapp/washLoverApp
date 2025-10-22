@@ -88,6 +88,19 @@ class _HistoryState extends State<History> {
                     ],
                   ),
                 ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 50, right: 50, bottom: 5),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'อัปเดตล่าสุดเมื่อ 21 ต.ค. 2568 เวลา 18:45',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
 
                 ////////////////////////////////////////// รายการ //////////////////////////////////////////
                 Expanded(
@@ -309,8 +322,31 @@ class _HistoryState extends State<History> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildInfoItem(
-                          Icons.local_activity_outlined, 'คูปอง', '0'),
+                      // ใช้รูป duck.png แทนไอคอนคูปอง
+                      Column(
+                        children: [
+                          Image.asset(
+                            'assets/images/duck.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'คูปอง',
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 16),
+                          ),
+                          Text(
+                            '0',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                        ],
+                      ),
+
+                      // ส่วนอื่นยังใช้ Icon ตามเดิม
                       _buildInfoItem(
                           Icons.star_outline_rounded, 'คะแนนสะสม', '0'),
                       _buildInfoItem(Icons.credit_card_outlined, 'เครดิต', '0'),
