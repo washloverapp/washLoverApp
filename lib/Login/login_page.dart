@@ -55,12 +55,15 @@ class _LoginPageState extends State<LoginPage>
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(
-                    top:
-                        50), // กำหนด padding เฉพาะด้านบน // padding ด้านบนและด้านล่าง
+                padding: const EdgeInsets.only(top: 50),
                 child: Image.asset(
-                  'assets/images/logo.png',
-                  width: 200.0,
+                  // 'assets/images/logo.png',
+                    // 'assets/images/logo/logocolor.png',
+                    // 'assets/images/logo/logolong.png',
+                    // 'assets/images/logo/Washlovercolor.png',
+                    'assets/images/logo/WashloverStroke.png',
+                    // 'assets/images/logo/Washloverwhite.png',
+                  width: 400.0,
                   height: 200.0,
                   fit: BoxFit.contain,
                 ),
