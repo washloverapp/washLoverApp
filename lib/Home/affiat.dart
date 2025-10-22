@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:share_plus/share_plus.dart'; // 🔹 สำหรับแชร์
+import 'package:share_plus/share_plus.dart'; // 🔹 สำหรับแชร์
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 
 class ShareFriendScreen extends StatefulWidget {
