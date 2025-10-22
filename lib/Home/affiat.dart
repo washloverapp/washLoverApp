@@ -144,11 +144,11 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
         const SizedBox(height: 16),
         ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: Image.network(
-            "https://cdn.pixabay.com/photo/2017/01/31/23/44/woman-2026447_1280.jpg",
+          child: Image.asset(
+            "assets/images/duck1.jpg",
             width: double.infinity,
             height: 180,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
         ),
         const SizedBox(height: 20),
