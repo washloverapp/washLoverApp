@@ -5,6 +5,8 @@ import 'package:my_flutter_mapwash/Home/account.dart';
 import 'package:my_flutter_mapwash/Home/affiat.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
 import 'package:my_flutter_mapwash/Home/promotion.dart';
+import 'package:my_flutter_mapwash/Home/show_promotion.dart';
+import 'package:my_flutter_mapwash/Manual/manual.dart';
 import 'package:my_flutter_mapwash/Profile/profile.dart';
 import 'package:my_flutter_mapwash/Banchs/location_banc.dart';
 
@@ -154,7 +156,7 @@ class _homeState extends State<home> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Promotion()),
+                                builder: (context) => select_Promotion()),
                           );
                         }),
                         _menuItem(Icons.star_border_outlined, "สะสมแต้ม", () {
@@ -173,7 +175,7 @@ class _homeState extends State<home> {
                             () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => point()),
+                            MaterialPageRoute(builder: (context) => manual()),
                           );
                         }),
                         _menuItem(Icons.call, "แจ้งปัญหา", () {
