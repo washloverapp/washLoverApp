@@ -328,7 +328,7 @@ class _HistoryState extends State<History> {
                         children: [
                           Transform.rotate(
                             angle: -0.3, // หมุนไปทางซ้ายเล็กน้อย
-                            child: Image.asset('assets/images/duck.png',
+                            child: Image.asset('assets/images/artboard17.png',
                                 width: 40, height: 40),
                           ),
                           const SizedBox(height: 4),
