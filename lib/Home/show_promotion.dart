@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 class select_Promotion extends StatefulWidget {
   const select_Promotion({super.key});
+
   @override
   _select_PromotionState createState() => _select_PromotionState();
 }
@@ -16,19 +17,35 @@ class _select_PromotionState extends State<select_Promotion> {
   void _createMockData() {
     promotionData = [
       {
-        "name": "โปรโมชั่นสุดพิเศษ",
-        "detail": "ส่วนลดพิเศษสำหรับลูกค้าทุกท่าน",
-        "image": "https://washlover.com/panel/img/icon-logo.png",
+        "name": "ลดแรงกลางเดือน!",
+        "detail": "ลด 10% สำหรับทุกการซักเกิน 100 บาท",
+        "image":
+            "https://cdn.pixabay.com/photo/2017/08/30/07/54/washing-machine-2691559_960_720.png",
         "percent": "10",
         "id": "mock-01",
         "date_start": "วันนี้",
+        "date_end": "สิ้นเดือน",
+      },
+      {
+        "name": "สมาชิกใหม่รับทันที!",
+        "detail": "ส่วนลดพิเศษ 15% สำหรับการซักครั้งแรก",
+        "image":
+            "https://cdn.pixabay.com/photo/2013/07/13/11/49/soap-158190_960_720.png",
+        "percent": "15",
+        "id": "mock-02",
+        "date_start": "วันนี้",
+        "date_end": "31 ธ.ค.",
+      },
+      {
+        "name": "ชวนเพื่อนซักรับโบนัส!",
+        "detail": "ลดทันที 20 บาท เมื่อแนะนำเพื่อนใช้บริการ",
+        "image":
+            "https://cdn.pixabay.com/photo/2014/04/03/00/41/cleaning-309608_960_720.png",
+        "percent": "20",
+        "id": "mock-03",
+        "date_start": "วันนี้",
         "date_end": "สิ้นปี",
-        "day": "ทุกวัน",
-        "time_start": "00:00",
-        "time_end": "23:59",
-        "type": "daily",
-        "amount": "1",
-      }
+      },
     ];
   }
 
@@ -51,11 +68,6 @@ class _select_PromotionState extends State<select_Promotion> {
               "id": promo['id'],
               "date_start": promo['date_start'],
               "date_end": promo['date_end'],
-              "day": promo['day'],
-              "time_start": promo['time_start'],
-              "time_end": promo['time_end'],
-              "type": promo['type'],
-              "amount": promo['amount'],
             };
           }).toList();
         } else {
@@ -85,9 +97,9 @@ class _select_PromotionState extends State<select_Promotion> {
   @override
   Widget build(BuildContext context) {
     final List<List<Color>> gradientColors = [
-      [Color(0xFFB3E5FC), Color(0xFFF8BBD0)], // ฟ้าชมพูพาสเทล
-      [Color(0xFF81D4FA), Color(0xFFF48FB1)],
-      [Color(0xFF4FC3F7), Color(0xFFE1BEE7)],
+      [const Color(0xFFB3E5FC), const Color(0xFFF8BBD0)], // ฟ้าชมพูพาสเทล
+      [const Color(0xFF81D4FA), const Color(0xFFF48FB1)], // ฟ้าเข้มชมพูสด
+      [const Color(0xFF4FC3F7), const Color(0xFFE1BEE7)], // ฟ้าน้ำทะเลม่วงอ่อน
     ];
 
     return Scaffold(
@@ -122,30 +134,32 @@ class _select_PromotionState extends State<select_Promotion> {
                         color: Colors.black12.withOpacity(0.1),
                         blurRadius: 8,
                         offset: const Offset(2, 3),
-                      )
+                      ),
                     ],
                   ),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // รูปโปรโมชั่น
+                      // รูปโปรโมชั่น (ขนาดเล็กลงให้พอดี)
                       ClipRRect(
                         borderRadius: const BorderRadius.horizontal(
                             left: Radius.circular(16)),
                         child: Image.network(
                           promo['image'],
-                          width: 100,
-                          height: 120,
+                          width: 90,
+                          height: 90,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Image.asset(
                               'assets/images/logo.png',
-                              width: 100,
-                              height: 120,
+                              width: 90,
+                              height: 90,
                               fit: BoxFit.cover,
                             );
                           },
                         ),
                       ),
+
                       // เนื้อหาโปรโมชั่น
                       Expanded(
                         child: Padding(
@@ -156,96 +170,43 @@ class _select_PromotionState extends State<select_Promotion> {
                               Text(
                                 promo['name'],
                                 style: const TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 17,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF1A237E),
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                              const SizedBox(height: 4),
                               Text(
                                 promo['detail'],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 13.5,
                                   color: Color(0xFF4A4A4A),
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 8),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '${promo['percent']}% ส่วนลด',
+                                    'ส่วนลด ${promo['percent']}%',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xFFEC407A),
                                     ),
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(16)),
-                                            title: const Text(
-                                              'โปรโมชั่น',
-                                              style: TextStyle(
-                                                  color: Color(0xFF1565C0),
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            content: const Text(
-                                                'สามารถเลือกรับโปรโมชั่นได้ก่อนทำรายการเลือกชำระเงิน'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('ตกลง'),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 10),
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                    ).copyWith(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(null),
-                                      elevation: MaterialStateProperty.all(0.0),
-                                    ),
-                                    child: Ink(
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF81D4FA),
-                                            Color(0xFFF48FB1)
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
-                                        child: const Text(
-                                          "เลือก",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
+                                  Text(
+                                    'หมดเขต: ${promo['date_end']}',
+                                    style: const TextStyle(
+                                      fontSize: 12.5,
+                                      color: Color(0xFF424242),
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
