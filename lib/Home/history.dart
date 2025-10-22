@@ -175,10 +175,10 @@ class _HistoryState extends State<History> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          '$date  $time',
+                                          formatThaiDate(date, time),
                                           style: const TextStyle(
                                             fontSize: 16,
-                                            color: Colors.black,
+                                            color: Color.fromARGB(255, 80, 80, 80),
                                           ),
                                         ),
                                         const SizedBox(height: 3),
@@ -328,21 +328,21 @@ class _HistoryState extends State<History> {
                         children: [
                           Transform.rotate(
                             angle: -0.3, // หมุนไปทางซ้ายเล็กน้อย
-                            child: Image.asset('assets/images/artboard17.png',
-                                width: 40, height: 40),
+                            child: Image.asset('assets/images/duck.png',
+                                width: 80, height: 40),
                           ),
                           const SizedBox(height: 4),
                           const Text(
                             'คูปอง',
                             style: TextStyle(
-                                color: Color(0xFF888888), fontSize: 16),
+                                color: Color(0xFF888888), fontSize: 18),
                           ),
                           const Text(
                             '0',
                             style: TextStyle(
                                 color: Color.fromARGB(255, 131, 124, 124),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 15),
+                                fontSize: 18),
                           ),
                         ],
                       ),
@@ -350,21 +350,23 @@ class _HistoryState extends State<History> {
                         children: [
                           Transform.rotate(
                             angle: 0.5, // หมุนไปทางขวาเล็กน้อย
-                            child: Image.asset('assets/images/duck.png',
-                                width: 40, height: 40),
+                            child: Image.asset(
+                                'assets/images/duck.png',
+                                width: 80,
+                                height: 40),
                           ),
                           const SizedBox(height: 4),
                           const Text(
                             'คะแนนสะสม',
                             style: TextStyle(
-                                color: Color(0xFF888888), fontSize: 16),
+                                color: Color(0xFF888888), fontSize: 18),
                           ),
                           const Text(
                             '0',
                             style: TextStyle(
                                 color: Color(0xFF444444),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 15),
+                                fontSize: 18),
                           ),
                         ],
                       ),
@@ -372,19 +374,19 @@ class _HistoryState extends State<History> {
                         children: [
                           // ไม่หมุนเลย ปกติ
                           Image.asset('assets/images/duck.png',
-                              width: 40, height: 40),
+                              width: 80, height: 40),
                           const SizedBox(height: 4),
                           const Text(
                             'เครดิต',
                             style: TextStyle(
-                                color: Color(0xFF888888), fontSize: 16),
+                                color: Color(0xFF888888), fontSize: 18),
                           ),
                           const Text(
                             '0',
                             style: TextStyle(
                                 color: Color(0xFF444444),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 15),
+                                fontSize: 18),
                           ),
                         ],
                       ),
@@ -402,6 +404,35 @@ class _HistoryState extends State<History> {
         ),
       ),
     );
+  }
+
+  String formatThaiDate(String date, String time) {
+    final monthsThai = [
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย.',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ค.',
+      'พ.ย.',
+      'ธ.ค.'
+    ];
+
+    try {
+      final dt = DateTime.parse('$date $time');
+      final buddhistYear = dt.year + 543;
+      final thaiMonth = monthsThai[dt.month - 1];
+      final formattedTime =
+          '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
+      return '${dt.day} $thaiMonth $buddhistYear เวลา $formattedTime';
+    } catch (e) {
+      return '$date $time'; // fallback
+    }
   }
 
 // ฟังก์ชันช่วยสร้างไอเท็มแสดงข้อมูล พร้อมพารามิเตอร์สี
@@ -507,12 +538,13 @@ class _HistoryState extends State<History> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$date  $time',
-                    style: const TextStyle(color: Colors.grey, fontSize: 13)),
-                // Text(phone,
-                //     style:
-                //         const TextStyle(color: Colors.black87, fontSize: 14)),
-                // const SizedBox(height: 4),
+                Text(
+                  formatThaiDate(date, time),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
                 Row(
                   children: [
                     _statusChip(status, _getStatusColor(status)),
