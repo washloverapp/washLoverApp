@@ -62,9 +62,20 @@ class _MainLayoutState extends State<MainLayout> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _onItemTapped(2), // Index 2 is the 'Scan' button
-        backgroundColor: Colors.blue, // A blue color like in the image
+        backgroundColor: Colors.blue, // พื้นหลังปุ่ม
         shape: CircleBorder(),
-        child: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 40),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.blue, width: 2), // ขอบสีฟ้า
+          ),
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/duck2.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
         elevation: 8.0,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -114,7 +125,7 @@ class _MainLayoutState extends State<MainLayout> {
                 clipBehavior: Clip.none,
                 children: [
                   Icon(Icons.online_prediction_rounded), // Icon ของคำสั่งซื้อ
-                  if (hasUnreadOrders) // ถ้ามีคำสั่งซื้อที่ยังไม่ได้อ่าน
+                  if (!hasUnreadOrders) // ถ้ามีคำสั่งซื้อที่ยังไม่ได้อ่าน
                     Positioned(
                       right: -5, // Adjust position to look like a badge
                       top: -5,
@@ -122,7 +133,7 @@ class _MainLayoutState extends State<MainLayout> {
                         padding: EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: Colors.red,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         constraints: BoxConstraints(
                           minWidth: 16,

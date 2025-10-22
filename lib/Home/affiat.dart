@@ -12,7 +12,7 @@ class ShareFriendScreen extends StatefulWidget {
 }
 
 class _ShareFriendScreenState extends State<ShareFriendScreen> {
-  final String shareLink = "https://washlover.com/register";
+  final String shareLink = "WASHXDE325HGJHOOD";
   int _selectedTab = 0; // 0: แชร์เพื่อน, 1: สมาชิก
 
   void copyToClipboard() {
