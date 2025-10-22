@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'login_page.dart'; // ✅ อย่าลืม import หน้านี้
@@ -71,201 +72,203 @@ class _OtpScreenState extends State<OtpScreen>
           SafeArea(
             child: FadeTransition(
               opacity: _fadeAnim,
-              child: Center(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginPage()),
-                            );
-                          },
-                          icon: const Icon(Icons.arrow_back, size: 30),
-                          color: mainBlue,
-                          padding: const EdgeInsets.only(left: 4),
-                          tooltip: "กลับ",
-                        ),
+              child: SingleChildScrollView(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 🔙 ปุ่มย้อนกลับ
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                          );
+                        },
+                        icon: const Icon(Icons.arrow_back, size: 30),
+                        color: mainBlue,
+                        padding: const EdgeInsets.only(left: 4),
+                        tooltip: "กลับ",
                       ),
-                      const SizedBox(height: 12),
-                      ///////////////////////////////////////// LOGO /////////////////////////////////////////
-                      Image.asset('assets/images/logo.png', height: 110),
-                      const SizedBox(height: 24),
-                      Text(
-                        "ยืนยันรหัส OTP",
-                        style: GoogleFonts.prompt(
-                          color: mainBlue,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "กรอกรหัส 4 หลักที่ส่งไปยังเบอร์\n061 **** 310",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.prompt(
-                          color: Colors.grey[700],
-                          fontSize: 15,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 40),
+                    ),
+                    const SizedBox(height: 12),
 
-                      ///////////////////////////////////////// card otp /////////////////////////////////////////
-                      Container(
-                        padding: const EdgeInsets.all(32),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white
-                                  .withOpacity(0.85), // สีขาวโปร่งใสเล็กน้อย
-                              Colors.grey.shade100
-                                  .withOpacity(0.6), // เทาอ่อนจาง ๆ
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                    // 🖼️ โลโก้
+                    Image.asset('assets/images/logo.png', height: 110),
+                    const SizedBox(height: 24),
+
+                    Text(
+                      "ยืนยันรหัส OTP",
+                      style: GoogleFonts.prompt(
+                        color: mainBlue,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "กรอกรหัส 4 หลักที่ส่งไปยังเบอร์\n061 **** 310",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.prompt(
+                        color: Colors.grey[700],
+                        fontSize: 15,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+
+                    // 🧾 กล่อง OTP
+                    Container(
+                      padding: const EdgeInsets.all(32),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withOpacity(0.85),
+                            Colors.grey.shade100.withOpacity(0.6),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
                           ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black
-                                  .withOpacity(0.04), // เงาจางลงด้วย
-                              blurRadius: 12,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.verified_user_rounded,
-                                size: 48, color: mainBlue),
-                            const SizedBox(height: 16),
-                            Text(
-                              "ยืนยันตัวตน",
-                              style: GoogleFonts.prompt(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "กรอกรหัส OTP ที่ส่งไปยังหมายเลขของคุณ",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.prompt(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-
-                            // OTP
-                            PinCodeTextField(
-                              appContext: context,
-                              length: 6,
-                              controller: _otpController,
-                              keyboardType: TextInputType.number,
-                              animationType: AnimationType.fade,
-                              pinTheme: PinTheme(
-                                shape: PinCodeFieldShape.underline,
-                                fieldHeight: 55,
-                                fieldWidth: 50,
-                                activeColor: mainBlue,
-                                selectedColor: mainBlue,
-                                inactiveColor: Colors.grey.shade400,
-                              ),
-                              textStyle: GoogleFonts.prompt(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: mainBlue,
-                              ),
-                              onChanged: (value) {},
-                            ),
-
-                            const SizedBox(height: 30),
-
-                            // Button
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: mainBlue,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: Text(
-                                  "ยืนยันรหัส OTP",
-                                  style: GoogleFonts.prompt(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        ],
                       ),
-                      const SizedBox(height: 30),
-
-                      ///////////////////////////////////////// ขอรับรหัสอีกครั้ง /////////////////////////////////////////
-                      Column(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          Icon(Icons.verified_user_rounded,
+                              size: 48, color: mainBlue),
+                          const SizedBox(height: 16),
                           Text(
-                            "ยังไม่ได้รับรหัส OTP?",
+                            "ยืนยันตัวตน",
                             style: GoogleFonts.prompt(
-                                color: Colors.grey[700], fontSize: 14),
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
-                          const SizedBox(height: 6),
-                          GestureDetector(
-                            onTap: () {
-                              // TODO: resend OTP
-                            },
-                            child: Text(
-                              "ขอรับรหัสอีกครั้ง",
-                              style: GoogleFonts.prompt(
-                                color: mainBlue,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                decoration: TextDecoration.underline,
+                          const SizedBox(height: 8),
+                          Text(
+                            "กรอกรหัส OTP ที่ส่งไปยังหมายเลขของคุณ",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.prompt(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // 🔢 OTP Input
+                          PinCodeTextField(
+                            appContext: context,
+                            length: 6,
+                            controller: _otpController,
+                            keyboardType: TextInputType.number,
+                            animationType: AnimationType.fade,
+                            pinTheme: PinTheme(
+                              shape: PinCodeFieldShape.underline,
+                              fieldHeight: 55,
+                              fieldWidth: 50,
+                              activeColor: mainBlue,
+                              selectedColor: mainBlue,
+                              inactiveColor: Colors.grey.shade400,
+                            ),
+                            textStyle: GoogleFonts.prompt(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: mainBlue,
+                            ),
+                            onChanged: (value) {},
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          // ✅ ปุ่มยืนยัน
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const MainLayout()),
+                                  (route) => false,
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: mainBlue,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                "ยืนยันรหัส OTP",
+                                style: GoogleFonts.prompt(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 60),
+                    ),
+                    const SizedBox(height: 30),
 
-                      ///////////////////////////////////////// โลโก้ล่าง /////////////////////////////////////////
-                      // Opacity(
-                      //   opacity: 0.8,
-                      //   child: Image.asset('assets/images/logo.png',
-                      //       height: 36),
-                      // ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "WASHLOVER",
-                        style: GoogleFonts.prompt(
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                    // 🔁 ขอรหัสใหม่
+                    Column(
+                      children: [
+                        Text(
+                          "ยังไม่ได้รับรหัส OTP?",
+                          style: GoogleFonts.prompt(
+                            color: Colors.grey[700],
+                            fontSize: 14,
+                          ),
                         ),
+                        const SizedBox(height: 6),
+                        GestureDetector(
+                          onTap: () {
+                            // TODO: resend OTP
+                          },
+                          child: Text(
+                            "ขอรับรหัสอีกครั้ง",
+                            style: GoogleFonts.prompt(
+                              color: mainBlue,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 60),
+
+                    // 🔻 โลโก้ล่าง
+                    const SizedBox(height: 8),
+                    Text(
+                      "WASHLOVER",
+                      style: GoogleFonts.prompt(
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
