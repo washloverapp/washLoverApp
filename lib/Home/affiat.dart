@@ -29,8 +29,7 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
   }
 
   void shareCode() {
-    // ignore: deprecated_member_use
-    // Share.share('แนะนำเพื่อนใช้แอปนี้! โค้ดของฉัน: $referralCode');
+    Share.share('แนะนำเพื่อนใช้แอปนี้! โค้ดของฉัน: $referralCode');
   }
 
   @override
@@ -49,7 +48,7 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
             // ปุ่มด้านบน
             Container(
               decoration: BoxDecoration(
-                // color: const Color(0xFFF3F6FB),
+                color: const Color(0xFFF3F6FB),
                 borderRadius: BorderRadius.circular(30),
               ),
               padding: const EdgeInsets.all(6),
@@ -145,11 +144,11 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
         const SizedBox(height: 16),
         ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: Image.asset(
-            "assets/images/duck1.jpg",
+          child: Image.network(
+            "https://cdn.pixabay.com/photo/2017/01/31/23/44/woman-2026447_1280.jpg",
             width: double.infinity,
             height: 180,
-            fit: BoxFit.contain,
+            fit: BoxFit.cover,
           ),
         ),
         const SizedBox(height: 20),
