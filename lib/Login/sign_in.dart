@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_flutter_mapwash/Login/sign_login_opt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -33,8 +34,10 @@ class _SignInState extends State<SignIn> {
 
   @override
   void _handleLogin() async {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (_) => const MainLayout()));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => const OtpScreen())); //OtpScreen MainLayout
   }
 
   void _togglePasswordVisibility() {
