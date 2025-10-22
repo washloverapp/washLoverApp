@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Home/affiat.dart';
+import 'package:my_flutter_mapwash/Home/history.dart';
 import 'package:my_flutter_mapwash/Home/show_promotion.dart';
 import 'package:my_flutter_mapwash/Login/login_page.dart';
 import 'package:my_flutter_mapwash/Login/sign_login_opt.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Kanit',
       ),
-      home: LoginPage(),
+      home: History(),
     );
   }
 }
