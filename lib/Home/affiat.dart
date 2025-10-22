@@ -35,7 +35,7 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
             // 🔹 ปุ่มด้านบน "รับโค้ด / ประวัติ"
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F6FB),
+                color: const Color.fromARGB(0, 243, 246, 251),
                 borderRadius: BorderRadius.circular(30),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
@@ -72,11 +72,11 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
             // 🔹 ภาพกลาง (Dummy image)
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                "https://cdn.pixabay.com/photo/2016/11/29/09/32/girl-1869116_1280.jpg",
+              child: Image.asset(
+                "assets/images/duck1.jpg",
                 width: double.infinity,
                 height: 220,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 20),
