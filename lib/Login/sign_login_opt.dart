@@ -98,8 +98,8 @@ class _OtpScreenState extends State<OtpScreen>
                     const SizedBox(height: 12),
 
                     // 🖼️ โลโก้
-                    Image.asset('assets/images/logo.png', height: 110),
-                    const SizedBox(height: 24),
+                    // Image.asset('assets/images/logo.png', height: 110),
+                    // const SizedBox(height: 24),
 
                     Text(
                       "ยืนยันรหัส OTP",
@@ -158,15 +158,15 @@ class _OtpScreenState extends State<OtpScreen>
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            "กรอกรหัส OTP ที่ส่งไปยังหมายเลขของคุณ",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.prompt(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 24),
+                          // Text(
+                          //   "กรอกรหัส OTP ที่ส่งไปยังหมายเลขของคุณ",
+                          //   textAlign: TextAlign.center,
+                          //   style: GoogleFonts.prompt(
+                          //     fontSize: 14,
+                          //     color: Colors.grey[600],
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 24),
 
                           // 🔢 OTP Input
                           PinCodeTextField(
@@ -189,6 +189,11 @@ class _OtpScreenState extends State<OtpScreen>
                               color: mainBlue,
                             ),
                             onChanged: (value) {},
+
+                            // 👇 เพิ่มบรรทัดนี้เพื่อเว้นระยะห่างระหว่างช่อง
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            // หรือจะใช้ spacing ถ้ามีในเวอร์ชันของคุณ
+                            // spacing: 12, // ระบุค่าระยะห่างเป็น double
                           ),
 
                           const SizedBox(height: 30),
