@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_flutter_mapwash/Home/API/api_account.dart';
+import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 
 class point extends StatefulWidget {
   const point({super.key});
@@ -46,166 +47,287 @@ class _pointState extends State<point> {
     }
   }
 
+  final List<Map<String, dynamic>> expiringPoints = [
+    {"points": 120, "expireDate": "31 ต.ค. 2025"},
+    {"points": 50, "expireDate": "15 พ.ย. 2025"},
+    {"points": 30, "expireDate": "1 ธ.ค. 2025"},
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
-      backgroundColor: Color(0xFFF8F9FE),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Back Button
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => MainLayout()),
-                        (route) => false, // Clear all previous routes
-                      );
-                    },
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                      size: 24,
-                    ),
-                  ),
+      backgroundColor: Colors.transparent,
+      appBar: headerOrder(
+        title: 'คะแนนสะสม',
+        onBackPressed: () => Navigator.pop(context),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 175, 230, 255),
+                  Colors.white,
                 ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 20),
-                    // Profile Image and Name Section
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.orange[300], // สีพื้นหลัง
-                      child: Icon(
-                        Icons.person,
-                        size: 60,
-                        color: Colors.white,
-                      ),
-                    ),
+          ),
 
-                    SizedBox(height: 16),
-                    Text(
-                      username,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+          ...List.generate(20, (index) {
+            final random = index * 37.3;
+            final top = (random * 7) % screenSize.height;
+            final left = (random * 13) % screenSize.width;
+            final size = 16 + (random % 28);
+            return Positioned(
+              top: top,
+              left: left,
+              child: _bubble(size),
+            );
+          }),
+
+          Column(
+            children: [
+              const SizedBox(height: 10),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      width: 1.2,
+                      color: const Color.fromARGB(80, 212, 175, 55),
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      userPhone,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.deepPurple,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
+                    ],
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 255, 255, 255),
+                        Color.fromARGB(255, 248, 248, 255),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    SizedBox(height: 20),
-                    // credit and point Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              credit,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                              userPhone,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF1A237E),
+                                letterSpacing: 0.5,
                               ),
                             ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                    colors: [
+                                      Color(0xFFFFC107),
+                                      Color(0xFFFFD54F)
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ).createShader(bounds),
+                                  child: const Icon(Icons.stars_rounded,
+                                      color: Colors.white, size: 26),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "$point Points",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF424242),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 6),
                             Text(
-                              'สะส้มแต้ม',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey),
+                              "$point คะแนน • หมดอายุ 31 ต.ค. 2025",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          Divider(),
-                          _buildMenuItemHepl(
-                            icon: Icons.dataset,
-                            date: '10 ตุลาคม 68',
-                            time: '11.00 น.',
-                            point: '0',
-                          ),
-                           _buildMenuItemHepl(
-                            icon: Icons.dataset,
-                            date: '10 ตุลาคม 68',
-                            time: '11.00 น.',
-                            point: '0',
-                          ),
-                            _buildMenuItemHepl(
-                            icon: Icons.dataset,
-                            date: '10 ตุลาคม 68',
-                            time: '11.00 น.',
-                            point: '0',
-                          ), _buildMenuItemHepl(
-                            icon: Icons.dataset,
-                            date: '10 ตุลาคม 68',
-                            time: '11.00 น.',
-                            point: '0',
-                          ), _buildMenuItemHepl(
-                            icon: Icons.dataset,
-                            date: '10 ตุลาคม 68',
-                            time: '11.00 น.',
-                            point: '0',
-                          ),
-                        ],
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        flex: 1,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFFBBDEFB),
+                                  Color(0xFFE3F2FD),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blueAccent.withOpacity(0.2),
+                                  blurRadius: 6,
+                                  offset: const Offset(2, 3),
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.all(2.5),
+                            child: CircleAvatar(
+                              radius: 34,
+                              backgroundColor: Colors.white,
+                              backgroundImage:
+                                  const AssetImage('assets/images/duck2.jpg'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+              Expanded(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "คะแนน ที่จะหมดอายุ",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1C48B5),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: expiringPoints.length,
+                            itemBuilder: (context, index) {
+                              final item = expiringPoints[index];
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 14),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade50.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: Colors.blueAccent.shade100),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.access_time_filled,
+                                            color: Colors.orange, size: 20),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          "${item['points']} คะแนน",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      "หมดอายุ ${item['expireDate']}",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.redAccent,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildMenuItemHepl(
-      {required IconData icon,
-      required String date,
-      required String time,
-      required String point}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.deepPurple),
-      title: Text(
-        date,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        time,
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.grey,
-        ),
-      ),
-      trailing: Text(
-        point,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+  Widget _bubble(double size) {
+    final icons = [
+      Icons.favorite,
+      Icons.star_rounded,
+      Icons.circle,
+    ];
+    final icon = (icons..shuffle()).first;
+
+    final colors = [
+      const Color.fromARGB(255, 62, 122, 172),
+      const Color.fromARGB(255, 68, 191, 207),
+      const Color.fromARGB(255, 214, 132, 140),
+      const Color.fromARGB(255, 230, 216, 93),
+    ];
+    final color = (colors..shuffle()).first.withOpacity(0.25);
+
+    final rotation = ([-0.3, 0.2, 0.4]..shuffle()).first;
+
+    return Transform.rotate(
+      angle: rotation,
+      child: Icon(
+        icon,
+        color: color,
+        size: size,
       ),
     );
   }
