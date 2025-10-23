@@ -50,13 +50,22 @@ class _HistoryState extends State<History> {
         children: [
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/news.png'),
-                fit: BoxFit.cover,
-                opacity: 0.4,
+              gradient: LinearGradient(
+                colors: [Color.fromARGB(169, 80, 171, 245), Colors.white],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
+          // Container(
+          //   decoration: const BoxDecoration(
+          //     image: DecorationImage(
+          //       image: AssetImage('assets/images/news.png'),
+          //       fit: BoxFit.cover,
+          //       opacity: 0.4,
+          //     ),
+          //   ),
+          // ),
           ////////////////////////////////////////// ประวัติรายการ //////////////////////////////////////////
           SafeArea(
             child: Column(
@@ -166,10 +175,10 @@ class _HistoryState extends State<History> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          '$date  $time',
+                                          formatThaiDate(date, time),
                                           style: const TextStyle(
                                             fontSize: 16,
-                                            color: Colors.black,
+                                            color: Color.fromARGB(255, 80, 80, 80),
                                           ),
                                         ),
                                         const SizedBox(height: 3),
@@ -269,14 +278,7 @@ class _HistoryState extends State<History> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF21409A),
-                    Color(0xFF21409A),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: Colors.white, // พื้นหลังสีขาวล้วน
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -300,7 +302,7 @@ class _HistoryState extends State<History> {
                       Text(
                         'ยอดเงินคงเหลือ',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: Color(0xFF666666), // สีเทาเข้มแบบเรียบๆ
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -308,50 +310,88 @@ class _HistoryState extends State<History> {
                       SizedBox(width: 6),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
                     '฿0.00',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.grey[800], // สีเทาเข้มหน่อย
                       fontSize: 34,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // ใช้รูป duck.png แทนไอคอนคูปอง
                       Column(
                         children: [
-                          Image.asset(
-                            'assets/images/duck.png',
-                            width: 40,
-                            height: 40,
+                          Transform.rotate(
+                            angle: -0.3, // หมุนไปทางซ้ายเล็กน้อย
+                            child: Image.asset('assets/images/duck.png',
+                                width: 80, height: 40),
                           ),
                           const SizedBox(height: 4),
-                          Text(
+                          const Text(
                             'คูปอง',
-                            style: const TextStyle(
-                                color: Colors.white70, fontSize: 16),
+                            style: TextStyle(
+                                color: Color(0xFF888888), fontSize: 18),
                           ),
-                          Text(
+                          const Text(
                             '0',
-                            style: const TextStyle(
-                                color: Colors.white,
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 131, 124, 124),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 15),
+                                fontSize: 18),
                           ),
                         ],
                       ),
-
-                      // ส่วนอื่นยังใช้ Icon ตามเดิม
-                      _buildInfoItem(
-                          Icons.star_outline_rounded, 'คะแนนสะสม', '0'),
-                      _buildInfoItem(Icons.credit_card_outlined, 'เครดิต', '0'),
+                      Column(
+                        children: [
+                          Transform.rotate(
+                            angle: 0.5, // หมุนไปทางขวาเล็กน้อย
+                            child: Image.asset(
+                                'assets/images/duck.png',
+                                width: 80,
+                                height: 40),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'คะแนนสะสม',
+                            style: TextStyle(
+                                color: Color(0xFF888888), fontSize: 18),
+                          ),
+                          const Text(
+                            '0',
+                            style: TextStyle(
+                                color: Color(0xFF444444),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          // ไม่หมุนเลย ปกติ
+                          Image.asset('assets/images/duck.png',
+                              width: 80, height: 40),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'เครดิต',
+                            style: TextStyle(
+                                color: Color(0xFF888888), fontSize: 18),
+                          ),
+                          const Text(
+                            '0',
+                            style: TextStyle(
+                                color: Color(0xFF444444),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          ),
+                        ],
+                      ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
@@ -366,6 +406,70 @@ class _HistoryState extends State<History> {
     );
   }
 
+  String formatThaiDate(String date, String time) {
+    final monthsThai = [
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย.',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ค.',
+      'พ.ย.',
+      'ธ.ค.'
+    ];
+
+    try {
+      final dt = DateTime.parse('$date $time');
+      final buddhistYear = dt.year + 543;
+      final thaiMonth = monthsThai[dt.month - 1];
+      final formattedTime =
+          '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
+      return '${dt.day} $thaiMonth $buddhistYear เวลา $formattedTime';
+    } catch (e) {
+      return '$date $time'; // fallback
+    }
+  }
+
+// ฟังก์ชันช่วยสร้างไอเท็มแสดงข้อมูล พร้อมพารามิเตอร์สี
+  Widget _buildInfoItem(
+    IconData icon,
+    String label,
+    String value, {
+    Color textColor = Colors.black,
+    Color labelColor = Colors.black54,
+  }) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          size: 36,
+          color: textColor,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: labelColor,
+            fontSize: 14,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _bubble(double size) {
     final icons = [
       Icons.favorite,
@@ -375,11 +479,11 @@ class _HistoryState extends State<History> {
     final icon = (icons..shuffle()).first;
 
     final colors = [
-      const Color(0xFFFFFFFF),
-      const Color.fromARGB(255, 198, 220, 247),
-      const Color.fromARGB(255, 155, 201, 245),
+      const Color.fromARGB(255, 255, 127, 127),
+      const Color.fromARGB(255, 129, 186, 255),
+      const Color.fromARGB(255, 79, 170, 255),
       const Color.fromARGB(255, 115, 181, 247),
-      const Color.fromARGB(255, 166, 212, 250),
+      const Color.fromARGB(255, 48, 162, 255),
     ];
     final color = (colors..shuffle()).first.withOpacity(0.12);
     final rotation = ([-0.2, 0.1, 0.3]..shuffle()).first;
@@ -390,22 +494,6 @@ class _HistoryState extends State<History> {
         color: color,
         size: size,
       ),
-    );
-  }
-
-  Widget _buildInfoItem(IconData icon, String title, String value) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white, size: 40),
-        const SizedBox(height: 4),
-        Text(title,
-            style: const TextStyle(color: Colors.white70, fontSize: 16)),
-        Text(value,
-            style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 15)),
-      ],
     );
   }
 
@@ -450,12 +538,13 @@ class _HistoryState extends State<History> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$date  $time',
-                    style: const TextStyle(color: Colors.grey, fontSize: 13)),
-                // Text(phone,
-                //     style:
-                //         const TextStyle(color: Colors.black87, fontSize: 14)),
-                // const SizedBox(height: 4),
+                Text(
+                  formatThaiDate(date, time),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
                 Row(
                   children: [
                     _statusChip(status, _getStatusColor(status)),
