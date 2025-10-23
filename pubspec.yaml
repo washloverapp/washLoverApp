@@ -105,6 +105,7 @@ flutter:
   assets:
     - assets/images/ # ใช้เส้นทางที่ถูกต้อง
     - assets/images/logo/ # ใช้เส้นทางที่ถูกต้อง
+    - assets/images/collectionduck/ # ใช้เส้นทางที่ถูกต้อง
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

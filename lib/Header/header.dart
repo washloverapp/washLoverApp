@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:my_flutter_mapwash/Notification/notification.dart';
+import 'package:my_flutter_mapwash/Profile/profile.dart';
 
 class Header extends StatelessWidget {
   const Header({super.key});
@@ -21,9 +22,8 @@ class Header extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // โลโก้
-                  Image.asset('assets/images/logo.png', height: 40),
-
-                  // ส่วนของ Notification กับ User
+                  Image.asset('assets/images/logo/Washlovercolor.png',
+                      height: 60),
                   Row(
                     children: [
                       // ปุ่มแจ้งเตือน
@@ -64,27 +64,48 @@ class Header extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       // ปุ่ม User
-                      ElevatedButton.icon(
-                        onPressed: () {},
-                        label: Text(
-                          '098xxxx321',
-                          style: TextStyle(color: Color(0xFFfdc607)),
+                      // ElevatedButton.icon(
+                      //   onPressed: () {},
+                      //   label: Text(
+                      //     '098xxxx321',
+                      //     style: TextStyle(color: Color(0xFFfdc607)),
+                      //   ),
+                      //   icon: Icon(Icons.account_circle,
+                      //       color: Color(0xFFfdc607)),
+                      //   style: ElevatedButton.styleFrom(
+                      //     backgroundColor: Colors.white,
+                      //     padding: EdgeInsets.symmetric(
+                      //       horizontal: 16,
+                      //       vertical: 8,
+                      //     ),
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(8),
+                      //       side:
+                      //           BorderSide(color: Color(0xFFfdc607), width: 2),
+                      //     ),
+                      //   ),
+                      // ),
+                      Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(100),
                         ),
-                        icon: Icon(Icons.account_circle,
-                            color: Color(0xFFfdc607)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side:
-                                BorderSide(color: Color(0xFFfdc607), width: 2),
-                          ),
+                        clipBehavior: Clip.hardEdge, // ทำให้รูปโค้งตามวงกลม
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => profile()),
+                            );
+                          },
+                          child: Image.asset(
+                              'assets/images/collectionduck/Artboard25copy9.png', // 👈 เปลี่ยนเป็น path รูปของคุณ
+                              fit: BoxFit.contain),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ],
