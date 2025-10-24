@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpScreen extends StatelessWidget {
@@ -131,7 +132,14 @@ class OtpScreen extends StatelessWidget {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MainLayout()),
+                                  (Route<dynamic> route) => false,
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: mainBlue,
                                 shape: RoundedRectangleBorder(
