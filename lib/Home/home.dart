@@ -45,17 +45,35 @@ class _homeState extends State<home> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _walletItem2(
-                    Icons.account_balance_wallet,
+                    Image.asset(
+                      "assets/images/collectionduck/Artboard14.png",
+                      width: 60,
+                      height: 60,
+                    ),
                     "ยอดเงิน",
                     "0฿",
                   ),
-                  _walletItem(Icons.star_border, "Points", "0"),
-                  _walletItem(Icons.card_giftcard, "คูปอง", "0"),
+                  _walletItem(
+                      Image.asset(
+                        "assets/images/collectionduck/Artboard21copy5.png",
+                        width: 60,
+                        height: 60,
+                      ),
+                      "Points",
+                      "0"),
+                  _walletItem(
+                      Image.asset(
+                        "assets/images/collectionduck/Artboard17.png",
+                        width: 60,
+                        height: 60,
+                      ),
+                      "คูปอง",
+                      "0"),
                   _duckItem(
                       Image.asset(
-                        "assets/images/duck1.jpg",
-                        width: 32,
-                        height: 32,
+                        "assets/images/collectionduck/Artboard37copy8.png",
+                        width: 60,
+                        height: 60,
                       ),
                       "เก็บเวล",
                       "0"),
@@ -127,7 +145,11 @@ class _homeState extends State<home> {
                       mainAxisSpacing: 10,
                       children: [
                         _menuItem(
-                          Icons.account_box_outlined,
+                          Image.asset(
+                            "assets/images/collectionduck/Artboard21copy12.png",
+                            width: 60,
+                            height: 60,
+                          ),
                           "ตัวฉัน",
                           () {
                             Navigator.push(
@@ -137,21 +159,33 @@ class _homeState extends State<home> {
                             );
                           },
                         ),
-                        _menuItem(Icons.check_circle_outline, "จุดบริการ", () {
+                        _menuItem( Image.asset(
+                            "assets/images/collectionduck/Artboard1copy4.png",
+                            width: 60,
+                            height: 60,
+                          ),"จุดบริการ", () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => location_banc()),
                           );
                         }),
-                        _menuItem(Icons.group_add_outlined, "แนะนำเพื่อน", () {
+                        _menuItem( Image.asset(
+                            "assets/images/collectionduck/Artboard43.png",
+                            width: 60,
+                            height: 60,
+                          ), "แนะนำเพื่อน", () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ShareFriendScreen()),
                           );
                         }),
-                        _menuItem(Icons.production_quantity_limits_outlined,
+                        _menuItem( Image.asset(
+                            "assets/images/collectionduck/Artboard37copy3.png",
+                            width: 60,
+                            height: 60,
+                          ),
                             "โปรโมชั่น", () {
                           Navigator.push(
                             context,
@@ -159,26 +193,42 @@ class _homeState extends State<home> {
                                 builder: (context) => select_Promotion()),
                           );
                         }),
-                        _menuItem(Icons.star_border_outlined, "สะสมแต้ม", () {
+                        _menuItem( Image.asset(
+                            "assets/images/collectionduck/Artboard17.png",
+                            width: 60,
+                            height: 60,
+                          ), "สะสมแต้ม", () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => point()),
                           );
                         }),
-                        _menuItem(Icons.history, "ประวัติใช้งาน", () {
+                        _menuItem( Image.asset(
+                            "assets/images/collectionduck/Artboard24.png",
+                            width: 60,
+                            height: 60,
+                          ), "ประวัติใช้งาน", () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => History()),
                           );
                         }),
-                        _menuItem(Icons.help_center_outlined, "คู่มือใช้งาน",
+                        _menuItem( Image.asset(
+                            "assets/images/collectionduck/Artboard37.png",
+                            width: 60,
+                            height: 60,
+                          ), "คู่มือใช้งาน",
                             () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => manual()),
                           );
                         }),
-                        _menuItem(Icons.call, "แจ้งปัญหา", () {
+                        _menuItem( Image.asset(
+                            "assets/images/collectionduck/Artboard37copy5.png",
+                            width: 60,
+                            height: 60,
+                          ), "แจ้งปัญหา", () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => Help()),
@@ -380,16 +430,13 @@ class _homeState extends State<home> {
     );
   }
 
-  Widget _walletItem2(IconData icon, String title, String value) {
+  Widget _walletItem2(Widget img, String title, String value) {
     return Column(
       children: [
         CircleAvatar(
           radius: 22,
           backgroundColor: Colors.white,
-          child: Icon(
-            icon,
-            color: Colors.blue,
-          ),
+          child: img,
         ),
         SizedBox(height: 6),
         Text(
@@ -406,16 +453,13 @@ class _homeState extends State<home> {
     );
   }
 
-  Widget _walletItem(IconData icon, String title, String value) {
+  Widget _walletItem(Widget img, String title, String value) {
     return Column(
       children: [
         CircleAvatar(
           radius: 22,
           backgroundColor: Colors.white,
-          child: Icon(
-            icon,
-            color: Colors.blue,
-          ),
+          child: img,
         ),
         SizedBox(height: 6),
         Text(
@@ -459,7 +503,7 @@ class _homeState extends State<home> {
     );
   }
 
-  Widget _menuItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _menuItem(Widget img, String title, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -468,11 +512,7 @@ class _homeState extends State<home> {
           CircleAvatar(
             radius: 26,
             backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-            child: Icon(
-              icon,
-              color: Colors.blue,
-              size: 22,
-            ),
+            child: img,
           ),
           SizedBox(height: 6),
           Text(
@@ -547,3 +587,4 @@ class _homeState extends State<home> {
     );
   }
 }
+
