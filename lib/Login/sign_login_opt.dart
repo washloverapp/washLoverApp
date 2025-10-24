@@ -110,21 +110,24 @@ class OtpScreen extends StatelessWidget {
                           const SizedBox(height: 18),
 
                           // ช่องกรอก OTP
-                          PinCodeTextField(
-                            appContext: context,
-                            length: 6,
-                            keyboardType: TextInputType.number,
-                            animationType: AnimationType.none,
-                            pinTheme: PinTheme(
-                              shape: PinCodeFieldShape.underline,
-                              borderRadius: BorderRadius.circular(5),
-                              fieldHeight: 60,
-                              fieldWidth: 50,
-                              activeColor: mainBlue,
-                              selectedColor: mainBlue,
-                              inactiveColor: Colors.grey.shade300,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: PinCodeTextField(
+                              appContext: context,
+                              length: 6,
+                              keyboardType: TextInputType.number,
+                              animationType: AnimationType.none,
+                              pinTheme: PinTheme(
+                                shape: PinCodeFieldShape.underline,
+                                borderRadius: BorderRadius.circular(5),
+                                fieldHeight: 60,
+                                fieldWidth: 50,
+                                activeColor: mainBlue,
+                                selectedColor: mainBlue,
+                                inactiveColor: Colors.grey.shade300,
+                              ),
+                              onChanged: (value) {},
                             ),
-                            onChanged: (value) {},
                           ),
                           const SizedBox(height: 25),
 
