@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Kanit',
       ),
-      home: LoginPage(),
+      home: OtpScreen(),
     );
   }
 }
