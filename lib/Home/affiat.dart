@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart'; // 🔹 สำหรับแชร์
+import 'package:share_plus/share_plus.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 
 class ShareFriendScreen extends StatefulWidget {
@@ -12,9 +12,8 @@ class ShareFriendScreen extends StatefulWidget {
 
 class _ShareFriendScreenState extends State<ShareFriendScreen> {
   final String referralCode = "TO2642";
-  bool showHistory = false; // toggle หน้า
+  bool showHistory = false;
 
-  // ตัวอย่างข้อมูลประวัติ
   final List<Map<String, dynamic>> referralHistory = [
     {"phone": "091-234-5678", "status": "ใช้งานแล้ว", "date": "21 ต.ค. 2025"},
     {"phone": "086-789-1123", "status": "รอใช้งาน", "date": "19 ต.ค. 2025"},
@@ -40,88 +39,97 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
         onBackPressed: () => Navigator.pop(context),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // ปุ่มด้านบน
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF3F6FB),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              padding: const EdgeInsets.all(6),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => showHistory = false),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: !showHistory
-                              ? const Color(0xFF0D47A1)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(color: const Color(0xFF0D47A1)),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: Text(
-                            "รับโค้ด",
-                            style: TextStyle(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isSmallScreen = constraints.maxWidth < 360;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // ปุ่มด้านบน
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F6FB),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.all(6),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => showHistory = false),
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: !showHistory
-                                  ? Colors.white
-                                  : const Color(0xFF0D47A1),
-                              fontWeight: FontWeight.bold,
+                                  ? const Color(0xFF0D47A1)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(25),
+                              border:
+                                  Border.all(color: const Color(0xFF0D47A1)),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: Text(
+                                "รับโค้ด",
+                                style: TextStyle(
+                                  color: !showHistory
+                                      ? Colors.white
+                                      : const Color(0xFF0D47A1),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => showHistory = true),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: showHistory
-                              ? const Color(0xFF0D47A1)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(color: const Color(0xFF0D47A1)),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: Text(
-                            "ประวัติ",
-                            style: TextStyle(
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => showHistory = true),
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: showHistory
-                                  ? Colors.white
-                                  : const Color(0xFF0D47A1),
-                              fontWeight: FontWeight.bold,
+                                  ? const Color(0xFF0D47A1)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(25),
+                              border:
+                                  Border.all(color: const Color(0xFF0D47A1)),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: Text(
+                                "ประวัติ",
+                                style: TextStyle(
+                                  color: showHistory
+                                      ? Colors.white
+                                      : const Color(0xFF0D47A1),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 20),
 
-            // สลับหน้า
-            showHistory ? buildHistoryList() : buildInviteSection(),
-          ],
-        ),
+                // สลับหน้า
+                showHistory
+                    ? buildHistoryList()
+                    : buildInviteSection(isSmallScreen),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   // หน้ารับโค้ด
-  Widget buildInviteSection() {
+  Widget buildInviteSection(bool isSmallScreen) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -167,88 +175,58 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
           style: TextStyle(fontSize: 14, color: Colors.black87),
         ),
         const SizedBox(height: 24),
+
+        // ✅ การ์ดโค้ด (Responsive)
         Container(
           decoration: BoxDecoration(
             color: const Color(0xFF1565C0),
             borderRadius: BorderRadius.circular(16),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const Text(
+                "Referral Code (Tier 1)",
+                style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                referralCode,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // ✅ ปุ่มแบบ Wrap ป้องกันล้น
+              Wrap(
+                spacing: 10,
+                runSpacing: 8,
                 children: [
-                  const Text(
-                    "Referral Code (Tier 1)",
-                    style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400),
+                  _buildActionButton(
+                    label: "คัดลอก",
+                    icon: Icons.copy,
+                    onTap: copyToClipboard,
+                    isSmall: isSmallScreen,
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    referralCode,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  _buildActionButton(
+                    label: "แชร์",
+                    icon: Icons.share,
+                    onTap: shareCode,
+                    isSmall: isSmallScreen,
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: copyToClipboard,
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: const Text(
-                        "คัดลอก",
-                        style: TextStyle(
-                          color: Color(0xFF1565C0),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  InkWell(
-                    onTap: shareCode,
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.share, color: Color(0xFF1565C0)),
-                          SizedBox(width: 8),
-                          Text(
-                            "แชร์",
-                            style: TextStyle(
-                              color: Color(0xFF1565C0),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
             ],
           ),
         ),
+
         const SizedBox(height: 20),
         const Text(
           "*ขอสงวนสิทธิ์การใช้คูปองเพื่อการส่วนบุคคลเท่านั้น",
@@ -257,6 +235,43 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
         ),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildActionButton({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+    bool isSmall = false,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(30),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmall ? 14 : 20,
+          vertical: 10,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: const Color(0xFF1565C0), size: isSmall ? 18 : 20),
+            SizedBox(width: isSmall ? 6 : 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: const Color(0xFF1565C0),
+                fontWeight: FontWeight.bold,
+                fontSize: isSmall ? 13 : 15,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
