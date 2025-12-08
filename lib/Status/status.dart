@@ -1,27 +1,39 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:my_flutter_mapwash/Chat/test.dart';
+import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
 import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 import 'package:my_flutter_mapwash/Status/realtime_status.dart';
 
+
 import '../Chat_socket/chat_screen.dart';
+
 
 class Status extends StatefulWidget {
   const Status({super.key});
 
+
   @override
   _StatusState createState() => _StatusState();
 }
+
 
 class _StatusState extends State<Status> {
   List<dynamic> _statusData = [];
   final api = ApistatusOrder();
   int status = 0;
   Timer? _timer;
+  bool isStat = false;
 
+
+  String apiKey = "DRIVER"; // 👈 ใส่ API KEY จริงของคุณ
+  String? paymentStatus;
   // ใช้ orderId เป็น key
   Map<String, Future<Map<String, dynamic>?>> _futureCache = {};
+
 
   @override
   void initState() {
@@ -30,11 +42,13 @@ class _StatusState extends State<Status> {
     _startAutoRefresh();
   }
 
+
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
+
 
   void _startAutoRefresh() {
     // ยิงทุก 5 วินาที
@@ -45,19 +59,21 @@ class _StatusState extends State<Status> {
     });
   }
 
+
   Future<void> _loadStatus() async {
     try {
       List<dynamic> data = await api_status.fetchstatus();
       final filtered = data.where((e) => e['status'] != 4).toList();
       setState(() {
         _statusData = filtered;
-        status = _statusData[0]['status'] ?? 0;
+        status = _statusData[0]['status'];
       });
     } catch (e) {
       print('Error loading status: $e');
       setState(() => _statusData = []);
     }
   }
+
 
   Future<Map<String, dynamic>?> _getFuture(
       String deviceId, String orderId) async {
@@ -70,6 +86,7 @@ class _StatusState extends State<Status> {
     return statusData;
   }
 
+
   String formatDate(String datetime) {
     try {
       DateTime parsedDate = DateTime.parse(datetime);
@@ -79,6 +96,7 @@ class _StatusState extends State<Status> {
     }
   }
 
+
   String formatTime(String datetime) {
     try {
       DateTime parsedDate = DateTime.parse(datetime);
@@ -87,6 +105,7 @@ class _StatusState extends State<Status> {
       return 'ออนไลน์';
     }
   }
+
 
   Map<String, dynamic> getStatusInfo(int status) {
     switch (status) {
@@ -101,6 +120,56 @@ class _StatusState extends State<Status> {
     }
   }
 
+
+  Color getPaymentStatusColor(String status) {
+    status = status.toLowerCase();
+
+
+    if (status.contains("ชำระเงินเรียบร้อย") ||
+        status.contains("success") ||
+        status.contains("paid")) {
+      return Colors.green;
+    }
+
+
+    if (status.contains("รอ") ||
+        status.contains("pending") ||
+        status.contains("ค้างชำระ")) {
+      return Colors.red;
+    }
+
+
+    if (status.contains("ไม่สำเร็จ") ||
+        status.contains("fail") ||
+        status.contains("error")) {
+      return Colors.red;
+    }
+
+
+    return Colors.grey; // default
+  }
+
+
+  /// 2) เช็คสถานะการชำระเงิน
+
+
+  Future<String> checkPaymentStatus(String orderId) async {
+    final url =
+        "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data["data"]["status"] == "success") {
+        return data["data"]["msg"];
+      } else {
+        return data["data"]["msg"] ?? "รอการชำระเงิน";
+      }
+    } else {
+      return "เช็คสถานะไม่สำเร็จ";
+    }
+  }
+
+
   Widget _buildTransactionItem({
     required BuildContext context,
     required IconData icon,
@@ -111,23 +180,47 @@ class _StatusState extends State<Status> {
     required String time,
     required String id,
     required String device_id,
-    required int status,
+    required dynamic status,
+    required dynamic payment,
+    required String paymentStatusText,
   }) {
     return GestureDetector(
       onTap: () {
+        double totalPrice = double.parse(amount);
         _timer?.cancel();
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => realtime_status(
-              id: id,
-              deviceId: device_id,
-            ),
-          ),
-        ).then((_) {
-          _startAutoRefresh();
-        });
+        if (isStat == true) {
+          if (paymentStatusText == "รอการชำระเงิน") {
+            isStat == false;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Qrcode(),
+                settings: RouteSettings(
+                  arguments: {
+                    'totalPrice': totalPrice,
+                    'address': 'ไม่พบที่อยู่',
+                    'addressBranch': 'ไม่พบสาขาที่ใกล้ที่สุด',
+                    'coupon': '',
+                    'payment': 'manual',
+                  },
+                ),
+              ),
+            );
+          } else {
+            isStat == true;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => realtime_status(
+                  id: id,
+                  deviceId: device_id,
+                ),
+              ),
+            ).then((_) {
+              _startAutoRefresh();
+            });
+          }
+        }
       },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -137,16 +230,33 @@ class _StatusState extends State<Status> {
             child: Icon(icon, color: color),
           ),
           title: Text(title, style: const TextStyle(fontSize: 14)),
-          subtitle: Text(
-            subtitle,
-            style: const TextStyle(fontSize: 13, color: Colors.grey),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                subtitle,
+                style: const TextStyle(fontSize: 13, color: Colors.grey),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: getPaymentStatusColor(paymentStatusText),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  paymentStatusText,
+                  style: const TextStyle(fontSize: 12, color: Colors.white),
+                ),
+              ),
+            ],
           ),
+
 
           // ✅ เพิ่มไอคอน chat ที่ฝั่งขวา
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // จำนวนเงินและเวลา
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -166,7 +276,6 @@ class _StatusState extends State<Status> {
                 ],
               ),
               const SizedBox(width: 8),
-              // ปุ่มไอคอนแชต
               if (status != 1)
                 IconButton(
                   icon: const Icon(Icons.chat, color: Colors.blueAccent),
@@ -185,6 +294,7 @@ class _StatusState extends State<Status> {
       ),
     );
   }
+
 
   Widget _buildEmptyStatus() {
     return Center(
@@ -205,6 +315,7 @@ class _StatusState extends State<Status> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -231,43 +342,85 @@ class _StatusState extends State<Status> {
                 itemCount: _statusData.length,
                 itemBuilder: (context, index) {
                   final order = _statusData[index];
-                  // print(order);
                   final orderStatus =
                       int.tryParse(order['status']?.toString() ?? '0') ?? 0;
+
+
                   if (orderStatus == 4) return const SizedBox.shrink();
 
-                  final price =
-                      double.tryParse(order['price']?.toString() ?? '0') ?? 0.0;
-                  final statusInfo = getStatusInfo(orderStatus);
+
+                  final price = '5.0';
                   final deviceId = order['device_id'].toString();
                   final orderId = order['id'].toString();
-
+                  final statusInfo = getStatusInfo(orderStatus);
+                  isStat = true;
                   return FutureBuilder<Map<String, dynamic>?>(
                     future: _getFuture(deviceId, orderId),
-                    builder: (context, snapshot) {
+                    builder: (context, snapshotOrder) {
                       String apiText = '...';
                       Color apiColor = statusInfo['color'];
-                      if (snapshot.hasData && snapshot.data != null) {
+
+
+                      if (snapshotOrder.hasData && snapshotOrder.data != null) {
                         String rawStatus =
-                            snapshot.data!['status']?.toString() ?? '';
+                            snapshotOrder.data!['status']?.toString() ?? '';
                         int statusInt = int.tryParse(rawStatus) ?? 0;
                         final statusFromApi = getStatusInfo(statusInt);
                         apiText = statusFromApi['text'];
                         apiColor = statusFromApi['color'];
                       }
 
-                      return _buildTransactionItem(
-                        context: context,
-                        icon: Icons.online_prediction_sharp,
-                        color: apiColor,
-                        title: '$apiText', // ${order['device_id']}
-                        subtitle: formatDate(order['set_at'] ?? ''),
-                        amount:
-                            '฿${price < 0 ? 0.0 : price.toStringAsFixed(2)}',
-                        time: formatTime(order['set_at'] ?? ''),
-                        id: orderId,
-                        device_id: deviceId,
-                        status: status,
+
+                      return FutureBuilder<Map<String, dynamic>?>(
+                        future: _getFuture(deviceId, orderId),
+                        builder: (context, snapshotOrder) {
+                          String apiText = '...';
+                          Color apiColor = statusInfo['color'];
+
+
+                          if (snapshotOrder.hasData &&
+                              snapshotOrder.data != null) {
+                            String rawStatus =
+                                snapshotOrder.data!['status']?.toString() ?? '';
+                            int statusInt = int.tryParse(rawStatus) ?? 0;
+                            final statusFromApi = getStatusInfo(statusInt);
+                            apiText = statusFromApi['text'];
+                            apiColor = statusFromApi['color'];
+                          }
+
+
+                          return FutureBuilder<String>(
+                            future: checkPaymentStatus(deviceId),
+                            builder: (context, paySnap) {
+                              String payText = "กำลังตรวจสอบ...";
+
+
+                              if (paySnap.hasData) payText = paySnap.data!;
+
+
+                              return Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  _buildTransactionItem(
+                                    context: context,
+                                    icon: Icons.online_prediction_sharp,
+                                    color: apiColor,
+                                    title: '$apiText',
+                                    subtitle:
+                                        "${formatDate(order['set_at'] ?? '')}",
+                                    amount: '$price',
+                                    time: formatTime(order['set_at'] ?? ''),
+                                    id: orderId,
+                                    device_id: deviceId,
+                                    status: status,
+                                    payment: order['payment'],
+                                    paymentStatusText: payText,
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       );
                     },
                   );
@@ -277,3 +430,6 @@ class _StatusState extends State<Status> {
     );
   }
 }
+
+
+

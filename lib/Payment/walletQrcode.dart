@@ -5,18 +5,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
-import 'package:my_flutter_mapwash/Payment/PaymentFail.dart';
-import 'package:my_flutter_mapwash/Payment/PaymentSuccess.dart';
+// import 'package:my_flutter_mapwash/Payment/PaymentFail.dart';
+// import 'package:my_flutter_mapwash/Payment/PaymentSuccess.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class Qrcode extends StatefulWidget {
   @override
   _QrcodeState createState() => _QrcodeState();
 }
+
 
 class _QrcodeState extends State<Qrcode> {
   String phone = '';
@@ -35,7 +37,7 @@ class _QrcodeState extends State<Qrcode> {
   String refID = "";
   String ID = "";
   String device_id = "";
-  int _remainingSeconds = 29 * 60;
+  int _remainingSeconds = 05 * 60;
   List<Map<String, dynamic>> addressuser = [];
   List<Map<String, dynamic>> Branch = [];
   late Timer _timer;
@@ -45,12 +47,14 @@ class _QrcodeState extends State<Qrcode> {
   List<dynamic> _statusData = [];
   int inNumber = 0;
 
+
   String? qrImage;
   // String orderId = ""; // 👈 เปลี่ยนได้
   double amount = 1.0; // 👈 ระบุจำนวนเงิน
   String apiKey = "DRIVER"; // 👈 ใส่ API KEY จริงของคุณ
   bool isCheck = false;
   String? paymentStatus;
+
 
   @override
   void didChangeDependencies() {
@@ -60,6 +64,7 @@ class _QrcodeState extends State<Qrcode> {
     amount = args['totalPrice'];
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -68,6 +73,7 @@ class _QrcodeState extends State<Qrcode> {
     loadStatus();
     loadPhone();
   }
+
 
   void _startCountdown() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -85,15 +91,18 @@ class _QrcodeState extends State<Qrcode> {
     });
   }
 
+
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
 
+
   Future<void> generateQR(orderId) async {
     final url =
         "https://payment.washlover.com/create-payment-qr?amount=$amount&order_id=$orderId&ref4=$apiKey";
+
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -109,8 +118,11 @@ class _QrcodeState extends State<Qrcode> {
     }
   }
 
+
   /// 2) เช็คสถานะการชำระเงิน
-  Future<void> checkPaymentStatus(orderId) async {
+  Future<void> checkPaymentStatus(
+    orderId,
+  ) async {
     final url =
         "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
     final response = await http.get(Uri.parse(url));
@@ -119,6 +131,7 @@ class _QrcodeState extends State<Qrcode> {
       if (data["data"]["status"] == "success") {
         setState(() {
           paymentStatus = "🎉 ชำระเงินเรียบร้อยแล้ว";
+          MainLayout.initialIndex = 4;
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -138,6 +151,7 @@ class _QrcodeState extends State<Qrcode> {
       });
     }
   }
+
 
   Future<void> loadStatus() async {
     String orderId = '';
@@ -166,14 +180,17 @@ class _QrcodeState extends State<Qrcode> {
     }
   }
 
+
   Future<String?> getPhone() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('phone');
   }
 
+
   void loadPhone() async {
     phone = await getPhone() ?? '';
   }
+
 
   String _formatTime(int seconds) {
     int minutes = seconds ~/ 60;
@@ -181,12 +198,14 @@ class _QrcodeState extends State<Qrcode> {
     return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
   }
 
+
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     initializeDateFormatting('th_TH', null).then((_) {});
     String formattedDate = DateFormat('d MMMM yyyy, E', 'th_TH').format(now);
     String formattedTime = DateFormat('HH:mm').format(now);
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -283,17 +302,19 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
+
   Widget buildInfoRow3(String label1, String value1) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          buildInfoColumn(label1, value1),
+          buildInfoColumn3(label1, value1),
         ],
       ),
     );
   }
+
 
   Widget buildInfoRow(
       String label1, String value1, String label2, String value2) {
@@ -309,6 +330,7 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
+
   Widget buildInfoRow2(
       String label1, String value1, String label2, String value2) {
     return Padding(
@@ -323,6 +345,7 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
+
   Widget buildInfoColumn2(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,6 +358,7 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
+
   Widget buildInfoColumn(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,6 +370,21 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
+
+  Widget buildInfoColumn3(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Colors.grey)),
+        Text(value,
+            style: TextStyle(
+              fontSize: 14,
+            )),
+      ],
+    );
+  }
+
+
   Widget buildButtonCancle(
       String text, Color bgColor, Color textColor, BuildContext context) {
     return ElevatedButton(
@@ -355,6 +394,7 @@ class _QrcodeState extends State<Qrcode> {
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
       onPressed: () {
+        MainLayout.initialIndex = 4;
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -366,6 +406,7 @@ class _QrcodeState extends State<Qrcode> {
       child: Text(text, style: TextStyle(color: textColor)),
     );
   }
+
 
   Widget buildButtonSuccess(String text, Color bgColor, Color textColor) {
     return ElevatedButton(
@@ -389,3 +430,6 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 }
+
+
+

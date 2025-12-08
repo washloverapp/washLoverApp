@@ -1,22 +1,26 @@
-import 'dart:convert';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'dart:convert';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Home/home.dart';
 import 'package:my_flutter_mapwash/Oders/sendwash.dart';
-import 'package:my_flutter_mapwash/Profile/API/api_profile.dart';
-import 'package:my_flutter_mapwash/Profile/profile.dart';
+// import 'package:my_flutter_mapwash/Profile/API/api_profile.dart';
+// import 'package:my_flutter_mapwash/Profile/profile.dart';
 import 'package:my_flutter_mapwash/Scan/scan.dart';
 import 'package:my_flutter_mapwash/Wallet/wallet.dart';
 import 'package:my_flutter_mapwash/Status/status.dart';
 import 'package:my_flutter_mapwash/Header/header.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
+
 
 class MainLayout extends StatefulWidget {
+  static int initialIndex = 0; // 💥 ตัวแปรรับค่าจาก Navigator
   const MainLayout({super.key});
+
 
   @override
   _MainLayoutState createState() => _MainLayoutState();
 }
+
 
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
@@ -24,14 +28,17 @@ class _MainLayoutState extends State<MainLayout> {
   String? phone;
   bool hasUnreadOrders = false;
 
+
   @override
   void initState() {
     super.initState();
+    _selectedIndex = MainLayout.initialIndex;
     if (_selectedIndex == 2) {
       // loadPhoneData();
       // fetchOrders(phone ?? '');
     }
   }
+
 
   void _onItemTapped(int index) {
     setState(() {
@@ -43,6 +50,7 @@ class _MainLayoutState extends State<MainLayout> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
@@ -50,9 +58,9 @@ class _MainLayoutState extends State<MainLayout> {
       wallet(),
       Scan(),
       sendwash(),
-      // LocationPickerPage(onLocationPicked: (address, location) => {}),
       Status(),
     ];
+
 
     return Scaffold(
       appBar: const PreferredSize(
@@ -160,6 +168,7 @@ class _MainLayoutState extends State<MainLayout> {
   }
 }
 
+
 // import 'dart:convert';
 // import 'package:flutter/material.dart';
 // // import 'package:my_flutter_mapwash/pages/banc.dart';
@@ -173,12 +182,15 @@ class _MainLayoutState extends State<MainLayout> {
 // import 'package:my_flutter_mapwash/Payment/wallet.dart';
 // import 'package:http/http.dart' as http;
 
+
 // class MainLayout extends StatefulWidget {
 //   const MainLayout({super.key});
+
 
 //   @override
 //   _MainLayoutState createState() => _MainLayoutState();
 // }
+
 
 // class _MainLayoutState extends State<MainLayout> {
 //   // สังเกต: Index ของ FAB คือ 2
@@ -187,9 +199,11 @@ class _MainLayoutState extends State<MainLayout> {
 //   // หน้าหลักคือ index 1 ของ _pages
 //   int _selectedIndex = 1; // เปลี่ยนเป็น 1 เพื่อให้เริ่มต้นที่ HomeScreen
 
+
 //   String workStatus = '';
 //   String? phone;
 //   bool hasUnreadOrders = false;
+
 
 //   // Widget Placeholder (ตัวอย่างสมมติเพื่อให้โค้ดคอมไพล์ได้)
 //   final Widget Wallet = const Center(child: Text('กระเป๋าเงิน (Wallet)'));
@@ -198,11 +212,13 @@ class _MainLayoutState extends State<MainLayout> {
 //   final Widget Status = const Center(child: Text('สถานะ (Status)'));
 //   final Widget Header = const Placeholder();
 
+
 //   @override
 //   void initState() {
 //     super.initState();
 //     loadPhoneData();
 //   }
+
 
 //   // ปรับการจัดการ Index: Index 2 คือการกด FAB (สแกน) ซึ่งไม่ควรเปลี่ยน _selectedIndex
 //   void _onItemTapped(int index) {
@@ -212,6 +228,7 @@ class _MainLayoutState extends State<MainLayout> {
 //       print('Scan button tapped - Index: $index');
 //       return;
 //     }
+
 
 //     // ปรับ Index สำหรับ _pages:
 //     // BottomNavigationBar Items: 0, 1, (2=FAB), 3, 4
@@ -224,6 +241,7 @@ class _MainLayoutState extends State<MainLayout> {
 //       newIndex = index - 1;
 //     }
 
+
 //     // ตั้งค่า _selectedIndex ใหม่
 //     if (_selectedIndex != newIndex) {
 //       setState(() {
@@ -232,9 +250,11 @@ class _MainLayoutState extends State<MainLayout> {
 //     }
 //   }
 
+
 //   Future<void> loadPhoneData() async {
 //     SharedPreferences prefs = await SharedPreferences.getInstance();
 //     String? phonex = prefs.getString('phone');
+
 
 //     if (phonex != null) {
 //       setState(() {
@@ -245,6 +265,7 @@ class _MainLayoutState extends State<MainLayout> {
 //     }
 //   }
 
+
 //   @override
 //   Widget build(BuildContext context) {
 //     List<Widget> _pages = [
@@ -253,6 +274,7 @@ class _MainLayoutState extends State<MainLayout> {
 //       LaundrySelection,
 //       Status,
 //     ];
+
 
 //     return Scaffold(
 //       // *** 1. เพิ่ม extendBody: true เพื่อให้ body ทะลุลงไปใต้ BottomAppBar
@@ -267,6 +289,7 @@ class _MainLayoutState extends State<MainLayout> {
 //         child: _pages[_selectedIndex > 1 ? _selectedIndex - 1 : _selectedIndex],
 //       ),
 
+
 //       floatingActionButton: FloatingActionButton(
 //         // Index 2 คือ 'Scan' button (ในมุมมองของ BottomNavigationBar Item)
 //         onPressed: () => _onItemTapped(2),
@@ -276,6 +299,7 @@ class _MainLayoutState extends State<MainLayout> {
 //         elevation: 8.0,
 //       ),
 //       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
 
 //       // *** 2. เปลี่ยนจาก Container และ BottomNavigationBar เป็น BottomAppBar ***
 //       bottomNavigationBar: BottomAppBar(
@@ -287,6 +311,7 @@ class _MainLayoutState extends State<MainLayout> {
 //         // 5. กำหนดระยะห่างระหว่าง FAB กับรอยเว้า
 //         notchMargin: 6.0,
 //         elevation: 10.0, // เพิ่มเงาเพื่อให้ดูนูนออกมา
+
 
 //         // 6. ใส่ BottomNavigationBar เดิมไว้เป็น child ของ BottomAppBar
 //         child: SizedBox(
@@ -362,3 +387,6 @@ class _MainLayoutState extends State<MainLayout> {
 //     );
 //   }
 // }
+
+
+
