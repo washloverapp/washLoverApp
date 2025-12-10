@@ -51,21 +51,18 @@ class _ProfileState extends State<profile> {
           Navigator.pop(context);
         },
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-              ? Center(
-                  child: Text(
-                    'เกิดข้อผิดพลาด: $errorMessage',
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                )
-              : buildProfileContent(context),
+      body: buildProfileContent(context),
     );
+  }
+
+  String maskPhone(String phone) {
+    if (phone.length < 7) return phone;
+    return phone.substring(0, 3) + 'xxxxxx' + phone.substring(phone.length - 2);
   }
 
   Widget buildProfileContent(BuildContext context) {
     final data = profileData;
+    final phone = data['phone'] ?? '-';
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -97,7 +94,7 @@ class _ProfileState extends State<profile> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      data['phone'] ?? '-',
+                      maskPhone(phone),
                       style: const TextStyle(color: Colors.blue),
                     ),
                   ],
@@ -105,28 +102,6 @@ class _ProfileState extends State<profile> {
               ],
             ),
           ),
-
-          // เมนูต่างๆ
-          // buildMenuItem(
-          //   icon: Icons.person,
-          //   text: "ข้อมูลส่วนตัว",
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => EditProfilePage(
-          //           nickname: data['nickname'] ?? '',
-          //           phone: data['phone'] ?? '',
-          //         ),
-          //       ),
-          //     );
-          //   },
-          // ),
-          // buildMenuItem(
-          //   icon: Icons.link,
-          //   text: "เชื่อมต่อบัญชี LINE",
-          //   onTap: () {},
-          // ),
           buildMenuItem(
             icon: Icons.account_balance_wallet,
             text: "วอลเล็ท (${data['balance'] ?? 0} บาท)",
@@ -148,11 +123,22 @@ class _ProfileState extends State<profile> {
             text: "ใช้งานล่าสุด: ${data['last_active'] ?? '-'}",
             onTap: () {},
           ),
-          // buildMenuItem(
-          //   icon: Icons.perm_identity,
-          //   text: "รหัสอุปกรณ์: ${data['device_id'] ?? '-'}",
-          //   onTap: () {},
-          // ),
+          buildMenuItem(
+            icon: Icons.delete,
+            text: "แจ้งลบบัญชี",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EmptyNotificationPage(
+                    nickname: data['nickname'] ?? '',
+                    phone: phone,
+                    device_id: data['device_id'] ?? '',
+                  ),
+                ),
+              );
+            },
+          ),
           buildMenuLogout(
             icon: Icons.logout_rounded,
             text: "ออกจากระบบ",
@@ -209,6 +195,86 @@ class _ProfileState extends State<profile> {
             const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.red),
         onTap: onTap,
       ),
+    );
+  }
+}
+
+// ----------------- หน้าลบ Account -----------------
+
+class EmptyNotificationPage extends StatelessWidget {
+  final String nickname;
+  final String phone;
+  final String device_id;
+  const EmptyNotificationPage({
+    super.key,
+    required this.nickname,
+    required this.phone,
+    required this.device_id,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F7), // สีพื้นหลังอ่อนเหมือนในภาพ
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              /// รูปภาพด้านบน
+              Image.network(
+                "https://static.vecteezy.com/system/resources/previews/016/716/465/non_2x/gmail-icon-free-png.png", // เปลี่ยนตามไฟล์ของคุณ
+                width: 140,
+                height: 140,
+              ),
+
+              const SizedBox(height: 20),
+
+              /// ข้อความหัวเรื่อง
+              const Text(
+                "แจ้งลบบัญชี",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 10),
+              /// ข้อความอธิบาย
+              Text(
+                "หากคุณต้องการลบบัญชีของคุณ กรุณาส่งอีเมลที่มีรายละเอียดดังนี้:\n\n- ชื่อ: $nickname \n- เบอร์โทรศัพท์: $phone \n- รหัสประจำตัวอุปกรณ์: $device_id\n\nไปที่อีเมล washloverapp@gmail.com",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 25),
+
+              /// ลิงก์ด้านล่าง
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "กลับหน้าหลัก",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      
     );
   }
 }
