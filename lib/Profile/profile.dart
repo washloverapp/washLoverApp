@@ -105,25 +105,25 @@ class _ProfileState extends State<profile> {
           buildMenuItem(
             icon: Icons.account_balance_wallet,
             text: "วอลเล็ท (${data['balance'] ?? 0} บาท)",
-            onTap: () {},
+            // onTap: () {},
           ),
           buildMenuItem(
             icon: Icons.star,
             text: "แต้มสะสม (${data['points'] ?? 0} คะแนน)",
-            onTap: () {},
+            // onTap: () {},
           ),
           buildMenuItem(
             icon: Icons.local_laundry_service,
             text:
                 "จำนวนครั้งที่ใช้บริการ (${data['service_count'] ?? 0} ครั้ง)",
-            onTap: () {},
+            // onTap: () {},
           ),
           buildMenuItem(
             icon: Icons.access_time,
             text: "ใช้งานล่าสุด: ${data['last_active'] ?? '-'}",
-            onTap: () {},
+            // onTap: () {},
           ),
-          buildMenuItem(
+          buildMenuItem22(
             icon: Icons.delete,
             text: "แจ้งลบบัญชี",
             onTap: () {
@@ -159,8 +159,7 @@ class _ProfileState extends State<profile> {
       ),
     );
   }
-
-  Widget buildMenuItem({
+Widget buildMenuItem22({
     required IconData icon,
     required String text,
     required VoidCallback onTap,
@@ -173,6 +172,22 @@ class _ProfileState extends State<profile> {
         title: Text(text, style: const TextStyle(fontSize: 16)),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: onTap,
+      ),
+    );
+  }
+  Widget buildMenuItem({
+    required IconData icon,
+    required String text,
+    // required VoidCallback onTap,
+  }) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+      color: Colors.white,
+      child: ListTile(
+        leading: Icon(icon, color: Colors.blue.shade800),
+        title: Text(text, style: const TextStyle(fontSize: 16)),
+        // trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        // onTap: onTap,
       ),
     );
   }

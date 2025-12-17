@@ -50,6 +50,7 @@ class _TotalOrderState extends State<TotalOrder> {
         _selection = json.decode(selectionString);
         _isLoading = false;
       });
+      print(_selection);
     } else {
       setState(() {
         _isLoading = false;

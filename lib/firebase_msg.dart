@@ -1,6 +1,10 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
+import 'package:my_flutter_mapwash/Status/status.dart';
+import 'app_navigator.dart';
 
 class FirebaseMsg {
   /// Create a [AndroidNotificationChannel] for heads up notifications
@@ -79,26 +83,43 @@ void handleFCMNavigation(RemoteMessage message) {
   print('handleFCMNavigation---s');
   final Map<String, dynamic> payload = message.data;
   print(payload);
-  final String? path = payload['screen'];
+  // final String? path = payload['screen'];
 
-  if (path == null) {
-    print('❌ Data Payload ไม่มี Path/route สำหรับ GoRouter');
+  // if (path == null) {
+  //   print('❌ Data Payload ไม่มี Path/route สำหรับ GoRouter');
+  //   return;
+  // }
+
+  // แปลง data payload ทั้งหมดให้เป็น Query Parameters
+
+  
+  // Ex: /productDetail?id=P1001&category=watches
+  // final Uri uri = Uri(
+  //   path: path,
+  //   queryParameters: {
+  //     for (final entry in payload.entries)
+  //       if (entry.key != 'path') entry.key: entry.value.toString(),
+  //   },
+  // );
+  
+  final navigator = navigatorKey.currentState;
+  if (navigator == null) {
+    debugPrint('❌ navigator ยังไม่พร้อม');
     return;
   }
 
-  // แปลง data payload ทั้งหมดให้เป็น Query Parameters
-  // Ex: /productDetail?id=P1001&category=watches
-  final Uri uri = Uri(
-    path: path,
-    queryParameters: {
-      for (final entry in payload.entries)
-        if (entry.key != 'path') entry.key: entry.value.toString(),
-    },
+  MainLayout.initialIndex = 4; // ← แก้บั๊กจากโค้ดเดิม
+
+  navigator.pushAndRemoveUntil(
+    MaterialPageRoute(builder: (_) => const MainLayout()),
+    (_) => false,
   );
 
-  final String targetPath = uri.toString();
-  print('✅ GoRouter Redirecting to: $targetPath');
+  // final String targetPath = uri.toString();
+  // print('✅ GoRouter Redirecting to: $targetPath');
 
   // สั่งนำทางโดยใช้ Global Key
   // _rootNavigatorKey.currentContext?.go(targetPath);
 }
+
+

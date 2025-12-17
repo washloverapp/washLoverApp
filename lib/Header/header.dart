@@ -53,11 +53,12 @@ class Header extends StatelessWidget {
                               size: 23,
                             ),
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => NotificationScreen()),
-                              );
+                              
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) => NotificationScreen()),
+                              // );
                             },
                             padding: EdgeInsets.zero,
                             constraints: BoxConstraints(),
