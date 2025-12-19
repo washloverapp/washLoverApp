@@ -64,7 +64,6 @@ class _SignInState extends State<SignIn> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        await api_config.saveTokenFcmApi(tokenfcm, phone);
         if (data['token'] != null) {
           final token = data['token'];
           // เก็บ token

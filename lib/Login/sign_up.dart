@@ -202,8 +202,6 @@ class _SignUpState extends State<SignUp> {
     final password = prefs.getString('password');
     final endpoint = prefs.getString('endpoint');
 
-    final tokenfcm = prefs.getString('fcm_token') ?? "";
-
     double currentLat = 13.7563;
     double currentLng = 100.5018;
 
@@ -222,7 +220,6 @@ class _SignUpState extends State<SignUp> {
           }),
         );
         if (response.statusCode == 200) {
-          await api_config.saveTokenFcmApi(tokenfcm, phone);
           final data = json.decode(response.body);
           await prefs.setString('token', data['token']);
           setState(() {

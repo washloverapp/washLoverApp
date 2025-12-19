@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class api_config {
   static String endpoint = ''; // ค่าเริ่มต้น
@@ -33,13 +34,12 @@ class api_config {
     }
   }
 
- static Future<Map<String, dynamic>> saveTokenFcmApi(_tokenMobile,username) async {
+  static Future<Map<String, dynamic>> saveTokenFcmApi() async {
+    final prefs = await SharedPreferences.getInstance();
+    final _tokenMobile = prefs.getString('fcm_token') ?? '';
+    final username = prefs.getString('phone') ?? '';
     final dio = Dio();
     String path = 'https://fcm.washlover.com/api/add-subscription';
-    print(path);
-
-    // print(_username);
-    // print(_password);
     var platform = 'android';
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       platform = 'ios';
@@ -57,10 +57,6 @@ class api_config {
       data: dataJson,
       options: Options(validateStatus: (_) => true),
     );
-    print('resApi-------saveTokenFcmApi');
-    print(resApi);
-    print('resApi-------saveTokenFcmApi==x');
-    print(resApi.statusCode);
     Map<String, dynamic> res = Map<String, dynamic>();
     if (resApi.statusCode == 200) {
       res = resApi.data;

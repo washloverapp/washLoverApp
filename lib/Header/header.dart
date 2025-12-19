@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Notification/notification.dart';
 import 'package:my_flutter_mapwash/Profile/profile.dart';
+import 'package:my_flutter_mapwash/api_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Header extends StatefulWidget {
@@ -23,22 +25,39 @@ class _HeaderState extends State<Header> {
 
   void _loadNotificationSetting() async {
     final prefs = await SharedPreferences.getInstance();
+    final enabled = prefs.getBool('notification_enabled') ?? false;
     setState(() {
-      _notificationEnabled = prefs.getBool('notification_enabled') ?? false;
+      _notificationEnabled = enabled;
+    });
+    print(_notificationEnabled);
+    setState(() {
+      _notificationEnabled = enabled;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _notificationEnabled) return;
+      if (!enabled) {
+        _showNotificationSetting(context);
+        return;
+      }
+      if (MainLayout.initialIndex == 4 && !enabled) {
+        _notificationEnabled = true;
+        _showNotificationSetting(context);
+      }
     });
   }
 
   void _showNotificationSetting(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    bool isEnabled = _notificationEnabled;
+    bool isEnabled = prefs.getBool('notification_enabled') ?? false;
 
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           content: StatefulBuilder(
             builder: (context, setStateDialog) {
               return Column(
@@ -69,9 +88,10 @@ class _HeaderState extends State<Header> {
                     'เปิด-ปิดแจ้งเตือนสถานะการส่งซัก',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF2E435A)),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2E435A),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   const Text(
@@ -95,14 +115,20 @@ class _HeaderState extends State<Header> {
                           setStateDialog(() {
                             isEnabled = value;
                           });
+
                           setState(() {
                             _notificationEnabled = value;
                           });
 
-                          await prefs.setBool(
-                              'notification_enabled', value);
+                          await prefs.setBool('notification_enabled', value);
 
-                          // 🔔 Logic แจ้งเตือน (subscribe/unsubscribe)
+                          // 🔥 เปิด notification → ยิง FCM token
+                          if (value) {
+                            api_config.saveTokenFcmApi();
+                          } else {
+                            // optional: unsubscribe / delete token
+                            // api_config.deleteTokenFcmApi();
+                          }
                         },
                       ),
                     ],
