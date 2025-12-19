@@ -82,10 +82,10 @@ class _MyAppState extends State<MyApp> {
       }
     });
     await api_config.loadEndpoint();
-    _checkLogin(token); // ฟังก์ชันเช็ค login ของคุณ
+    _checkLogin(); // ฟังก์ชันเช็ค login ของคุณ
   }
 
-  Future<void> _checkLogin(tokenfcm) async {
+  Future<void> _checkLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final phone = prefs.getString('phone');
@@ -113,7 +113,6 @@ class _MyAppState extends State<MyApp> {
         final data = json.decode(response.body);
         final token = data['token'];
         await prefs.setString('token', token);
-        // await api_config.saveTokenFcmApi(tokenfcm, phone);
         setState(() {
           _startScreen = const MainLayout();
         });

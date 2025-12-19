@@ -12,7 +12,7 @@
     <application
         android:label="WashLover"
         android:name="${applicationName}"
-        android:icon="@mipmap/launch_image">
+        android:icon="@mipmap/launcher_icon">
 
         <!-- เพิ่ม API key ของ Google Maps -->
         <meta-data
@@ -44,8 +44,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-                <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="https" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
