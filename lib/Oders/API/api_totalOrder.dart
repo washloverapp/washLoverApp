@@ -36,6 +36,7 @@ class ApiPost {
         data: {
           "latitude": lat,
           "longitude": lng,
+          "cutomer_id": "0987654322"
         },
         options: Options(headers: header, validateStatus: (_) => true),
       );

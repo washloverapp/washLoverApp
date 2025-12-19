@@ -1,10 +1,120 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:my_flutter_mapwash/Notification/notification.dart';
 import 'package:my_flutter_mapwash/Profile/profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Header extends StatelessWidget {
+class Header extends StatefulWidget {
   const Header({super.key});
+
+  @override
+  State<Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends State<Header> {
+  bool _notificationEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationSetting();
+  }
+
+  void _loadNotificationSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _notificationEnabled = prefs.getBool('notification_enabled') ?? false;
+    });
+  }
+
+  void _showNotificationSetting(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool isEnabled = _notificationEnabled;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          content: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: isEnabled
+                          ? Colors.orange.withOpacity(0.15)
+                          : Colors.grey.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      child: Icon(
+                        isEnabled
+                            ? Icons.notifications_active
+                            : Icons.notifications_off,
+                        key: ValueKey(isEnabled),
+                        size: 72,
+                        color: isEnabled ? Colors.orange : Colors.grey,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'เปิด-ปิดแจ้งเตือนสถานะการส่งซัก',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2E435A)),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'เปิดหรือปิดการแจ้งเตือนเพื่อรับข้อมูลสถานะการส่งซักของคุณผ่านแอปพลิเคชัน',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'เปิดการแจ้งเตือน',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      Switch(
+                        value: isEnabled,
+                        activeColor: Colors.orange,
+                        onChanged: (value) async {
+                          setStateDialog(() {
+                            isEnabled = value;
+                          });
+                          setState(() {
+                            _notificationEnabled = value;
+                          });
+
+                          await prefs.setBool(
+                              'notification_enabled', value);
+
+                          // 🔔 Logic แจ้งเตือน (subscribe/unsubscribe)
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +123,7 @@ class Header extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: AppBar(
-          // backgroundColor: Color.fromRGBO(19, 108, 180, 1),
           backgroundColor: Color(0xFF42A5F5),
-
           elevation: 0,
           flexibleSpace: SafeArea(
             child: Padding(
@@ -23,71 +131,45 @@ class Header extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // โลโก้
                   Image.asset('assets/images/logo/Washloverwhite.png',
                       height: 60),
                   Row(
                     children: [
-                      // ปุ่มแจ้งเตือน
                       badges.Badge(
-                        position: badges.BadgePosition.topEnd(
-                            top: 3, end: 5), // ปรับตำแหน่งจุดแดง
+                        position: badges.BadgePosition.topEnd(top: 3, end: 5),
                         badgeStyle: badges.BadgeStyle(
-                          badgeColor: Colors.red, // สีของจุด
-                          padding: EdgeInsets.all(4), // ขนาดของจุดแดง
+                          badgeColor: Colors.red,
+                          padding: EdgeInsets.all(4),
                           elevation: 0,
                         ),
-                        badgeContent: SizedBox.shrink(), // ไม่มีตัวเลข
+                        badgeContent: SizedBox.shrink(),
                         child: Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Color(0xFFfdc607),
+                            color: _notificationEnabled
+                                ? Color(0xFFfdc607)
+                                : Colors.grey,
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: IconButton(
                             icon: Icon(
-                              Icons.notifications,
+                              _notificationEnabled
+                                  ? Icons.notifications_active
+                                  : Icons.notifications_off,
                               color: Colors.white,
                               size: 23,
                             ),
                             onPressed: () {
-                              
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => NotificationScreen()),
-                              // );
+                              _showNotificationSetting(context);
                             },
                             padding: EdgeInsets.zero,
                             constraints: BoxConstraints(),
                           ),
                         ),
                       ),
-                      SizedBox(width: 8),
-                      // ปุ่ม User
-                      // ElevatedButton.icon(
-                      //   onPressed: () {},
-                      //   label: Text(
-                      //     '098xxxx321',
-                      //     style: TextStyle(color: Color(0xFFfdc607)),
-                      //   ),
-                      //   icon: Icon(Icons.account_circle,
-                      //       color: Color(0xFFfdc607)),
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: Colors.white,
-                      //     padding: EdgeInsets.symmetric(
-                      //       horizontal: 16,
-                      //       vertical: 8,
-                      //     ),
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(8),
-                      //       side:
-                      //           BorderSide(color: Color(0xFFfdc607), width: 2),
-                      //     ),
-                      //   ),
-                      // ),
+                      const SizedBox(width: 8),
                       Container(
                         width: 38,
                         height: 38,
@@ -95,7 +177,7 @@ class Header extends StatelessWidget {
                           color: Colors.grey[400],
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        clipBehavior: Clip.hardEdge, // ทำให้รูปโค้งตามวงกลม
+                        clipBehavior: Clip.hardEdge,
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
@@ -105,12 +187,13 @@ class Header extends StatelessWidget {
                             );
                           },
                           child: Image.asset(
-                              'assets/images/collectionduck/Artboard25copy9.png', // 👈 เปลี่ยนเป็น path รูปของคุณ
-                              fit: BoxFit.contain),
+                            'assets/images/collectionduck/Artboard25copy9.png',
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                      )
+                      ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),

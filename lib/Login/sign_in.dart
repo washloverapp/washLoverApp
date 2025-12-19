@@ -39,7 +39,8 @@ class _SignInState extends State<SignIn> {
     final phone = _phoneController.text.trim();
     final password = _passwordController.text.trim();
     final prefs = await SharedPreferences.getInstance();
-    final endpoint = prefs.getString('endpoint');
+    final endpoint = prefs.getString('endpoint')?? 'https://members.washlover.com';
+    final tokenfcm = prefs.getString('fcm_token')?? '';
     //  prefs.clear();
     if (phone.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -63,6 +64,7 @@ class _SignInState extends State<SignIn> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        await api_config.saveTokenFcmApi(tokenfcm, phone);
         if (data['token'] != null) {
           final token = data['token'];
           // เก็บ token

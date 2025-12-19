@@ -104,25 +104,34 @@ class _ProfileState extends State<profile> {
           ),
           buildMenuItem(
             icon: Icons.account_balance_wallet,
-            text: "วอลเล็ท (${data['balance'] ?? 0} บาท)",
-            // onTap: () {},
+            text: "วอลเล็ท",
+            value: "(${data['balance'] ?? 0} คะแนน)",
           ),
           buildMenuItem(
             icon: Icons.star,
-            text: "แต้มสะสม (${data['points'] ?? 0} คะแนน)",
+            text: "แต้มสะสม",
+            value: "(${data['points'] ?? 0} คะแนน)",
             // onTap: () {},
           ),
           buildMenuItem(
             icon: Icons.local_laundry_service,
-            text:
-                "จำนวนครั้งที่ใช้บริการ (${data['service_count'] ?? 0} ครั้ง)",
+            text: "จำนวนครั้งที่ใช้บริการ",
+            value: " (${data['service_count'] ?? 0} ครั้ง)",
             // onTap: () {},
           ),
           buildMenuItem(
             icon: Icons.access_time,
-            text: "ใช้งานล่าสุด: ${data['last_active'] ?? '-'}",
+            text: "ใช้งานล่าสุด ${data['last_active'] ?? '-'}",
+            value: "",
             // onTap: () {},
           ),
+           buildMenuItem(
+            icon: Icons.access_time,
+            text: "รหัสประจำตัว ${data['device_id'] ?? '-'}",
+            value: "",
+            // onTap: () {},
+          ),
+          const SizedBox(height: 20),
           buildMenuItem22(
             icon: Icons.delete,
             text: "แจ้งลบบัญชี",
@@ -159,7 +168,8 @@ class _ProfileState extends State<profile> {
       ),
     );
   }
-Widget buildMenuItem22({
+
+  Widget buildMenuItem22({
     required IconData icon,
     required String text,
     required VoidCallback onTap,
@@ -175,19 +185,42 @@ Widget buildMenuItem22({
       ),
     );
   }
+
   Widget buildMenuItem({
     required IconData icon,
     required String text,
-    // required VoidCallback onTap,
+    required String value,
   }) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       color: Colors.white,
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blue.shade800),
-        title: Text(text, style: const TextStyle(fontSize: 16)),
-        // trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        // onTap: onTap,
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.blue.shade800),
+            const SizedBox(width: 12),
+
+            // ข้อความฝั่งซ้าย
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+
+            // ค่าอยู่ขวาสุด
+            Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -258,6 +291,7 @@ class EmptyNotificationPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 10),
+
               /// ข้อความอธิบาย
               Text(
                 "หากคุณต้องการลบบัญชีของคุณ กรุณาส่งอีเมลที่มีรายละเอียดดังนี้:\n\n- ชื่อ: $nickname \n- เบอร์โทรศัพท์: $phone \n- รหัสประจำตัวอุปกรณ์: $device_id\n\nไปที่อีเมล washloverapp@gmail.com",
@@ -289,7 +323,6 @@ class EmptyNotificationPage extends StatelessWidget {
           ),
         ),
       ),
-      
     );
   }
 }

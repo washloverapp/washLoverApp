@@ -17,7 +17,7 @@ class api_status {
           'Accept': 'application/json',
         },
       );
-
+      print("$token");
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 

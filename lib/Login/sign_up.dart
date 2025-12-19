@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_flutter_mapwash/api_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/theme.dart';
@@ -171,8 +172,8 @@ class _SignUpState extends State<SignUp> {
         }
       } else {
         print("Error reason: ${response.reasonPhrase}");
-        _showDialog("ผิดพลาด",
-            "พบข้อมูลสมาชิกนี้แล้ว (${response.statusCode})");
+        _showDialog(
+            "ผิดพลาด", "พบข้อมูลสมาชิกนี้แล้ว (${response.statusCode})");
       }
     } catch (e) {
       _showDialog("ผิดพลาด", "พบข้อมูลสมาชิกนี้แล้ว");
@@ -201,6 +202,8 @@ class _SignUpState extends State<SignUp> {
     final password = prefs.getString('password');
     final endpoint = prefs.getString('endpoint');
 
+    final tokenfcm = prefs.getString('fcm_token') ?? "";
+
     double currentLat = 13.7563;
     double currentLng = 100.5018;
 
@@ -219,6 +222,7 @@ class _SignUpState extends State<SignUp> {
           }),
         );
         if (response.statusCode == 200) {
+          await api_config.saveTokenFcmApi(tokenfcm, phone);
           final data = json.decode(response.body);
           await prefs.setString('token', data['token']);
           setState(() {

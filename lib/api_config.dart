@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class api_config {
   static String endpoint = ''; // ค่าเริ่มต้น
@@ -29,5 +31,40 @@ class api_config {
     } catch (e) {
       print('❌ โหลด endpoint ไม่สำเร็จ: $e');
     }
+  }
+
+ static Future<Map<String, dynamic>> saveTokenFcmApi(_tokenMobile,username) async {
+    final dio = Dio();
+    String path = 'https://fcm.washlover.com/api/add-subscription';
+    print(path);
+
+    // print(_username);
+    // print(_password);
+    var platform = 'android';
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      platform = 'ios';
+    }
+    print(platform);
+    var subData = {
+      'endpoint': "app://${platform}",
+      'keys': {'auth': "", 'p256dh': ""},
+      'token': _tokenMobile,
+      'platform': platform,
+    };
+    var dataJson = {'customer_id': username, 'subscription_json': subData};
+    final resApi = await dio.post(
+      path,
+      data: dataJson,
+      options: Options(validateStatus: (_) => true),
+    );
+    print('resApi-------saveTokenFcmApi');
+    print(resApi);
+    print('resApi-------saveTokenFcmApi==x');
+    print(resApi.statusCode);
+    Map<String, dynamic> res = Map<String, dynamic>();
+    if (resApi.statusCode == 200) {
+      res = resApi.data;
+    }
+    return {};
   }
 }
