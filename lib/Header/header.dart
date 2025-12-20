@@ -5,6 +5,8 @@ import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Notification/notification.dart';
 import 'package:my_flutter_mapwash/Profile/profile.dart';
 import 'package:my_flutter_mapwash/api_config.dart';
+import 'package:permission_handler/permission_handler.dart' as AppSettings;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Header extends StatefulWidget {
@@ -16,126 +18,111 @@ class Header extends StatefulWidget {
 
 class _HeaderState extends State<Header> {
   bool _notificationEnabled = false;
+  bool _notificationPermissionGranted = false;
 
   @override
   void initState() {
     super.initState();
-    _loadNotificationSetting();
+    _requestNotification();
   }
 
-  void _loadNotificationSetting() async {
-    final prefs = await SharedPreferences.getInstance();
-    final enabled = prefs.getBool('notification_enabled') ?? false;
-    setState(() {
-      _notificationEnabled = enabled;
-    });
-    print(_notificationEnabled);
-    setState(() {
-      _notificationEnabled = enabled;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _notificationEnabled) return;
-      if (!enabled) {
-        _showNotificationSetting(context);
-        return;
-      }
-      if (MainLayout.initialIndex == 4 && !enabled) {
-        _notificationEnabled = true;
-        _showNotificationSetting(context);
-      }
-    });
+  void _openAppSettings() {
+    AppSettings.openAppSettings();
   }
 
-  void _showNotificationSetting(BuildContext context) async {
+  Future<void> _requestNotification() async {
     final prefs = await SharedPreferences.getInstance();
-    bool isEnabled = prefs.getBool('notification_enabled') ?? false;
+    final bool fcmSent = prefs.getBool('fcm_token_sent') ?? false;
+    if (!mounted) return;
+    setState(() {
+      _notificationPermissionGranted = true;
+      _notificationEnabled = true;
+    });
+    // ส่ง FCM token แค่ครั้งแรก
+    if (!fcmSent) {
+      await api_config.saveTokenFcmApi();
+      await prefs.setBool('fcm_token_sent', true);
+    }
+  }
 
+  void _showNotificationSetting(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          content: StatefulBuilder(
-            builder: (context, setStateDialog) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: _notificationEnabled
+                      ? Colors.orange.withOpacity(0.15)
+                      : Colors.grey.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: Icon(
+                    _notificationEnabled
+                        ? Icons.notifications_active
+                        : Icons.notifications_off,
+                    key: ValueKey(_notificationEnabled),
+                    size: 72,
+                    color: _notificationEnabled ? Colors.orange : Colors.grey,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'เปิด-ปิดแจ้งเตือนสถานะการส่งซัก',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2E435A),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'เปิดหรือปิดการแจ้งเตือนเพื่อรับข้อมูลสถานะการส่งซักของคุณผ่านแอปพลิเคชัน',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 20),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: isEnabled
-                          ? Colors.orange.withOpacity(0.15)
-                          : Colors.grey.withOpacity(0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 250),
-                      child: Icon(
-                        isEnabled
-                            ? Icons.notifications_active
-                            : Icons.notifications_off,
-                        key: ValueKey(isEnabled),
-                        size: 72,
-                        color: isEnabled ? Colors.orange : Colors.grey,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
                   const Text(
-                    'เปิด-ปิดแจ้งเตือนสถานะการส่งซัก',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2E435A),
+                    'เปิด-ปิดการแจ้งเตือน',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange, // สีปุ่ม
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'เปิดหรือปิดการแจ้งเตือนเพื่อรับข้อมูลสถานะการส่งซักของคุณผ่านแอปพลิเคชัน',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 20),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'เปิดการแจ้งเตือน',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      Switch(
-                        value: isEnabled,
-                        activeColor: Colors.orange,
-                        onChanged: (value) async {
-                          setStateDialog(() {
-                            isEnabled = value;
-                          });
-
-                          setState(() {
-                            _notificationEnabled = value;
-                          });
-
-                          await prefs.setBool('notification_enabled', value);
-
-                          // 🔥 เปิด notification → ยิง FCM token
-                          if (value) {
-                            api_config.saveTokenFcmApi();
-                          } else {
-                            // optional: unsubscribe / delete token
-                            // api_config.deleteTokenFcmApi();
-                          }
-                        },
-                      ),
-                    ],
+                    onPressed: () {
+                      // เมื่อกด → เปิด Settings
+                      _openAppSettings();
+                    },
+                    child: const Text(
+                      'ไปที่การตั้งค่า',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
-              );
-            },
+              )
+            ],
           ),
         );
       },
@@ -147,13 +134,13 @@ class _HeaderState extends State<Header> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
+        preferredSize: const Size.fromHeight(80),
         child: AppBar(
-          backgroundColor: Color(0xFF42A5F5),
+          backgroundColor: const Color(0xFF42A5F5),
           elevation: 0,
           flexibleSpace: SafeArea(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -165,16 +152,16 @@ class _HeaderState extends State<Header> {
                         position: badges.BadgePosition.topEnd(top: 3, end: 5),
                         badgeStyle: badges.BadgeStyle(
                           badgeColor: Colors.red,
-                          padding: EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(4),
                           elevation: 0,
                         ),
-                        badgeContent: SizedBox.shrink(),
+                        badgeContent: const SizedBox.shrink(),
                         child: Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
                             color: _notificationEnabled
-                                ? Color(0xFFfdc607)
+                                ? const Color(0xFFfdc607)
                                 : Colors.grey,
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
@@ -191,7 +178,7 @@ class _HeaderState extends State<Header> {
                               _showNotificationSetting(context);
                             },
                             padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(),
+                            constraints: const BoxConstraints(),
                           ),
                         ),
                       ),
@@ -229,19 +216,19 @@ class _HeaderState extends State<Header> {
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
-                color: const Color.fromARGB(39, 180, 180, 180),
+                color: Color.fromARGB(39, 180, 180, 180),
                 blurRadius: 8,
                 spreadRadius: 0,
                 offset: Offset(0, 12),
               ),
             ],
           ),
-          child: Column(children: [Text('Main content goes here')]),
+          child: const Column(children: [Text('Main content goes here')]),
         ),
       ),
     );
