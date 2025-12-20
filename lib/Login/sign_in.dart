@@ -40,8 +40,9 @@ class _SignInState extends State<SignIn> {
     final password = _passwordController.text.trim();
     final prefs = await SharedPreferences.getInstance();
     final endpoint = prefs.getString('endpoint')?? 'https://members.washlover.com';
-    final tokenfcm = prefs.getString('fcm_token')?? '';
+    final tokenfcm = prefs.getString('fcmtoken');
     //  prefs.clear();
+    print(tokenfcm);
     if (phone.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('กรุณากรอกข้อมูลให้ครบถ้วน')),

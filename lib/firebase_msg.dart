@@ -19,7 +19,8 @@ class FirebaseMsg {
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
-      description: 'This channel is used for important notifications.', // description
+      description:
+          'This channel is used for important notifications.', // description
       importance: Importance.high,
     );
 
@@ -30,12 +31,14 @@ class FirebaseMsg {
     /// We use this channel in the `AndroidManifest.xml` file to override the
     /// default FCM channel to enable heads up notifications.
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     /// Update the iOS foreground notification presentation options to allow
     /// heads up notifications.
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
@@ -92,7 +95,6 @@ void handleFCMNavigation(RemoteMessage message) {
 
   // แปลง data payload ทั้งหมดให้เป็น Query Parameters
 
-  
   // Ex: /productDetail?id=P1001&category=watches
   // final Uri uri = Uri(
   //   path: path,
@@ -101,14 +103,14 @@ void handleFCMNavigation(RemoteMessage message) {
   //       if (entry.key != 'path') entry.key: entry.value.toString(),
   //   },
   // );
-  
+
   final navigator = navigatorKey.currentState;
   if (navigator == null) {
     debugPrint('❌ navigator ยังไม่พร้อม');
     return;
   }
 
-  MainLayout.initialIndex = 4; // ← แก้บั๊กจากโค้ดเดิม
+  MainLayout.initialIndex = 4;
 
   navigator.pushAndRemoveUntil(
     MaterialPageRoute(builder: (_) => const MainLayout()),
@@ -121,5 +123,3 @@ void handleFCMNavigation(RemoteMessage message) {
   // สั่งนำทางโดยใช้ Global Key
   // _rootNavigatorKey.currentContext?.go(targetPath);
 }
-
-

@@ -8,18 +8,14 @@ import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
 import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 import 'package:my_flutter_mapwash/Status/realtime_status.dart';
 
-
 import '../Chat_socket/chat_screen.dart';
-
 
 class Status extends StatefulWidget {
   const Status({super.key});
 
-
   @override
   _StatusState createState() => _StatusState();
 }
-
 
 class _StatusState extends State<Status> {
   List<dynamic> _statusData = [];
@@ -28,12 +24,10 @@ class _StatusState extends State<Status> {
   Timer? _timer;
   bool isStat = false;
 
-
   String apiKey = "DRIVER"; // 👈 ใส่ API KEY จริงของคุณ
   String? paymentStatus;
   // ใช้ orderId เป็น key
   Map<String, Future<Map<String, dynamic>?>> _futureCache = {};
-
 
   @override
   void initState() {
@@ -42,13 +36,11 @@ class _StatusState extends State<Status> {
     _startAutoRefresh();
   }
 
-
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
-
 
   void _startAutoRefresh() {
     // ยิงทุก 5 วินาที
@@ -59,8 +51,8 @@ class _StatusState extends State<Status> {
     });
   }
 
-
   Future<void> _loadStatus() async {
+    if (!mounted) return;
     try {
       List<dynamic> data = await api_status.fetchstatus();
       final filtered = data.where((e) => e['status'] != 4).toList();
@@ -69,11 +61,12 @@ class _StatusState extends State<Status> {
         status = _statusData[0]['status'];
       });
     } catch (e) {
+      if (!mounted) return; // 🔴 important
       print('Error loading status: $e');
+
       setState(() => _statusData = []);
     }
   }
-
 
   Future<Map<String, dynamic>?> _getFuture(
       String deviceId, String orderId) async {
@@ -86,7 +79,6 @@ class _StatusState extends State<Status> {
     return statusData;
   }
 
-
   String formatDate(String datetime) {
     try {
       DateTime parsedDate = DateTime.parse(datetime);
@@ -96,7 +88,6 @@ class _StatusState extends State<Status> {
     }
   }
 
-
   String formatTime(String datetime) {
     try {
       DateTime parsedDate = DateTime.parse(datetime);
@@ -105,7 +96,6 @@ class _StatusState extends State<Status> {
       return 'ออนไลน์';
     }
   }
-
 
   Map<String, dynamic> getStatusInfo(int status) {
     switch (status) {
@@ -120,10 +110,8 @@ class _StatusState extends State<Status> {
     }
   }
 
-
   Color getPaymentStatusColor(String status) {
     status = status.toLowerCase();
-
 
     if (status.contains("ชำระเงินเรียบร้อย") ||
         status.contains("success") ||
@@ -131,13 +119,11 @@ class _StatusState extends State<Status> {
       return Colors.green;
     }
 
-
     if (status.contains("รอ") ||
         status.contains("pending") ||
         status.contains("ค้างชำระ")) {
       return Colors.red;
     }
-
 
     if (status.contains("ไม่สำเร็จ") ||
         status.contains("fail") ||
@@ -145,13 +131,10 @@ class _StatusState extends State<Status> {
       return Colors.red;
     }
 
-
     return Colors.grey; // default
   }
 
-
   /// 2) เช็คสถานะการชำระเงิน
-
 
   Future<String> checkPaymentStatus(String orderId) async {
     final url =
@@ -168,7 +151,6 @@ class _StatusState extends State<Status> {
       return "เช็คสถานะไม่สำเร็จ";
     }
   }
-
 
   Widget _buildTransactionItem({
     required BuildContext context,
@@ -252,7 +234,6 @@ class _StatusState extends State<Status> {
             ],
           ),
 
-
           // ✅ เพิ่มไอคอน chat ที่ฝั่งขวา
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -295,7 +276,6 @@ class _StatusState extends State<Status> {
     );
   }
 
-
   Widget _buildEmptyStatus() {
     return Center(
       child: Column(
@@ -315,7 +295,6 @@ class _StatusState extends State<Status> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -345,9 +324,7 @@ class _StatusState extends State<Status> {
                   final orderStatus =
                       int.tryParse(order['status']?.toString() ?? '0') ?? 0;
 
-
                   if (orderStatus == 4) return const SizedBox.shrink();
-
 
                   final price = '5.0';
                   final deviceId = order['device_id'].toString();
@@ -360,7 +337,6 @@ class _StatusState extends State<Status> {
                       String apiText = '...';
                       Color apiColor = statusInfo['color'];
 
-
                       if (snapshotOrder.hasData && snapshotOrder.data != null) {
                         String rawStatus =
                             snapshotOrder.data!['status']?.toString() ?? '';
@@ -370,13 +346,11 @@ class _StatusState extends State<Status> {
                         apiColor = statusFromApi['color'];
                       }
 
-
                       return FutureBuilder<Map<String, dynamic>?>(
                         future: _getFuture(deviceId, orderId),
                         builder: (context, snapshotOrder) {
                           String apiText = '...';
                           Color apiColor = statusInfo['color'];
-
 
                           if (snapshotOrder.hasData &&
                               snapshotOrder.data != null) {
@@ -388,15 +362,12 @@ class _StatusState extends State<Status> {
                             apiColor = statusFromApi['color'];
                           }
 
-
                           return FutureBuilder<String>(
                             future: checkPaymentStatus(deviceId),
                             builder: (context, paySnap) {
                               String payText = "กำลังตรวจสอบ...";
 
-
                               if (paySnap.hasData) payText = paySnap.data!;
-
 
                               return Stack(
                                 clipBehavior: Clip.none,
@@ -430,6 +401,3 @@ class _StatusState extends State<Status> {
     );
   }
 }
-
-
-

@@ -69,17 +69,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _init() async {
-    var token = await FirebaseMessaging.instance.getToken();
+    // final token = await FirebaseMessaging.instance.getToken();
     final prefs = await SharedPreferences.getInstance();
     final enabled = prefs.getBool('notification_enabled') ?? false;
-    await prefs.setString('fcm_token', token ?? '');
-    print('token');
-    print(token);
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('🟡 คลิก Notification: นำทางจาก Background ด้วย GoRouter -- MyApp');
-      if (!enabled) {
-        handleFCMNavigation(message);
-      }
+      handleFCMNavigation(message);
     });
     await api_config.loadEndpoint();
     _checkLogin(); // ฟังก์ชันเช็ค login ของคุณ
@@ -118,7 +113,7 @@ class _MyAppState extends State<MyApp> {
         });
         return;
       } else {
-        await prefs.clear();
+        // await prefs.clear();
       }
     } catch (e) {
       debugPrint('Login check error: $e');

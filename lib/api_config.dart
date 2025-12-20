@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart'
@@ -36,19 +37,20 @@ class api_config {
 
   static Future<Map<String, dynamic>> saveTokenFcmApi() async {
     final prefs = await SharedPreferences.getInstance();
-    final _tokenMobile = prefs.getString('fcm_token') ?? '';
-    final username = prefs.getString('phone') ?? '';
+    final username = prefs.getString('phone');
+    final tokenMobile = await FirebaseMessaging.instance.getToken() ?? '';
     final dio = Dio();
     String path = 'https://fcm.washlover.com/api/add-subscription';
     var platform = 'android';
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       platform = 'ios';
     }
-    print(platform);
+    
+    print(tokenMobile);
     var subData = {
       'endpoint': "app://${platform}",
       'keys': {'auth': "", 'p256dh': ""},
-      'token': _tokenMobile,
+      'token': tokenMobile,
       'platform': platform,
     };
     var dataJson = {'customer_id': username, 'subscription_json': subData};

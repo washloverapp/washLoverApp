@@ -302,18 +302,19 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
-
-  Widget buildInfoRow3(String label1, String value1) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          buildInfoColumn3(label1, value1),
-        ],
-      ),
-    );
-  }
+Widget buildInfoRow3(String label1, String value1) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: buildInfoColumn3(label1, value1),
+        ),
+      ],
+    ),
+  );
+}
 
 
   Widget buildInfoRow(
