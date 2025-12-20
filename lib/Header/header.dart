@@ -95,12 +95,12 @@ class _HeaderState extends State<Header> {
               const SizedBox(height: 20),
               const Divider(),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'เปิด-ปิดการแจ้งเตือน',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
+                  // const Text(
+                  //   'เปิด-ปิดการแจ้งเตือน',
+                  //   style: TextStyle(fontWeight: FontWeight.w500),
+                  // ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange, // สีปุ่ม
