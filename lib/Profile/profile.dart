@@ -125,7 +125,7 @@ class _ProfileState extends State<profile> {
             value: "",
             // onTap: () {},
           ),
-           buildMenuItem(
+          buildMenuItem(
             icon: Icons.access_time,
             text: "รหัสประจำตัว ${data['device_id'] ?? '-'}",
             value: "",
@@ -306,19 +306,22 @@ class EmptyNotificationPage extends StatelessWidget {
               const SizedBox(height: 25),
 
               /// ลิงก์ด้านล่าง
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "กลับหน้าหลัก",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
+              Material(
+                color: Colors.transparent, // ถ้าไม่อยากให้ background มีสี
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    "กลับหน้าหลัก",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
-              ),
+              )
             ],
           ),
         ),
@@ -391,15 +394,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: InkWell(
-                    onTap: getImage,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.blue.shade800,
-                      radius: 18,
-                      child: const Icon(Icons.camera_alt, color: Colors.white),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: getImage,
+                      borderRadius: BorderRadius.circular(18),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue.shade800,
+                        radius: 18,
+                        child:
+                            const Icon(Icons.camera_alt, color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
+                )
               ],
             ),
             const SizedBox(height: 20),

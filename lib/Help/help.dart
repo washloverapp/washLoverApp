@@ -199,18 +199,24 @@ class _HelpState extends State<Help> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 30),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Image.asset(
-                    'assets/images/logo/logocolor.png',
-                    width: 200, // กำหนดขนาดภาพตามต้องการ
-                    height: 100,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+
+                const SizedBox(height: 130), // 👈 เผื่อพื้นที่ให้โลโก้
               ],
+            ),
+          ),
+
+          // ===== โลโก้มุมล่างขวา (แก้ถูกต้อง) =====
+          Positioned(
+            bottom: 16,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Image.asset(
+                'assets/images/logo/logocolor.png',
+                width: 200,
+                height: 100,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ],
@@ -252,7 +258,7 @@ class _HelpState extends State<Help> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),

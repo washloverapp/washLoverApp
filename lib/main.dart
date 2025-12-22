@@ -70,8 +70,6 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _init() async {
     // final token = await FirebaseMessaging.instance.getToken();
-    final prefs = await SharedPreferences.getInstance();
-    final enabled = prefs.getBool('notification_enabled') ?? false;
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('🟡 คลิก Notification: นำทางจาก Background ด้วย GoRouter -- MyApp');
       handleFCMNavigation(message);

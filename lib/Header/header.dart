@@ -191,7 +191,7 @@ class _HeaderState extends State<Header> {
                           borderRadius: BorderRadius.circular(100),
                         ),
                         clipBehavior: Clip.hardEdge,
-                        child: InkWell(
+                        child: GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,

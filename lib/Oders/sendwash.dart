@@ -15,15 +15,12 @@ import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 // import 'package:my_flutter_mapwash/Oders/total_order.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class sendwash extends StatefulWidget {
   const sendwash({super.key});
-
 
   @override
   _sendwashState createState() => _sendwashState();
 }
-
 
 class _sendwashState extends State<sendwash> {
   TextEditingController noteController = TextEditingController();
@@ -46,7 +43,6 @@ class _sendwashState extends State<sendwash> {
   String selectedAddress = ''; // ✅ ตัวแปรที่อยู่
   LatLng? selectedLatLng; // ✅ ตัวแปรพิกัด (nullable)
 
-
   String mapType(String type) {
     if (type == 'detergent') return 'detergent';
     if (type == 'softener') return 'softener';
@@ -56,16 +52,13 @@ class _sendwashState extends State<sendwash> {
     return type;
   }
 
-
   List<Map<String, dynamic>> detergentOptions = [];
   List<Map<String, dynamic>> softenerOptions = [];
   List<Map<String, dynamic>> washingOptions = [];
   List<Map<String, dynamic>> temperatureOptions = [];
   List<Map<String, dynamic>> dryerOptions = [];
 
-
   bool loading = true;
-
 
   Future<void> loadOptions() async {
     detergentOptions = await API_sendwash.getDefaultOptions('detergent');
@@ -77,12 +70,10 @@ class _sendwashState extends State<sendwash> {
     setState(() => loading = false);
   }
 
-
   Future<void> _saveSelection() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selection', json.encode(selectedOptions));
   }
-
 
   @override
   void initState() {
@@ -92,22 +83,18 @@ class _sendwashState extends State<sendwash> {
     loadOptions();
   }
 
-
   @override
   void dispose() {
     super.dispose();
   }
-
 
   Future<void> _loadStatus() async {
     try {
       List<dynamic> data = await api_status.fetchstatus();
       final filtered = data.where((e) => e['status'] == 1).toList();
 
-
       print(
           '_loadStatus: ${filtered.isNotEmpty ? filtered[0]['status'] : 'no data'}');
-
 
       if (filtered.isNotEmpty) {
         if (!mounted) return;
@@ -135,7 +122,6 @@ class _sendwashState extends State<sendwash> {
           },
         );
 
-
         if (!mounted) return;
         Navigator.pushAndRemoveUntil(
           context,
@@ -148,19 +134,16 @@ class _sendwashState extends State<sendwash> {
     }
   }
 
-
   bool isImagePickerActive = false;
   Future<void> _pickImage() async {
     if (isImagePickerActive) {
       return;
     }
 
-
     final ImagePicker _picker = ImagePicker();
     setState(() {
       isImagePickerActive = true;
     });
-
 
     try {
       final XFile? pickedFile =
@@ -178,7 +161,6 @@ class _sendwashState extends State<sendwash> {
       });
     }
   }
-
 
   void _nextPage() {
     print(_currentPage);
@@ -221,7 +203,6 @@ class _sendwashState extends State<sendwash> {
     }
   }
 
-
   void _prevPage() {
     print(_currentPage);
     if (_currentPage > 0) {
@@ -233,7 +214,6 @@ class _sendwashState extends State<sendwash> {
     }
   }
 
-
   void _updateQuantity(
     String key,
     String itemId,
@@ -242,12 +222,10 @@ class _sendwashState extends State<sendwash> {
     setState(() {
       selectedOptions.putIfAbsent(key, () => {});
 
-
       // เลือกได้หลายตัว
       selectedOptions[key]!.putIfAbsent(itemId, () => 0);
       int currentQuantity = selectedOptions[key]![itemId] ?? 0;
       int newQuantity = (currentQuantity + change).clamp(0, 99);
-
 
       if (newQuantity == 0) {
         selectedOptions[key]!.remove(itemId);
@@ -256,7 +234,6 @@ class _sendwashState extends State<sendwash> {
       }
     });
   }
-
 
   Future<void> _geoLocator() async {
     try {
@@ -289,7 +266,6 @@ class _sendwashState extends State<sendwash> {
       print("❌ เกิดข้อผิดพลาดใน _geoLocator: $e");
     }
   }
-
 
   Widget _buildClothingType() {
     // ✅ ดึงข้อมูลประเภทเสื้อผ้า
@@ -441,7 +417,6 @@ class _sendwashState extends State<sendwash> {
     );
   }
 
-
   Widget _buildDetergentSoftenerList(String type, String key) {
     String apiType = mapType(type);
     List<Map<String, dynamic>> options = _items
@@ -455,7 +430,6 @@ class _sendwashState extends State<sendwash> {
         options = softenerOptions;
       }
     }
-
 
     return GridView.builder(
       padding: EdgeInsets.all(10),
@@ -571,9 +545,7 @@ class _sendwashState extends State<sendwash> {
     );
   }
 
-
   Map<String, dynamic> selectedItems = {}; // เก็บ item ที่เลือก
-
 
   Widget _buildOptionList(String type, String key) {
     String apiType = mapType(type);
@@ -667,7 +639,6 @@ class _sendwashState extends State<sendwash> {
     );
   }
 
-
   Widget _buildNote() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -699,7 +670,6 @@ class _sendwashState extends State<sendwash> {
       ),
     );
   }
-
 
   Widget _buildBasketImage() {
     return Padding(
@@ -739,7 +709,6 @@ class _sendwashState extends State<sendwash> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -837,6 +806,3 @@ class _sendwashState extends State<sendwash> {
     );
   }
 }
-
-
-

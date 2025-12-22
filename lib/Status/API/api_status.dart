@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -67,6 +68,7 @@ class ApistatusOrder {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        ApisCartjob().getCartTotalPrice(deviceId);
         return data;
       } else {
         print(
@@ -77,5 +79,40 @@ class ApistatusOrder {
       print('❌ [$id] Error fetching destination status: $e');
       return null;
     }
+  }
+}
+
+class ApisCartjob {
+  /// ดึงสถานะปลายทางของอุปกรณ์ (device) แบบไม่ใช้ token
+  Future<String> getCartTotalPrice(String deviceId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    final endpoint = prefs.getString('endpoint');
+
+    final dio = Dio();
+    final headers = {'Authorization': 'Bearer $token'};
+
+    try {
+      final response = await dio.get(
+        '$endpoint/api/cart/$deviceId',
+        options: Options(headers: headers),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        final List items = data['items'];
+
+        int total = 0;
+        for (final item in items) {
+          total += (item['price'] as int) * (item['qty'] as int);
+        }
+
+        return total.toString(); // << ส่งกลับเป็น String
+      }
+    } catch (e) {
+      print("getCartTotalPrice error: $e");
+    }
+
+    return '0';
   }
 }

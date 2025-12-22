@@ -218,6 +218,9 @@ class _StatusState extends State<Status> {
               Text(
                 subtitle,
                 style: const TextStyle(fontSize: 13, color: Colors.grey),
+              ), Text(
+                device_id,
+                style: const TextStyle(fontSize: 13, color: Colors.grey),
               ),
               const SizedBox(height: 4),
               Container(

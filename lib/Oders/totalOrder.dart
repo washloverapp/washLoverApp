@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Chat/utils/utils.dart';
 import 'package:my_flutter_mapwash/Home/promotion.dart';
 import 'package:my_flutter_mapwash/Oders/API/api_totalOrder.dart';
+import 'package:my_flutter_mapwash/Oders/total_order.dart';
 import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 import 'package:http/http.dart' as http;
@@ -115,6 +116,10 @@ class _TotalOrderState extends State<TotalOrder> {
       if (succ.status) {
         status.messageJson = succ.messageJson;
         status.status = true;
+        var job_id = succ.messageJson['device_id'];
+        final sender = ApiTotalorder();
+        final order = await sender.loadOrderSummary();
+        await sender.clearCart(order, job_id);
       } else {
         print('Error loading history: ${json.encode(succ.messageJson)}');
         status.messageJson = succ.messageJson;

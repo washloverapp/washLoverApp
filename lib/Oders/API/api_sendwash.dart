@@ -50,36 +50,4 @@ class API_sendwash {
     }
     return [];
   }
-
-  // List<Map<String, dynamic>> getwashing(String type) {
-  //   return List.generate(4, (index) {
-  //     String sampleImage;
-  //     String typeselect;
-  //     switch (type) {
-  //       case 'washing':
-  //         sampleImage = 'assets/images/sakpa.png';
-  //         typeselect = 'เครื่องซักผ้า';
-  //         break;
-  //       case 'temperature':
-  //         sampleImage = 'assets/images/water01.png';
-  //         typeselect = 'อุณหภูมิน้ำ';
-  //         break;
-  //       case 'dryer':
-  //         sampleImage = 'assets/images/ooppa2.png';
-  //         typeselect = 'เครื่องอบผ้า';
-  //         break;
-  //       default:
-  //         sampleImage = 'assets/images/notag.png';
-  //         typeselect = 'น้ำยาซัก&ปรับผ้านุ่ม';
-  //     }
-
-  //     return {
-  //       'id': 'sample_${index + 1}',
-  //       'name': typeselect + index.toString(),
-  //       'image': sampleImage,
-  //       'price': 40 + index,
-  //       'type': type,
-  //     };
-  //   });
-  // }
 }

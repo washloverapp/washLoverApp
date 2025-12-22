@@ -135,7 +135,7 @@ class _ChatState extends ConsumerState<ChatScreen> {
                       Row(
                         spacing: 10,
                         children: [
-                          InkWell(
+                          GestureDetector(
                             onTap: () {
                               Navigator.of(context).pop();
                             },
@@ -170,7 +170,7 @@ class _ChatState extends ConsumerState<ChatScreen> {
                           ),
                         ],
                       ),
-                      InkWell(
+                      GestureDetector(
                         onTap: () {
                           showCupertinoModalPopup<void>(
                             context: context,

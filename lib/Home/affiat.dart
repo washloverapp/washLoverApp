@@ -244,32 +244,37 @@ class _ShareFriendScreenState extends State<ShareFriendScreen> {
     required VoidCallback onTap,
     bool isSmall = false,
   }) {
-    return InkWell(
-      onTap: onTap,
+    return Material(
+      color: Colors.transparent, // ไม่อยากให้พื้นหลังเปลี่ยน
       borderRadius: BorderRadius.circular(30),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: isSmall ? 14 : 20,
-          vertical: 10,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: const Color(0xFF1565C0), size: isSmall ? 18 : 20),
-            SizedBox(width: isSmall ? 6 : 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: const Color(0xFF1565C0),
-                fontWeight: FontWeight.bold,
-                fontSize: isSmall ? 13 : 15,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: isSmall ? 14 : 20,
+            vertical: 10,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon,
+                  color: const Color(0xFF1565C0), size: isSmall ? 18 : 20),
+              SizedBox(width: isSmall ? 6 : 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: const Color(0xFF1565C0),
+                  fontWeight: FontWeight.bold,
+                  fontSize: isSmall ? 13 : 15,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
