@@ -68,7 +68,6 @@ class ApistatusOrder {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        ApisCartjob().getCartTotalPrice(deviceId);
         return data;
       } else {
         print(
@@ -106,7 +105,7 @@ class ApisCartjob {
         for (final item in items) {
           total += (item['price'] as int) * (item['qty'] as int);
         }
-
+        print("Total Price: $total");
         return total.toString(); // << ส่งกลับเป็น String
       }
     } catch (e) {

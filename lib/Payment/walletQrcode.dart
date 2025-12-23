@@ -19,7 +19,6 @@ class Qrcode extends StatefulWidget {
   _QrcodeState createState() => _QrcodeState();
 }
 
-
 class _QrcodeState extends State<Qrcode> {
   String phone = '';
   String displayMessageStatus = "กำลังดำเนินการ";
@@ -128,6 +127,7 @@ class _QrcodeState extends State<Qrcode> {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+      print(data["data"]["status"]);
       if (data["data"]["status"] == "success") {
         setState(() {
           paymentStatus = "🎉 ชำระเงินเรียบร้อยแล้ว";

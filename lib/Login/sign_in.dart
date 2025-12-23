@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_flutter_mapwash/Login/google_in.dart';
 import 'package:my_flutter_mapwash/Login/sign_login_opt.dart';
 import 'package:my_flutter_mapwash/api_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -297,6 +298,27 @@ class _SignInState extends State<SignIn> {
               ),
             ),
           ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 16.0),
+          //   child: TextButton(
+          //     onPressed: () {
+          //       Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (_) => const LoginScreen()),
+          //       );
+          //     },
+          //     child: const Text(
+          //       'google',
+          //       style: TextStyle(
+          //         decoration: TextDecoration.underline,
+          //         color: Colors.white,
+          //         fontSize: 16.0,
+          //         fontFamily: 'WorkSansMedium',
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

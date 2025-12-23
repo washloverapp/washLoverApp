@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:my_flutter_mapwash/Chat/test.dart';
-import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
+import 'package:my_flutter_mapwash/Payment/statusQrcode.dart';
 import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 import 'package:my_flutter_mapwash/Status/realtime_status.dart';
 
@@ -134,6 +133,18 @@ class _StatusState extends State<Status> {
     return Colors.grey; // default
   }
 
+  Map<String, String> _priceCache = {};
+
+  Future<String> _getCartPriceOnce(String deviceId) async {
+    if (_priceCache.containsKey(deviceId)) {
+      return _priceCache[deviceId]!;
+    }
+
+    final price = await ApisCartjob().getCartTotalPrice(deviceId);
+    _priceCache[deviceId] = price;
+    return price;
+  }
+
   /// 2) เช็คสถานะการชำระเงิน
 
   Future<String> checkPaymentStatus(String orderId) async {
@@ -157,7 +168,7 @@ class _StatusState extends State<Status> {
     required IconData icon,
     required Color color,
     required String title,
-    required String subtitle,
+    required String datetime,
     required String amount,
     required String time,
     required String id,
@@ -176,15 +187,10 @@ class _StatusState extends State<Status> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Qrcode(),
-                settings: RouteSettings(
-                  arguments: {
-                    'totalPrice': totalPrice,
-                    'address': 'ไม่พบที่อยู่',
-                    'addressBranch': 'ไม่พบสาขาที่ใกล้ที่สุด',
-                    'coupon': '',
-                    'payment': 'manual',
-                  },
+                builder: (context) => StatusQrcodePage(
+                  id: id,
+                  deviceId: device_id,
+                  totalPrice: totalPrice,
                 ),
               ),
             );
@@ -196,6 +202,8 @@ class _StatusState extends State<Status> {
                 builder: (context) => realtime_status(
                   id: id,
                   deviceId: device_id,
+                  price: amount,
+                  datetime: datetime,
                 ),
               ),
             ).then((_) {
@@ -205,7 +213,7 @@ class _StatusState extends State<Status> {
         }
       },
       child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: color.withOpacity(0.2),
@@ -216,10 +224,7 @@ class _StatusState extends State<Status> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                subtitle,
-                style: const TextStyle(fontSize: 13, color: Colors.grey),
-              ), Text(
-                device_id,
+                datetime,
                 style: const TextStyle(fontSize: 13, color: Colors.grey),
               ),
               const SizedBox(height: 4),
@@ -242,7 +247,7 @@ class _StatusState extends State<Status> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
@@ -260,18 +265,17 @@ class _StatusState extends State<Status> {
                 ],
               ),
               const SizedBox(width: 8),
-              if (status != 1)
-                IconButton(
-                  icon: const Icon(Icons.chat, color: Colors.blueAccent),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatScreen(device_id),
-                      ),
-                    );
-                  },
-                ),
+              IconButton(
+                icon: const Icon(Icons.chat, color: Colors.blueAccent),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(device_id),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -372,25 +376,39 @@ class _StatusState extends State<Status> {
 
                               if (paySnap.hasData) payText = paySnap.data!;
 
-                              return Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  _buildTransactionItem(
-                                    context: context,
-                                    icon: Icons.online_prediction_sharp,
-                                    color: apiColor,
-                                    title: '$apiText',
-                                    subtitle:
-                                        "${formatDate(order['set_at'] ?? '')}",
-                                    amount: '$price',
-                                    time: formatTime(order['set_at'] ?? ''),
-                                    id: orderId,
-                                    device_id: deviceId,
-                                    status: status,
-                                    payment: order['payment'],
-                                    paymentStatusText: payText,
-                                  ),
-                                ],
+                              return FutureBuilder<String>(
+                                future: _getCartPriceOnce(deviceId),
+                                builder: (context, priceSnap) {
+                                  String price = '0';
+
+                                  if (priceSnap.connectionState ==
+                                      ConnectionState.waiting) {
+                                    price = '...';
+                                  } else if (priceSnap.hasData) {
+                                    price = priceSnap.data!;
+                                  }
+
+                                  return Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      _buildTransactionItem(
+                                        context: context,
+                                        icon: Icons.online_prediction_sharp,
+                                        color: apiColor,
+                                        title: apiText,
+                                        datetime:
+                                            formatDate(order['set_at'] ?? ''),
+                                        amount: price,
+                                        time: formatTime(order['set_at'] ?? ''),
+                                        id: orderId,
+                                        device_id: deviceId,
+                                        status: status,
+                                        payment: order['payment'],
+                                        paymentStatusText: payText,
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
                           );

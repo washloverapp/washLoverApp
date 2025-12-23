@@ -1,26 +1,26 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_flutter_mapwash/DirectionMap/direction_map.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:my_flutter_mapwash/Profile/API/api_profile.dart';
 import 'package:my_flutter_mapwash/Status/API/api_realtime_status.dart';
-import 'dart:math'; // เพิ่มการนำเข้าคลาส dart:math
-import 'dart:ui' as ui;
 import 'package:timeline_tile/timeline_tile.dart';
 
 class realtime_status extends StatefulWidget {
   final String id;
   final String deviceId;
+  final String price;
+  final String datetime;
 
   const realtime_status({
     super.key,
     required this.id,
     required this.deviceId,
+    required this.price,
+    required this.datetime,
   });
 
   @override
@@ -34,6 +34,12 @@ class _realtime_statusState extends State<realtime_status> {
   late GoogleMapController _mapController;
   Set<Marker> _markers = {};
   Map<String, dynamic> profileData = {};
+
+  get price => widget.price;
+  get deviceId => widget.deviceId;
+  get datetime => widget.datetime;
+
+  String placeName = '';
 
   Timer? _timer;
 
@@ -91,14 +97,12 @@ class _realtime_statusState extends State<realtime_status> {
 
   String? currentStatus;
   String? statusDescription;
-  DraggableScrollableController _sheetController = DraggableScrollableController();
+  DraggableScrollableController _sheetController =
+      DraggableScrollableController();
   double mapHeight = 0.0;
   @override
   void initState() {
     _sheetController.addListener(() {
-      print('Current fractional size: ${_sheetController.size}');
-      print('Current pixel height: ${_sheetController.pixels}');
-
       setState(() {
         mapHeight = _sheetController.pixels;
       });
@@ -121,8 +125,11 @@ class _realtime_statusState extends State<realtime_status> {
 
   Future<void> startRealtimeUpdates() async {
     await fetchRealtimeStatus();
+
     _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
-      await fetchRealtimeStatus();
+      if (mounted) {
+        await fetchRealtimeStatus();
+      }
     });
   }
 
@@ -139,7 +146,8 @@ class _realtime_statusState extends State<realtime_status> {
     if (_mapController == null) return;
 
     double tolerance = 0.00001;
-    bool samePoint = ((_lat - _latdri).abs() < tolerance) && ((_long - _longdri).abs() < tolerance);
+    bool samePoint = ((_lat - _latdri).abs() < tolerance) &&
+        ((_long - _longdri).abs() < tolerance);
     setState(() {
       _markers.clear();
       _polylines.clear();
@@ -178,8 +186,9 @@ class _realtime_statusState extends State<realtime_status> {
 
   // ฟังก์ชันหลักสำหรับดึงเส้นทางจาก API
   Future<void> _drawRoute() async {
-    final directionsService =
-        DirectionsService(googleApiKey: 'AIzaSyDEds_3tBG5jdPMRLZyBl1EJFo196mjNgs'); // ใส่ API Key ของคุณ
+    final directionsService = DirectionsService(
+        googleApiKey:
+            'AIzaSyDEds_3tBG5jdPMRLZyBl1EJFo196mjNgs'); // ใส่ API Key ของคุณ
     List<LatLng> routePoints = await directionsService.getRouteCoordinates(
       startLat: _latdri,
       startLng: _longdri,
@@ -224,9 +233,9 @@ class _realtime_statusState extends State<realtime_status> {
     final apiDriver = ApistatusDriver();
     final data = await apiCustomer.StReal(widget.deviceId, widget.id);
     final dtDri = await apiDriver.stDriver(widget.deviceId, widget.id);
-    print('data-------x3');
     print(data);
     if (data != null) {
+      if (!mounted) return;
       setState(() {
         _lat = data['latitude'];
         _long = data['longitude'];
@@ -243,6 +252,7 @@ class _realtime_statusState extends State<realtime_status> {
             .toString();
       });
       _updateMarkersAndPolylines();
+      placeName = await getPlaceName(_lat, _long);
     }
   }
 
@@ -255,6 +265,22 @@ class _realtime_statusState extends State<realtime_status> {
     } catch (e) {
       setState(() {});
     }
+  }
+
+  Future<String> getPlaceName(double lat, double lng) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks.first;
+        // เลือกฟิลด์ที่ต้องการ
+        return "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+      }
+    } catch (e) {
+      print("Error in reverse geocoding: $e");
+    }
+
+    return "ไม่พบสถานที่";
   }
 
   @override
@@ -322,7 +348,8 @@ class _realtime_statusState extends State<realtime_status> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 20.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -339,25 +366,35 @@ class _realtime_statusState extends State<realtime_status> {
                             ),
                             const SizedBox(height: 8.0),
                             ...deliveryStatuses.map((status) {
-                              bool isCurrentOrBefore = _isCurrentOrBefore(List<String>.from(status['status']!));
+                              bool isCurrentOrBefore = _isCurrentOrBefore(
+                                  List<String>.from(status['status']!));
                               return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 0.0),
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 0.0),
                                 child: TimelineTile(
                                   alignment: TimelineAlign.manual,
                                   lineXY: 0.0,
                                   isFirst: status == deliveryStatuses.first,
                                   isLast: status == deliveryStatuses.last,
                                   indicatorStyle: IndicatorStyle(
-                                    color: isCurrentOrBefore ? Colors.white : Colors.grey,
+                                    color: isCurrentOrBefore
+                                        ? Colors.white
+                                        : Colors.grey,
                                     iconStyle: IconStyle(
-                                      iconData: isCurrentOrBefore ? Icons.check_circle : Icons.cancel,
-                                      color:
-                                          isCurrentOrBefore ? Colors.green : const Color.fromARGB(101, 158, 158, 158),
+                                      iconData: isCurrentOrBefore
+                                          ? Icons.check_circle
+                                          : Icons.cancel,
+                                      color: isCurrentOrBefore
+                                          ? Colors.green
+                                          : const Color.fromARGB(
+                                              101, 158, 158, 158),
                                       fontSize: 22.0,
                                     ),
                                   ),
                                   beforeLineStyle: LineStyle(
-                                    color: isCurrentOrBefore ? Colors.green : Colors.grey,
+                                    color: isCurrentOrBefore
+                                        ? Colors.green
+                                        : Colors.grey,
                                     thickness: 2,
                                   ),
                                   endChild: Container(
@@ -367,7 +404,8 @@ class _realtime_statusState extends State<realtime_status> {
                                       left: 5.0,
                                       right: 0.0,
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 7.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 7.0),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[200],
                                       borderRadius: BorderRadius.circular(16.0),
@@ -392,7 +430,7 @@ class _realtime_statusState extends State<realtime_status> {
                           children: [
                             // แสดงชื่อสาขา
                             Text(
-                              "สาขา: สาขาดอนเมือง",
+                              "สาขา: ใกล้เคียง...",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -418,22 +456,16 @@ class _realtime_statusState extends State<realtime_status> {
                                 SizedBox(width: 6),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         member['phone'].toString(),
                                         style: TextStyle(fontSize: 16),
                                       ),
                                       Text(
-                                        "หทัยราษฎร์-ไทยรามัญ",
+                                        placeName,
                                         style: TextStyle(fontSize: 16),
-                                      ),
-                                      Text(
-                                        "VPW4+XC9 แขวงสามวาตะวันตก เขตคลองสามวา กรุงเทพมหานคร 10510",
-                                        softWrap: true,
-                                        style: TextStyle(fontSize: 16),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 3,
                                       ),
                                     ],
                                   ),
@@ -447,7 +479,8 @@ class _realtime_statusState extends State<realtime_status> {
                     SliverToBoxAdapter(
                       child: Card(
                         color: Colors.white,
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Column(
@@ -455,19 +488,25 @@ class _realtime_statusState extends State<realtime_status> {
                               // orderDetails["order_selects"]?.length ?? 0,
                               _orderDetails.length ?? 0,
                               (index) {
-                                // final product =
-                                //     orderDetails["order_selects"][index];
                                 final product = _orderDetails[index];
+                                final int qty = product["qty"] ?? 0;
+                                final double price =
+                                    (product["price"] ?? 0).toDouble();
+                                final double totalPrice = price * qty;
+
                                 return Column(
                                   children: [
                                     ListTile(
                                       contentPadding: EdgeInsets.zero,
                                       leading: Image.asset(
-                                        product["image"] ?? 'assets/images/default.png',
+                                        product["image"] ??
+                                            'assets/images/default.png',
                                         width: 50,
                                         height: 50,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) => Icon(Icons.image),
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Icon(Icons.image),
                                       ),
                                       title: Text(
                                         product["name"] ?? "ไม่มีชื่อสินค้า",
@@ -477,21 +516,25 @@ class _realtime_statusState extends State<realtime_status> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       subtitle: Text(
-                                        "จำนวน: ${product["quantity"] ?? 0}",
-                                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                                        "จำนวน: $qty",
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 13),
                                       ),
                                       trailing: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            "฿${product["price"] ?? 0} ",
-                                            style: TextStyle(color: Colors.orange, fontSize: 14),
+                                            "฿${totalPrice.toStringAsFixed(2)}", // ✅ แสดงราคาสุทธิ
+                                            style: TextStyle(
+                                                color: Colors.orange,
+                                                fontSize: 14),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    // คั่นแต่ละรายการด้วยเส้นแบ่ง
                                   ],
                                 );
                               },
@@ -511,9 +554,11 @@ class _realtime_statusState extends State<realtime_status> {
                               color: Colors.grey[100],
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card
+                                borderRadius: BorderRadius.circular(
+                                    8), // ทำมุมโค้งให้ Card
                               ),
-                              margin: EdgeInsets.only(bottom: 16), // เพิ่ม margin ใต้ Card
+                              margin: EdgeInsets.only(
+                                  bottom: 16), // เพิ่ม margin ใต้ Card
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
@@ -527,9 +572,11 @@ class _realtime_statusState extends State<realtime_status> {
                                       ),
                                     ),
                                     Container(
-                                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("ยอดรวมก่อนส่วนลด"),
                                           Text(
@@ -540,9 +587,11 @@ class _realtime_statusState extends State<realtime_status> {
                                       ),
                                     ),
                                     Container(
-                                      padding: EdgeInsets.symmetric(vertical: 4.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 4.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("ค่าจัดส่ง"),
                                           Text(
@@ -553,9 +602,11 @@ class _realtime_statusState extends State<realtime_status> {
                                       ),
                                     ),
                                     Container(
-                                      padding: EdgeInsets.symmetric(vertical: 4.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 4.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("ส่วนลด"),
                                           Text(
@@ -567,9 +618,11 @@ class _realtime_statusState extends State<realtime_status> {
                                     ),
                                     Divider(),
                                     Container(
-                                      padding: EdgeInsets.symmetric(vertical: 4.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 4.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             "ยอดชำระ",
@@ -579,10 +632,11 @@ class _realtime_statusState extends State<realtime_status> {
                                             ),
                                           ),
                                           Text(
-                                            "฿0.00",
+                                            "฿$price",
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
+                                              color: Colors.orange,
                                             ),
                                           ),
                                         ],
@@ -598,7 +652,8 @@ class _realtime_statusState extends State<realtime_status> {
                               color: Colors.grey[100],
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card
+                                borderRadius: BorderRadius.circular(
+                                    8), // ทำมุมโค้งให้ Card
                               ),
                               margin: EdgeInsets.only(bottom: 16),
                               child: Padding(
@@ -615,12 +670,15 @@ class _realtime_statusState extends State<realtime_status> {
                                     ),
                                     Divider(),
                                     Container(
-                                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("วิธีการชำระเงิน"),
-                                          Text("QrCode", style: TextStyle(fontSize: 16)),
+                                          Text("qrcode",
+                                              style: TextStyle(fontSize: 16)),
                                         ],
                                       ),
                                     ),
@@ -634,7 +692,8 @@ class _realtime_statusState extends State<realtime_status> {
                               color: Colors.grey[100],
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card
+                                borderRadius: BorderRadius.circular(
+                                    8), // ทำมุมโค้งให้ Card
                               ),
                               margin: EdgeInsets.only(bottom: 16),
                               child: Padding(
@@ -642,28 +701,36 @@ class _realtime_statusState extends State<realtime_status> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Text(
+                                      "หมายเลขออเดอร์",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     Row(
                                       children: [
-                                        Text(
-                                          "หมายเลขออเดอร์",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
                                         SizedBox(width: 8),
-                                        Spacer(),
-                                        Text(
-                                          "#sefkeefsef",
-                                          style: TextStyle(fontSize: 14),
+                                        Expanded(
+                                          child: Text(
+                                            "$deviceId",
+                                            style: TextStyle(fontSize: 14),
+                                            maxLines: 2, // แสดงได้ 2 บรรทัด
+                                            overflow: TextOverflow
+                                                .ellipsis, // แสดง ... เมื่อข้อความยาว
+                                          ),
                                         ),
                                         IconButton(
                                           icon: Icon(Icons.copy),
                                           onPressed: () {
-                                            Clipboard.setData(ClipboardData(text: 'code')).then((_) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
+                                            Clipboard.setData(ClipboardData(
+                                                    text: deviceId ?? ''))
+                                                .then((_) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
                                                 SnackBar(
-                                                  content: Text('คัดลอกหมายเลขออเดอร์แล้ว'),
+                                                  content: Text(
+                                                      'คัดลอกหมายเลขออเดอร์แล้ว'),
                                                 ),
                                               );
                                             });
@@ -673,13 +740,15 @@ class _realtime_statusState extends State<realtime_status> {
                                     ),
                                     Divider(),
                                     Container(
-                                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("วันที่สั่งออเดอร์"),
                                           Text(
-                                            "datetime",
+                                            datetime,
                                             style: TextStyle(fontSize: 16),
                                           ),
                                         ],
@@ -714,7 +783,8 @@ class _realtime_statusState extends State<realtime_status> {
       );
       // หาค่าของ statusIndex โดยเช็คว่า status ที่ส่งมามีอยู่ใน List ของ 'status'
       int statusIndex = deliveryStatuses.indexWhere(
-        (s) => (s['status'] as List<String>).any((item) => statusList.contains(item)),
+        (s) => (s['status'] as List<String>)
+            .any((item) => statusList.contains(item)),
       );
       // ตรวจสอบว่า statusIndex อยู่ก่อน currentIndex หรือไม่
       return statusIndex <= currentIndex;
