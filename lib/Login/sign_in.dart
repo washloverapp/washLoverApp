@@ -1,15 +1,16 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_flutter_mapwash/Login/google_in.dart';
-import 'package:my_flutter_mapwash/Login/sign_login_opt.dart';
+import 'package:my_flutter_mapwash/Login/auth_wrapper.dart';
+// import 'package:my_flutter_mapwash/Login/sign_login_opt.dart';
 import 'package:my_flutter_mapwash/api_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout_NOaccount.dart';
-import 'package:my_flutter_mapwash/Header/snackbar.dart';
+// import 'package:my_flutter_mapwash/Header/snackbar.dart';
 import 'package:my_flutter_mapwash/theme.dart';
 
 class SignIn extends StatefulWidget {
@@ -40,7 +41,8 @@ class _SignInState extends State<SignIn> {
     final phone = _phoneController.text.trim();
     final password = _passwordController.text.trim();
     final prefs = await SharedPreferences.getInstance();
-    final endpoint = prefs.getString('endpoint')?? 'https://members.washlover.com';
+    final endpoint =
+        prefs.getString('endpoint') ?? 'https://members.washlover.com';
     final tokenfcm = prefs.getString('fcmtoken');
     //  prefs.clear();
     print(tokenfcm);
@@ -86,7 +88,8 @@ class _SignInState extends State<SignIn> {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('ระบุข้อมูลไม่ถูกต้อง: ${response.statusCode}')),
+          SnackBar(
+              content: Text('ระบุข้อมูลไม่ถูกต้อง: ${response.statusCode}')),
         );
       }
     } catch (e) {
@@ -280,11 +283,19 @@ class _SignInState extends State<SignIn> {
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+
+                // เปิดโหมดไม่ระบุตัวตน
+                await prefs.setString('incognito', 'incognito');
+
+                // เปลี่ยนหน้า (ล้าง stack เดิม)
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => const NO_accountMainLayout()),
+                    builder: (_) => const MainLayout(),
+                  ),
+                  (route) => false,
                 );
               },
               child: const Text(
@@ -298,14 +309,14 @@ class _SignInState extends State<SignIn> {
               ),
             ),
           ),
+
           // Padding(
           //   padding: const EdgeInsets.only(top: 16.0),
           //   child: TextButton(
           //     onPressed: () {
           //       Navigator.pushReplacement(
           //         context,
-          //         MaterialPageRoute(
-          //             builder: (_) => const LoginScreen()),
+          //         MaterialPageRoute(builder: (_) => AuthWrapper()),
           //       );
           //     },
           //     child: const Text(

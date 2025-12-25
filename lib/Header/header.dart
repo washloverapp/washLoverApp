@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
-import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
-import 'package:my_flutter_mapwash/Notification/notification.dart';
 import 'package:my_flutter_mapwash/Profile/profile.dart';
 import 'package:my_flutter_mapwash/api_config.dart';
 import 'package:permission_handler/permission_handler.dart' as AppSettings;
@@ -19,26 +17,52 @@ class Header extends StatefulWidget {
 class _HeaderState extends State<Header> {
   bool _notificationEnabled = false;
   bool _notificationPermissionGranted = false;
+  bool _incognito = false;
 
   @override
   void initState() {
     super.initState();
+    _loadIncognito();
     _requestNotification();
+  }
+
+  /// โหลดสถานะ Incognito
+  Future<void> _loadIncognito() async {
+    final prefs = await SharedPreferences.getInstance();
+    final incognitoValue = prefs.getString('incognito') ?? '';
+
+    if (!mounted) return;
+    setState(() {
+      _incognito = incognitoValue.isNotEmpty;
+    });
   }
 
   void _openAppSettings() {
     AppSettings.openAppSettings();
   }
 
+  /// ขอสิทธิ์แจ้งเตือน (ปิดอัตโนมัติถ้า incognito)
   Future<void> _requestNotification() async {
     final prefs = await SharedPreferences.getInstance();
+    final incognitoValue = prefs.getString('incognito') ?? '';
+
+    if (incognitoValue.isNotEmpty) {
+      if (!mounted) return;
+      setState(() {
+        _notificationEnabled = false;
+        _notificationPermissionGranted = false;
+      });
+      return;
+    }
+
     final bool fcmSent = prefs.getBool('fcm_token_sent') ?? false;
+
     if (!mounted) return;
     setState(() {
       _notificationPermissionGranted = true;
       _notificationEnabled = true;
     });
-    // ส่ง FCM token แค่ครั้งแรก
+
     if (!fcmSent) {
       await api_config.saveTokenFcmApi();
       await prefs.setBool('fcm_token_sent', true);
@@ -64,16 +88,12 @@ class _HeaderState extends State<Header> {
                       : Colors.grey.withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
-                  child: Icon(
-                    _notificationEnabled
-                        ? Icons.notifications_active
-                        : Icons.notifications_off,
-                    key: ValueKey(_notificationEnabled),
-                    size: 72,
-                    color: _notificationEnabled ? Colors.orange : Colors.grey,
-                  ),
+                child: Icon(
+                  _notificationEnabled
+                      ? Icons.notifications_active
+                      : Icons.notifications_off,
+                  size: 72,
+                  color: _notificationEnabled ? Colors.orange : Colors.grey,
                 ),
               ),
               const SizedBox(height: 20),
@@ -94,34 +114,20 @@ class _HeaderState extends State<Header> {
               ),
               const SizedBox(height: 20),
               const Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // const Text(
-                  //   'เปิด-ปิดการแจ้งเตือน',
-                  //   style: TextStyle(fontWeight: FontWeight.w500),
-                  // ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange, // สีปุ่ม
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                    ),
-                    onPressed: () {
-                      // เมื่อกด → เปิด Settings
-                      _openAppSettings();
-                    },
-                    child: const Text(
-                      'ไปที่การตั้งค่า',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                ],
-              )
+                ),
+                onPressed: _openAppSettings,
+                child: const Text(
+                  'ไปที่การตั้งค่า',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
             ],
           ),
         );
@@ -132,11 +138,11 @@ class _HeaderState extends State<Header> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _incognito ? Colors.black : Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
-          backgroundColor: const Color(0xFF42A5F5),
+          backgroundColor: _incognito ? Colors.black : const Color(0xFF42A5F5),
           elevation: 0,
           flexibleSpace: SafeArea(
             child: Padding(
@@ -144,17 +150,21 @@ class _HeaderState extends State<Header> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset('assets/images/logo/Washloverwhite.png',
-                      height: 60),
+                  Image.asset(
+                    'assets/images/logo/Washloverwhite.png',
+                    height: 60,
+                  ),
+                  Text( 
+                    _incognito ? 'โหมดไม่ระบุตัวตน' : '',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   Row(
                     children: [
                       badges.Badge(
-                        position: badges.BadgePosition.topEnd(top: 3, end: 5),
-                        badgeStyle: badges.BadgeStyle(
-                          badgeColor: Colors.red,
-                          padding: const EdgeInsets.all(4),
-                          elevation: 0,
-                        ),
                         badgeContent: const SizedBox.shrink(),
                         child: Container(
                           width: 40,
@@ -177,28 +187,20 @@ class _HeaderState extends State<Header> {
                             onPressed: () {
                               _showNotificationSetting(context);
                             },
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => profile()),
-                            );
-                          },
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => profile()),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 19,
+                          backgroundColor: Colors.grey[400],
                           child: Image.asset(
                             'assets/images/collectionduck/Artboard25copy9.png',
                             fit: BoxFit.contain,
@@ -213,22 +215,9 @@ class _HeaderState extends State<Header> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                color: Color.fromARGB(39, 180, 180, 180),
-                blurRadius: 8,
-                spreadRadius: 0,
-                offset: Offset(0, 12),
-              ),
-            ],
-          ),
-          child: const Column(children: [Text('Main content goes here')]),
+      body: const SafeArea(
+        child: Center(
+          child: Text('Main content goes here'),
         ),
       ),
     );

@@ -12,7 +12,12 @@
           "package_name": "com.washlover.washlover"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "113772128014-4d5qfeq2hdiv26lfhasmg4igdkcrg6qg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDcHqdRAvOlJe_vs9d3HQEZ6Dt253dfpd8"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "113772128014-4d5qfeq2hdiv26lfhasmg4igdkcrg6qg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "113772128014-sad7curj9kndjku7c3i0iinqgr0if1o1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.washlover.washlover"
+              }
+            }
+          ]
         }
       }
     }

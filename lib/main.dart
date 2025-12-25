@@ -15,7 +15,7 @@ import 'package:my_flutter_mapwash/api_config.dart';
 import 'package:my_flutter_mapwash/app_navigator.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseMsg.setupFlutterNotifications();
   FirebaseMsg.showFlutterNotification(message);
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -133,3 +133,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
