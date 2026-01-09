@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_flutter_mapwash/Login/auth_wrapper.dart';
@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
-import 'package:my_flutter_mapwash/Layouts/main_layout_NOaccount.dart';
+// import 'package:my_flutter_mapwash/Layouts/main_layout_NOaccount.dart';
 // import 'package:my_flutter_mapwash/Header/snackbar.dart';
 import 'package:my_flutter_mapwash/theme.dart';
 
@@ -309,27 +309,41 @@ class _SignInState extends State<SignIn> {
               ),
             ),
           ),
-
-          // Padding(
-          //   padding: const EdgeInsets.only(top: 16.0),
-          //   child: TextButton(
-          //     onPressed: () {
-          //       Navigator.pushReplacement(
-          //         context,
-          //         MaterialPageRoute(builder: (_) => AuthWrapper()),
-          //       );
-          //     },
-          //     child: const Text(
-          //       'google',
-          //       style: TextStyle(
-          //         decoration: TextDecoration.underline,
-          //         color: Colors.white,
-          //         fontSize: 16.0,
-          //         fontFamily: 'WorkSansMedium',
-          //       ),
-          //     ),
-          //   ),
-          // ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, // ปุ่มสีขาว
+                foregroundColor: Colors.black, // ตัวอักษรสีดำ
+                minimumSize: const Size(200, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              onPressed: () async {
+                final googleAuth = GoogleAuth();
+                await googleAuth.signInWithGoogle(context);
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/google.png',
+                    height: 24,
+                    width: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Sign in with Google',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );

@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_flutter_mapwash/Login/login_page.dart';
 import 'package:my_flutter_mapwash/api_config.dart';
 import 'package:my_flutter_mapwash/app_navigator.dart';
+// import 'package:my_flutter_mapwash/auth_wrapper.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -69,7 +70,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _init() async {
-    // final token = await FirebaseMessaging.instance.getToken();
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('🟡 คลิก Notification: นำทางจาก Background ด้วย GoRouter -- MyApp');
       handleFCMNavigation(message);
@@ -133,4 +133,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
