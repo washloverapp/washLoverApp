@@ -1,7 +1,9 @@
 import 'dart:convert';
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:my_flutter_mapwash/Login/auth_wrapper.dart';
 // import 'package:my_flutter_mapwash/Login/sign_login_opt.dart';
 import 'package:my_flutter_mapwash/api_config.dart';
@@ -29,6 +31,8 @@ class _SignInState extends State<SignIn> {
 
   bool _obscurePassword = true;
   bool _isLoading = false;
+  
+  String slert = '1';
 
   @override
   void initState() {
@@ -159,192 +163,224 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 40.0),
-      child: Column(
-        children: <Widget>[
-          Stack(
-            alignment: Alignment.topCenter,
-            children: <Widget>[
-              Card(
-                elevation: 2.0,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
-                child: SizedBox(
-                  width: 350.0,
-                  height: 160.0,
-                  child: Column(
-                    children: <Widget>[
-                      _buildTextField(
-                        hint: 'เบอร์โทรศัพท์',
-                        icon: FontAwesomeIcons.phone,
-                        controller: _phoneController,
-                        focusNode: _focusPhone,
-                        nextFocus: _focusPassword,
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 40),
+
+                /// ===== Login Card =====
+                Stack(
+                  alignment: Alignment.topCenter,
+                  children: <Widget>[
+                    Card(
+                      elevation: 2.0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                      Container(
-                          width: 250.0, height: 1.0, color: Colors.grey[400]),
-                      _buildTextField(
-                        hint: 'PINN',
-                        icon: FontAwesomeIcons.key,
-                        controller: _passwordController,
-                        focusNode: _focusPassword,
-                        isPassword: true,
+                      child: SizedBox(
+                        width: 350.0,
+                        height: 160.0,
+                        child: Column(
+                          children: <Widget>[
+                            _buildTextField(
+                              hint: 'เบอร์โทรศัพท์',
+                              icon: FontAwesomeIcons.phone,
+                              controller: _phoneController,
+                              focusNode: _focusPhone,
+                              nextFocus: _focusPassword,
+                            ),
+                            Container(
+                              width: 250.0,
+                              height: 1.0,
+                              color: Colors.grey[400],
+                            ),
+                            _buildTextField(
+                              hint: 'PINN',
+                              icon: FontAwesomeIcons.key,
+                              controller: _passwordController,
+                              focusNode: _focusPassword,
+                              isPassword: true,
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 140.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFF8E75), Color(0xFFFDC569)],
-                    begin: FractionalOffset(0.2, 0.2),
-                    end: FractionalOffset(1.0, 1.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: Color(0xFFFDC569),
-                        offset: Offset(1.0, 6.0),
-                        blurRadius: 20.0),
-                    BoxShadow(
-                        color: Color(0xFFFF8E75),
-                        offset: Offset(1.0, 6.0),
-                        blurRadius: 20.0),
+                    ),
+
+                    /// ===== Login Button =====
+                    Container(
+                      margin: const EdgeInsets.only(top: 140.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFF8E75), Color(0xFFFDC569)],
+                          begin: FractionalOffset(0.2, 0.2),
+                          end: FractionalOffset(1.0, 1.0),
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0xFFFDC569),
+                            offset: Offset(1.0, 6.0),
+                            blurRadius: 20.0,
+                          ),
+                          BoxShadow(
+                            color: Color(0xFFFF8E75),
+                            offset: Offset(1.0, 6.0),
+                            blurRadius: 20.0,
+                          ),
+                        ],
+                      ),
+                      child: MaterialButton(
+                        highlightColor: Colors.transparent,
+                        splashColor: CustomTheme.loginGradientEnd,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 42.0,
+                          vertical: 10.0,
+                        ),
+                        onPressed: _handleLogin,
+                        child: const Text(
+                          'LOGIN',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 25.0,
+                            fontFamily: 'WorkSansBold',
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                child: MaterialButton(
-                  highlightColor: Colors.transparent,
-                  splashColor: CustomTheme.loginGradientEnd,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 42.0, vertical: 10.0),
-                  onPressed: _handleLogin,
-                  child: const Text(
-                    'LOGIN',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25.0,
-                      fontFamily: 'WorkSansBold',
+
+                const SizedBox(height: 40),
+
+                /// ===== Divider =====
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _buildDivider(),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text(
+                        'Washlover',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                          fontFamily: 'WorkSansMedium',
+                        ),
+                      ),
+                    ),
+                    _buildDivider(reverse: true),
+                  ],
+                ),
+
+                /// ===== Incognito Login =====
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: TextButton(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('incognito', 'incognito');
+
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const MainLayout(),
+                        ),
+                        (route) => false,
+                      );
+                    },
+                    child: const Text(
+                      'เข้าสู่ระบบไม่ระบุตัวตน',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        fontFamily: 'WorkSansMedium',
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 100.0,
-                height: 1.0,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white10, Colors.white],
-                    begin: FractionalOffset(0.0, 0.0),
-                    end: FractionalOffset(1.0, 1.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
-                  ),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.0),
-                child: Text(
-                  'Washlover',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
-                    fontFamily: 'WorkSansMedium',
-                  ),
-                ),
-              ),
-              Container(
-                width: 100.0,
-                height: 1.0,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white, Colors.white10],
-                    begin: FractionalOffset(0.0, 0.0),
-                    end: FractionalOffset(1.0, 1.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: TextButton(
-              onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
 
-                // เปิดโหมดไม่ระบุตัวตน
-                await prefs.setString('incognito', 'incognito');
+                /// ===== Google Login =====
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: const Size(200, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    onPressed: () async {
+                      final googleAuth = GoogleAuth();
+                      await googleAuth.signInWithGoogle(context);
 
-                // เปลี่ยนหน้า (ล้าง stack เดิม)
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const MainLayout(),
-                  ),
-                  (route) => false,
-                );
-              },
-              child: const Text(
-                'เข้าสู่ระบบไม่ระบุตัวตน',
-                style: TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: Colors.white,
-                  fontSize: 16.0,
-                  fontFamily: 'WorkSansMedium',
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white, // ปุ่มสีขาว
-                foregroundColor: Colors.black, // ตัวอักษรสีดำ
-                minimumSize: const Size(200, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-              ),
-              onPressed: () async {
-                final googleAuth = GoogleAuth();
-                await googleAuth.signInWithGoogle(context);
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    'assets/images/google.png',
-                    height: 24,
-                    width: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'Sign in with Google',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                      // ถ้าต้องการ user สามารถดึงจาก FirebaseAuth
+                      final user = FirebaseAuth.instance.currentUser;
+                      if (user != null) {
+                        setState(() {
+                          slert = 'Login success: ${user.email}';
+                        });
+                      } else {
+                        setState(() {
+                          slert = 'ailed: null';
+                        });
+                      }
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/images/google.png',
+                          height: 24,
+                          width: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Sign in with Google',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          '\n ${slert} \n ',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          )
-        ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider({bool reverse = false}) {
+    return Container(
+      width: 100.0,
+      height: 1.0,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: reverse
+              ? [Colors.white, Colors.white10]
+              : [Colors.white10, Colors.white],
+        ),
       ),
     );
   }
