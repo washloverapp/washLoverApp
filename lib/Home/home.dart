@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Help/help.dart';
+import 'package:my_flutter_mapwash/Home/API/api_account.dart';
 import 'package:my_flutter_mapwash/Home/account.dart';
 import 'package:my_flutter_mapwash/Home/affiat.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
@@ -17,6 +18,34 @@ class home extends StatefulWidget {
 }
 
 class _homeState extends State<home> {
+  String credit = "Loading...";
+  String point_h = "Loading...";
+
+  Future<void> _loadUserData() async {
+    var userData = await API_account.fetchapiaccount();
+    if (userData != null) {
+      setState(() {
+        if (userData['credit'] == null) {
+          userData['credit'] = 0;
+          credit = userData['credit'].toString();
+        } else {
+          credit = userData['credit'].toString();
+        }
+        if (userData['points'] == null) {
+          userData['points'] = 0;
+        } else {
+          point_h = userData['points'].toString();
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +92,7 @@ class _homeState extends State<home> {
                         height: 60,
                       ),
                       "ยอดเงิน",
-                      "0฿",
+                      "${credit}฿",
                     ),
                     _walletItem(
                         Image.asset(
@@ -72,7 +101,7 @@ class _homeState extends State<home> {
                           height: 60,
                         ),
                         "Points",
-                        "0"),
+                        point_h),
                     _walletItem(
                         Image.asset(
                           "assets/images/collectionduck/Artboard17.png",

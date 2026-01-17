@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
+import 'package:my_flutter_mapwash/Home/API/api_account.dart';
 import 'package:my_flutter_mapwash/Home/API/api_history.dart';
+import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class History extends StatefulWidget {
@@ -13,37 +15,55 @@ class History extends StatefulWidget {
 class _HistoryState extends State<History> {
   static const Color lightBlue = Color(0xFFE8F1FF);
   static const Color primaryBlue = Color(0xFF1E62F9);
+  Map<String, String> _priceCache = {};
+  List<dynamic> _historyData = [];
+ String credit = "Loading...";
+  String point_h = "Loading...";
 
+  Future<void> _loadUserData() async {
+    var userData = await API_account.fetchapiaccount();
+    if (userData != null) {
+      setState(() {
+        if (userData['credit'] == null) {
+          userData['credit'] = 0;
+          credit = userData['credit'].toString();
+        } else {
+          credit = userData['credit'].toString();
+        }
+        if (userData['points'] == null) {
+          userData['points'] = 0;
+        } else {
+          point_h = userData['points'].toString();
+        }
+      });
+    }
+  }
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     _loadHistory();
   }
 
-  List<dynamic> _historyData = [
-    // {
-    //   'date': '2025-10-15',
-    //   'time': '14:30',
-    //   'status': 'completed',
-    //   'price_net': 150.75,
-    //   // 'phone': '0812345678',
-    // },
-  ];
   Future<void> _loadHistory() async {
     try {
-      List<dynamic> data = await api_history.fetchHistory();
-
+      final data = await api_history.fetchHistory();
       setState(() {
-        if (data.isNotEmpty) {
-          _historyData = data; // มีข้อมูล → แสดงเลย
-        } else {
-          _historyData = []; // ไม่มีข้อมูล → แสดงว่าไม่มีประวัติ
-        }
+        _historyData = data;
       });
     } catch (e) {
-      print('Error loading history: $e');
       setState(() => _historyData = []);
     }
+  }
+
+  Future<String> _getCartPriceOnce(String deviceId) async {
+    if (_priceCache.containsKey(deviceId)) {
+      return _priceCache[deviceId]!;
+    }
+
+    final price = await ApisCartjob().getCartTotalPrice(deviceId);
+    _priceCache[deviceId] = price;
+    return price;
   }
 
   @override
@@ -65,15 +85,7 @@ class _HistoryState extends State<History> {
               ),
             ),
           ),
-          // Container(
-          //   decoration: const BoxDecoration(
-          //     image: DecorationImage(
-          //       image: AssetImage('assets/images/news.png'),
-          //       fit: BoxFit.cover,
-          //       opacity: 0.4,
-          //     ),
-          //   ),
-          // ),
+
           ////////////////////////////////////////// ประวัติรายการ //////////////////////////////////////////
           SafeArea(
             child: Column(
@@ -148,6 +160,9 @@ class _HistoryState extends State<History> {
                           itemCount: _historyData.length,
                           itemBuilder: (context, index) {
                             var item = _historyData[index];
+
+                            String deviceId =
+                                item['device_id'].toString(); // ✅ เพิ่ม
                             String date = item['set_at'] ?? '-';
                             String time = item['started_at'] ?? '-';
                             String status = (item['status'] ?? '').toString();
@@ -281,13 +296,27 @@ class _HistoryState extends State<History> {
                                         ),
 
                                         // ===== ราคา =====
-                                        Text(
-                                          '฿$price',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 22,
-                                            color: statusColor,
-                                          ),
+                                        FutureBuilder<String>(
+                                          future: _getCartPriceOnce(deviceId),
+                                          builder: (context, snapshot) {
+                                            String displayPrice =
+                                                price; // fallback ใช้ของเดิมก่อน
+
+                                            if (snapshot.connectionState ==
+                                                    ConnectionState.done &&
+                                                snapshot.hasData) {
+                                              displayPrice = snapshot.data!;
+                                            }
+
+                                            return Text(
+                                              '฿$displayPrice',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 22,
+                                                color: statusColor,
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),
@@ -382,7 +411,7 @@ class _HistoryState extends State<History> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    '฿0.00',
+                    '฿${credit}',
                     style: TextStyle(
                       color: Colors.grey[800], // สีเทาเข้มหน่อย
                       fontSize: 34,
@@ -429,8 +458,8 @@ class _HistoryState extends State<History> {
                             style: TextStyle(
                                 color: Color(0xFF888888), fontSize: 18),
                           ),
-                          const Text(
-                            '0',
+                          Text(
+                            '${point_h}',
                             style: TextStyle(
                                 color: Color(0xFF444444),
                                 fontWeight: FontWeight.bold,
@@ -449,8 +478,8 @@ class _HistoryState extends State<History> {
                             style: TextStyle(
                                 color: Color(0xFF888888), fontSize: 18),
                           ),
-                          const Text(
-                            '0',
+                           Text(
+                            '${credit}',
                             style: TextStyle(
                                 color: Color(0xFF444444),
                                 fontWeight: FontWeight.bold,
