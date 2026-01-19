@@ -352,13 +352,13 @@ class _SignInState extends State<SignIn> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        Text(
-                          '\n ${slert} \n ',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                        // Text(
+                        //   '\n ${slert} \n ',
+                        //   style: TextStyle(
+                        //     fontSize: 20,
+                        //     fontWeight: FontWeight.w500,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
