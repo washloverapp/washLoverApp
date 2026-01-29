@@ -6,7 +6,6 @@ import 'package:my_flutter_mapwash/Chat/utils/utils.dart';
 import 'package:my_flutter_mapwash/Home/promotion.dart';
 import 'package:my_flutter_mapwash/Login/login_page.dart';
 import 'package:my_flutter_mapwash/Oders/API/api_totalOrder.dart';
-import 'package:my_flutter_mapwash/Oders/total_order.dart';
 import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 import 'package:http/http.dart' as http;
@@ -374,131 +373,138 @@ class _TotalOrderState extends State<TotalOrder> {
                       if (!mounted) return;
 
                       showDialog(
-  context: context,
-  barrierDismissible: false,
-  builder: (context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      title: Row(
-        children: const [
-          Icon(Icons.lock_outline, color: Colors.red, size: 28),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'ไม่สามารถทำรายการได้',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.black87),
-            ),
-          ),
-        ],
-      ),
-      content: const Text(
-        'ฟังก์ชันนี้ไม่สามารถใช้งานได้ในโหมดไม่ระบุตัวตน\nกรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ',
-        style: TextStyle(fontSize: 16, color: Colors.black87),
-      ),
-      actionsAlignment: MainAxisAlignment.end,
-      actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      actions: [
-        // ปุ่มยกเลิก
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context); // ปิด popup
-          },
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.grey[700],
-          ),
-          child: const Text(
-            'ยกเลิก',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            title: Row(
+                              children: const [
+                                Icon(Icons.lock_outline,
+                                    color: Colors.red, size: 28),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'ไม่สามารถทำรายการได้',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.black87),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            content: const Text(
+                              'ฟังก์ชันนี้ไม่สามารถใช้งานได้ในโหมดไม่ระบุตัวตน\nกรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ',
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.black87),
+                            ),
+                            actionsAlignment: MainAxisAlignment.end,
+                            actionsPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            actions: [
+                              // ปุ่มยกเลิก
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context); // ปิด popup
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.grey[700],
+                                ),
+                                child: const Text(
+                                  'ยกเลิก',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
 
-        // ปุ่มออกจากโหมดไม่ระบุตัวตน / ออกจากระบบ
-        TextButton(
-          onPressed: () async {
-            final prefs = await SharedPreferences.getInstance();
+                              // ปุ่มออกจากโหมดไม่ระบุตัวตน / ออกจากระบบ
+                              TextButton(
+                                onPressed: () async {
+                                  final prefs =
+                                      await SharedPreferences.getInstance();
 
-            // ล้างข้อมูลทั้งหมด
-            await prefs.clear();
+                                  // ล้างข้อมูลทั้งหมด
+                                  await prefs.clear();
 
-            if (!mounted) return;
+                                  if (!mounted) return;
 
-            Navigator.pop(context); // ปิด popup
+                                  Navigator.pop(context); // ปิด popup
 
-            // ไปหน้า Login / หน้าแรก
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const LoginPage(), // แก้เป็นหน้าของคุณ
-              ),
-              (route) => false,
-            );
-          },
-          style: TextButton.styleFrom(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text(
-            'ออกจากระบบ',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
-    );
-  },
-);
+                                  // ไปหน้า Login / หน้าแรก
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const LoginPage(), // แก้เป็นหน้าของคุณ
+                                    ),
+                                    (route) => false,
+                                  );
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'ออกจากระบบ',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
 
                       return;
                     }
 
                     var succ = await _send_update_location();
                     if (succ.status) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Qrcode(),
-                          settings: RouteSettings(
-                            arguments: {
-                              'totalPrice': totalCost,
-                              'address': address ?? 'ไม่พบที่อยู่',
-                              'addressBranch':
-                                  addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
-                              'coupon': (selectedCouponPromotion?['amount']
-                                      ?.toString() ??
-                                  '$totalCost'),
-                              'payment': 'manual',
-                            },
-                          ),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => Qrcode(),
+                      //     settings: RouteSettings(
+                      //       arguments: {
+                      //         'totalPrice': totalCost,
+                      //         'address': address ?? 'ไม่พบที่อยู่',
+                      //         'addressBranch':
+                      //             addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
+                      //         'coupon': (selectedCouponPromotion?['amount']
+                      //                 ?.toString() ??
+                      //             '$totalCost'),
+                      //         'payment': 'manual',
+                      //       },
+                      //     ),
+                      //   ),
+                      // );
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Qrcode(),
-                          settings: RouteSettings(
-                            arguments: {
-                              'totalPrice': totalCost,
-                              'address': address ?? 'ไม่พบที่อยู่',
-                              'addressBranch':
-                                  addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
-                              'coupon': (selectedCouponPromotion?['amount']
-                                      ?.toString() ??
-                                  '$totalCost'),
-                              'payment': 'manual',
-                            },
-                          ),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => Qrcode(),
+                      //     settings: RouteSettings(
+                      //       arguments: {
+                      //         'totalPrice': totalCost,
+                      //         'address': address ?? 'ไม่พบที่อยู่',
+                      //         'addressBranch':
+                      //             addressBranch ?? 'ไม่พบสาขาที่ใกล้ที่สุด',
+                      //         'coupon': (selectedCouponPromotion?['amount']
+                      //                 ?.toString() ??
+                      //             '$totalCost'),
+                      //         'payment': 'manual',
+                      //       },
+                      //     ),
+                      //   ),
+                      // );
                     }
                   },
                   style: ElevatedButton.styleFrom(

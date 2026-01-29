@@ -13,8 +13,9 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class Qrcode extends StatefulWidget {
+  final double amountP;
+  Qrcode({Key? key, required this.amountP}) : super(key: key);
   @override
   _QrcodeState createState() => _QrcodeState();
 }
@@ -46,7 +47,6 @@ class _QrcodeState extends State<Qrcode> {
   List<dynamic> _statusData = [];
   int inNumber = 0;
 
-
   String? qrImage;
   // String orderId = ""; // 👈 เปลี่ยนได้
   double amount = 1.0; // 👈 ระบุจำนวนเงิน
@@ -54,25 +54,26 @@ class _QrcodeState extends State<Qrcode> {
   bool isCheck = false;
   String? paymentStatus;
 
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    amount = args['totalPrice'];
-  }
-
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   final args =
+  //       ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  //   amount = args['amountP'];
+  // }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
 
   @override
   void initState() {
     super.initState();
+    amount = widget.amountP;
     getPhone();
     _startCountdown();
     loadStatus();
     loadPhone();
   }
-
 
   void _startCountdown() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -90,18 +91,15 @@ class _QrcodeState extends State<Qrcode> {
     });
   }
 
-
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
 
-
   Future<void> generateQR(orderId) async {
     final url =
         "https://payment.washlover.com/create-payment-qr?amount=$amount&order_id=$orderId&ref4=$apiKey";
-
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -116,7 +114,6 @@ class _QrcodeState extends State<Qrcode> {
       });
     }
   }
-
 
   /// 2) เช็คสถานะการชำระเงิน
   Future<void> checkPaymentStatus(
@@ -152,7 +149,6 @@ class _QrcodeState extends State<Qrcode> {
     }
   }
 
-
   Future<void> loadStatus() async {
     String orderId = '';
     try {
@@ -180,17 +176,14 @@ class _QrcodeState extends State<Qrcode> {
     }
   }
 
-
   Future<String?> getPhone() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('phone');
   }
 
-
   void loadPhone() async {
     phone = await getPhone() ?? '';
   }
-
 
   String _formatTime(int seconds) {
     int minutes = seconds ~/ 60;
@@ -198,14 +191,12 @@ class _QrcodeState extends State<Qrcode> {
     return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
   }
 
-
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     initializeDateFormatting('th_TH', null).then((_) {});
     String formattedDate = DateFormat('d MMMM yyyy, E', 'th_TH').format(now);
     String formattedTime = DateFormat('HH:mm').format(now);
-
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -302,20 +293,19 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
-Widget buildInfoRow3(String label1, String value1) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: buildInfoColumn3(label1, value1),
-        ),
-      ],
-    ),
-  );
-}
-
+  Widget buildInfoRow3(String label1, String value1) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: buildInfoColumn3(label1, value1),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget buildInfoRow(
       String label1, String value1, String label2, String value2) {
@@ -331,7 +321,6 @@ Widget buildInfoRow3(String label1, String value1) {
     );
   }
 
-
   Widget buildInfoRow2(
       String label1, String value1, String label2, String value2) {
     return Padding(
@@ -346,7 +335,6 @@ Widget buildInfoRow3(String label1, String value1) {
     );
   }
 
-
   Widget buildInfoColumn2(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,7 +347,6 @@ Widget buildInfoRow3(String label1, String value1) {
     );
   }
 
-
   Widget buildInfoColumn(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -370,7 +357,6 @@ Widget buildInfoRow3(String label1, String value1) {
       ],
     );
   }
-
 
   Widget buildInfoColumn3(String label, String value) {
     return Column(
@@ -384,7 +370,6 @@ Widget buildInfoRow3(String label1, String value1) {
       ],
     );
   }
-
 
   Widget buildButtonCancle(
       String text, Color bgColor, Color textColor, BuildContext context) {
@@ -408,7 +393,6 @@ Widget buildInfoRow3(String label1, String value1) {
     );
   }
 
-
   Widget buildButtonSuccess(String text, Color bgColor, Color textColor) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -431,6 +415,3 @@ Widget buildInfoRow3(String label1, String value1) {
     );
   }
 }
-
-
-

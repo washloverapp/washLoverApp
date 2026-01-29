@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_flutter_mapwash/Oders/API/api_saveorder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,38 +16,48 @@ class ApiPost {
     required double lat,
     required double lng,
   }) async {
+    final jsonData = jsonEncode({
+      "app": "washlover",
+      "version": "1.0.0",
+    });
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
     String endpoint = prefs.getString('endpoint') ?? '';
     String phone = prefs.getString('phone') ?? '';
+
     Status status = Status(status: false, messageJson: {});
 
     try {
-      Map<String, dynamic> header = {
+      final header = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
+
       final dio = Dio();
-      String path = '$endpoint/api/member/update_location';
-      print(path);
+      final path = '$endpoint/api/member/update_location';
+
       final resApi = await dio.post(
         path,
-        data: {"latitude": lat, "longitude": lng, "cutomer_id": phone},
+        data: {
+          "latitude": lat,
+          "longitude": lng,
+          "cutomer_id": phone,
+          "device_id": "tonnnnnnnnn1235323",
+          "oder_app": jsonData,
+        },
         options: Options(headers: header, validateStatus: (_) => true),
       );
 
       if (resApi.statusCode == 200) {
-        status.messageJson = resApi.data;
         status.status = true;
-      } else {
-        status.messageJson = resApi.data;
       }
-    } catch (e) {
-      print("Exception: $e");
-      status.messageJson = {"error": e};
 
-      // return false;
+      status.messageJson = resApi.data;
+    } catch (e) {
+      status.messageJson = {"error": e.toString()};
     }
+
     return status;
   }
 }
@@ -240,7 +251,8 @@ class ApiTotalorder {
   /// =======================
   /// API POST ITEM
   /// =======================
-  Future<void> sendItemToCart(String job_id, MockItem item, {int qty = 1}) async {
+  Future<void> sendItemToCart(String job_id, MockItem item,
+      {int qty = 1}) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
     final endpoint = prefs.getString('endpoint') ?? '';
@@ -282,7 +294,8 @@ class ApiTotalorder {
   /// ส่ง OrderSummary ทั้งหมด
   /// =======================
   Future<void> sendOrderItems(OrderSummary order, String job_id) async {
-    if (order.washing != null) await sendItemToCart(job_id, order.washing!, qty: 1);
+    if (order.washing != null)
+      await sendItemToCart(job_id, order.washing!, qty: 1);
     if (order.dryer != null) await sendItemToCart(job_id, order.dryer!, qty: 1);
     if (order.temperature != null)
       await sendItemToCart(
