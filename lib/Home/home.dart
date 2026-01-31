@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Help/help.dart';
 import 'package:my_flutter_mapwash/Home/API/api_account.dart';
+import 'package:my_flutter_mapwash/Home/API/api_sendFcmNotify.dart';
 import 'package:my_flutter_mapwash/Home/account.dart';
 import 'package:my_flutter_mapwash/Home/affiat.dart';
 import 'package:my_flutter_mapwash/Home/history.dart';
@@ -68,8 +69,7 @@ class _homeState extends State<home> {
               SizedBox(height: 12),
               Container(
                 padding: EdgeInsets.all(20),
-                margin:
-                    EdgeInsets.symmetric(horizontal: 15), // ขยับด้านซ้าย-ขวา
+                margin: EdgeInsets.symmetric(horizontal: 15), // ขยับด้านซ้าย-ขวา
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 250, 250, 250),
                   borderRadius: BorderRadius.circular(10),
@@ -137,24 +137,39 @@ class _homeState extends State<home> {
                     items: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15.0),
-                        child: Image.asset("assets/images/slid2.png",
-                            fit: BoxFit.cover),
+                        child: Image.asset("assets/images/slid2.png", fit: BoxFit.cover),
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15.0),
-                        child: Image.asset("assets/images/slid3.png",
-                            fit: BoxFit.cover),
+                        child: Image.asset("assets/images/slid3.png", fit: BoxFit.cover),
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15.0),
-                        child: Image.asset("assets/images/slid1.png",
-                            fit: BoxFit.cover),
+                        child: Image.asset("assets/images/slid1.png", fit: BoxFit.cover),
                       ),
                     ],
                   ),
                 ),
               ),
               SizedBox(height: 12),
+
+              InkWell(
+                onTap: () {
+                  api_sendFcmNotify.sendFcmNotify(
+                    'แจ้งเตือนปิดงาน',
+                    'พนักงานปิดงานแล้ว',
+                  );
+                },
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+                    child: Text(
+                      "ส่งแจ้งเตือน",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
 
               // Service Section Title
               Container(
@@ -166,16 +181,13 @@ class _homeState extends State<home> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start, // จัด Text ชิดซ้าย
+                    crossAxisAlignment: CrossAxisAlignment.start, // จัด Text ชิดซ้าย
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 4, vertical: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
                         child: Text(
                           "บริการ",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                       GridView.count(
@@ -195,8 +207,7 @@ class _homeState extends State<home> {
                             () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => profile()),
+                                MaterialPageRoute(builder: (context) => profile()),
                               );
                             },
                           ),
@@ -209,8 +220,7 @@ class _homeState extends State<home> {
                               "จุดบริการ", () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => location_banc()),
+                              MaterialPageRoute(builder: (context) => location_banc()),
                             );
                           }),
                           _menuItem(
@@ -222,8 +232,7 @@ class _homeState extends State<home> {
                               "แนะนำเพื่อน", () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => ShareFriendScreen()),
+                              MaterialPageRoute(builder: (context) => ShareFriendScreen()),
                             );
                           }),
                           _menuItem(
@@ -235,8 +244,7 @@ class _homeState extends State<home> {
                               "โปรโมชั่น", () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => select_Promotion()),
+                              MaterialPageRoute(builder: (context) => select_Promotion()),
                             );
                           }),
                           _menuItem(
@@ -260,8 +268,7 @@ class _homeState extends State<home> {
                               "ประวัติใช้งาน", () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => History()),
+                              MaterialPageRoute(builder: (context) => History()),
                             );
                           }),
                           _menuItem(
@@ -396,8 +403,7 @@ class _homeState extends State<home> {
     );
   }
 
-  Widget buildContactButton(
-      String text, Color color, IconData icon, VoidCallback onPressed) {
+  Widget buildContactButton(String text, Color color, IconData icon, VoidCallback onPressed) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(vertical: 5),
@@ -427,8 +433,7 @@ class _homeState extends State<home> {
     );
   }
 
-  Widget buildExpansionTile(String title, String content,
-      {bool isExpanded = false}) {
+  Widget buildExpansionTile(String title, String content, {bool isExpanded = false}) {
     return ExpansionTile(
       title: Text(
         title,
@@ -449,11 +454,7 @@ class _homeState extends State<home> {
       children: [
         Icon(icon, color: Colors.blue[200]),
         Text(title, style: TextStyle(fontSize: 12, color: Colors.black54)),
-        Text(amount,
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.amber)),
+        Text(amount, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.amber)),
       ],
     );
   }
