@@ -1,16 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 // import 'package:http/http.dart' as http;
 import 'package:my_flutter_mapwash/Oders/API/api_sendwash.dart';
-import 'package:my_flutter_mapwash/Oders/API/api_saveorder.dart';
 import 'package:my_flutter_mapwash/Oders/address_user.dart';
 import 'package:my_flutter_mapwash/Oders/location_helper.dart';
 import 'package:my_flutter_mapwash/Oders/screens/laundry_customization_page.dart';
-import 'package:my_flutter_mapwash/Oders/totalOrder.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_flutter_mapwash/Oders/utils/laundry_pref_helper.dart';
 import 'package:my_flutter_mapwash/Status/API/api_status.dart';

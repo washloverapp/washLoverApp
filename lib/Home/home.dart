@@ -156,8 +156,8 @@ class _homeState extends State<home> {
               InkWell(
                 onTap: () {
                   api_sendFcmNotify.sendFcmNotify(
-                    'แจ้งเตือนปิดงาน',
-                    'พนักงานปิดงานแล้ว',
+                    'แจ้งเตือนออเดอร์งานจากลูกค้า',
+                    'งานด่วนลูกค้ารอพนักงานรับผ้า',
                   );
                 },
                 child: Card(
