@@ -22,7 +22,6 @@ class ApiPost {
 
     /// 🔥 ดึง order JSON ที่ save ไว้
     String orderJsonString = prefs.getString('current_order') ?? '{}';
-    print('orderJsonString: $orderJsonString');
 
     Map<String, dynamic> orderJson = jsonDecode(orderJsonString);
 

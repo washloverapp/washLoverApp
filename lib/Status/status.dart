@@ -181,36 +181,49 @@ class _StatusState extends State<Status> {
       onTap: () {
         double totalPrice = double.parse(amount);
         _timer?.cancel();
-        if (isStat == true) {
-          if (paymentStatusText == "รอการชำระเงิน") {
-            isStat == false;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => StatusQrcodePage(
-                  id: id,
-                  deviceId: device_id,
-                  totalPrice: totalPrice,
-                ),
-              ),
-            );
-          } else {
-            isStat == true;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => realtime_status(
-                  id: id,
-                  deviceId: device_id,
-                  price: amount,
-                  datetime: datetime,
-                ),
-              ),
-            ).then((_) {
-              _startAutoRefresh();
-            });
-          }
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => realtime_status(
+              id: id,
+              deviceId: device_id,
+              price: amount,
+              datetime: datetime,
+            ),
+          ),
+        ).then((_) {
+          _startAutoRefresh();
+        });
+        // if (isStat == true) {
+        //   if (paymentStatusText == "รอการชำระเงิน") {
+        //     isStat == false;
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => StatusQrcodePage(
+        //           id: id,
+        //           deviceId: device_id,
+        //           totalPrice: totalPrice,
+        //         ),
+        //       ),
+        //     );
+        //   } else {
+        //     isStat == true;
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => realtime_status(
+        //           id: id,
+        //           deviceId: device_id,
+        //           price: amount,
+        //           datetime: datetime,
+        //         ),
+        //       ),
+        //     ).then((_) {
+        //       _startAutoRefresh();
+        //     });
+        //   }
+        // }
       },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
@@ -225,6 +238,10 @@ class _StatusState extends State<Status> {
             children: [
               Text(
                 datetime,
+                style: const TextStyle(fontSize: 13, color: Colors.grey),
+              ),
+              Text(
+                device_id,
                 style: const TextStyle(fontSize: 13, color: Colors.grey),
               ),
               const SizedBox(height: 4),

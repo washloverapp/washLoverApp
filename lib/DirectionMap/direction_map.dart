@@ -32,7 +32,7 @@ class DirectionsService {
             .map((point) => LatLng(point.latitude, point.longitude))
             .toList();
       } else {
-        print('❌ ไม่พบเส้นทาง: ${result.errorMessage}');
+        // print('❌ ไม่พบเส้นทาง: ${result.errorMessage}');
       }
     } catch (e) {
       print('⚠️ เกิดข้อผิดพลาดในการเรียกเส้นทาง: $e');
