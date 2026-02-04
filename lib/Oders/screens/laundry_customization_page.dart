@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_flutter_mapwash/Oders/API/api_totalOrder.dart';
 import 'package:my_flutter_mapwash/Oders/models/laundry_item.dart';
-import 'package:my_flutter_mapwash/Oders/screens/laundry_summary_page.dart';
 import 'package:my_flutter_mapwash/Oders/services/laundry_service.dart';
 import 'dart:io';
 
-import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
-import 'package:my_flutter_mapwash/Status/status.dart' hide Status;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:uuid/uuid.dart';
 
 class LaundryCustomizationPage extends StatefulWidget {
   final String laundryType;
@@ -28,6 +27,7 @@ class LaundryCustomizationPage extends StatefulWidget {
 class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
   final ImagePicker _picker = ImagePicker();
   final LaundryService _laundryService = LaundryService();
+
   XFile? _selectedImage;
 
   LaundryItem? selectedDetergent;
@@ -35,22 +35,20 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
   LaundryItem? selectedMachineSize;
   LaundryItem? selectedTemperature;
   LaundryItem? selectedFabricSoftenerSize;
+
   final TextEditingController _notesController = TextEditingController();
 
-  // จำนวนสำหรับน้ำยาซักและปรับผ้านุ่ม (เริ่มต้น 2 ชิ้นขึ้นไป)
   int detergentQuantity = 2;
   int fabricSoftenerQuantity = 2;
 
-  // ไม่เลือก = ลูกค้าจะนำมาเอง
   bool bringOwnDetergent = false;
   bool bringOwnFabricSoftener = false;
 
-  static const int _pricePerPiece = 5; // 5 บาท/ชิ้น
+  static const int _pricePerPiece = 5;
 
   int basePrice = 0;
   bool isLoading = true;
 
-  // API Data
   List<LaundryItem> allItems = [];
   List<LaundryItem> detergentItems = [];
   List<LaundryItem> fabricSoftenerItems = [];
@@ -64,40 +62,103 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
     _loadLaundryItems();
   }
 
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  /* -------------------- ORDER JSON -------------------- */
+
+  Map<String, dynamic> _buildOrderJson() {
+    String jobId = ''; // รหัส ID งาน
+
+    if (jobId == null || jobId.isEmpty) {
+      jobId = const Uuid().v4();
+    }
+    return {
+      "device_id": 'order_$jobId',
+      "laundry_type": widget.laundryType,
+      "machine_size": selectedMachineSize == null
+          ? null
+          : {
+              "id": selectedMachineSize!.id,
+              "name": selectedMachineSize!.name,
+              "price": selectedMachineSize!.price,
+            },
+      "temperature": selectedTemperature == null
+          ? null
+          : {
+              "id": selectedTemperature!.id,
+              "name": selectedTemperature!.name,
+              "price": selectedTemperature!.price,
+            },
+      "dryer_size": selectedFabricSoftenerSize == null
+          ? null
+          : {
+              "id": selectedFabricSoftenerSize!.id,
+              "name": selectedFabricSoftenerSize!.name,
+              "price": selectedFabricSoftenerSize!.price,
+            },
+      "detergent": {
+        "id": selectedDetergent?.id,
+        "name": selectedDetergent?.name,
+        "quantity": detergentQuantity,
+        "bring_own": bringOwnDetergent,
+        "price_per_piece": _pricePerPiece,
+      },
+      "fabric_softener": {
+        "id": selectedFabricSoftener?.id,
+        "name": selectedFabricSoftener?.name,
+        "quantity": fabricSoftenerQuantity,
+        "bring_own": bringOwnFabricSoftener,
+        "price_per_piece": _pricePerPiece,
+      },
+      "notes": _notesController.text,
+      "total_price": getTotalPrice(),
+      "image_path": _selectedImage?.path,
+    };
+  }
+
+  Future<void> _saveOrderToPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('current_order', jsonEncode(_buildOrderJson()));
+  }
+
+  /* -------------------- API -------------------- */
+
   Future<Status> _send_update_location() async {
     Status status = Status(status: false, messageJson: {});
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      double lat = prefs.getDouble('lat') ?? 0.0;
-      double lng = prefs.getDouble('lng') ?? 0.0;
-      var succ = await ApiPost.updateLocation(lat: lat, lng: lng);
+      final prefs = await SharedPreferences.getInstance();
+      final lat = prefs.getDouble('lat') ?? 0.0;
+      final lng = prefs.getDouble('lng') ?? 0.0;
+
+      final succ = await ApiPost.updateLocation(lat: lat, lng: lng);
+
       if (succ.status) {
-        status.messageJson = succ.messageJson;
         status.status = true;
-        var job_id = succ.messageJson['device_id'];
-        print('device_id: $job_id');
+        status.messageJson = succ.messageJson;
+
+        final jobId = succ.messageJson['device_id'];
         final sender = ApiTotalorder();
         final order = await sender.loadOrderSummary();
-        await sender.clearCart(order, job_id);
+        await sender.clearCart(order, jobId);
       } else {
-        print('Error loading history: ${json.encode(succ.messageJson)}');
         status.messageJson = succ.messageJson;
       }
     } catch (e) {
-      print('Error loading history: $e');
-      status.messageJson = {"error": e};
+      status.messageJson = {"error": e.toString()};
     }
     return status;
   }
 
+  /* -------------------- DATA LOAD -------------------- */
+
   Future<void> _loadLaundryItems() async {
     try {
-      setState(() {
-        isLoading = true;
-      });
-
+      setState(() => isLoading = true);
       final items = await _laundryService.fetchLaundryItems();
-
       setState(() {
         allItems = items;
         detergentItems = _laundryService.getItemsByType(items, 'detergent');
@@ -108,42 +169,39 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
             _laundryService.getItemsByType(items, 'dryer');
         isLoading = false;
       });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('เกิดข้อผิดพลาดในการโหลดข้อมูล: $e')),
-        );
-      }
+    } catch (_) {
+      setState(() => isLoading = false);
     }
   }
 
-  @override
-  void dispose() {
-    _notesController.dispose();
-    super.dispose();
-  }
+  /* -------------------- IMAGE -------------------- */
 
   Future<void> _pickImage() async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-      );
-      if (image != null) {
-        setState(() {
-          _selectedImage = image;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('เกิดข้อผิดพลาด: $e')),
-        );
-      }
+    final image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() => _selectedImage = image);
+      await _saveOrderToPrefs();
     }
   }
+
+  /* -------------------- PRICE -------------------- */
+
+  // int getTotalPrice() {
+  //   return (selectedMachineSize?.price ?? 0) +
+  //       (selectedTemperature?.price ?? 0) +
+  //       (selectedFabricSoftenerSize?.price ?? 0) +
+  //       (bringOwnDetergent ? 0 : detergentQuantity * _pricePerPiece) +
+  //       (bringOwnFabricSoftener ? 0 : fabricSoftenerQuantity * _pricePerPiece);
+  // }
+
+  // bool get isAllRequiredFieldsSelected =>
+  //     (selectedDetergent != null || bringOwnDetergent) &&
+  //     (selectedFabricSoftener != null || bringOwnFabricSoftener) &&
+  //     selectedMachineSize != null &&
+  //     selectedTemperature != null &&
+  //     selectedFabricSoftenerSize != null;
+
+  /* -------------------- UI -------------------- */
 
   // Price calculation methods
 
@@ -413,7 +471,9 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
         child: ElevatedButton(
           onPressed: isAllRequiredFieldsSelected
               ? () async {
+                  await _saveOrderToPrefs();
                   // var succ = await _send_update_location();
+                  final succ = await _send_update_location();
                   // if (succ.status) {
                   // Navigator.push(
                   //   context,
@@ -425,28 +485,28 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                   // );
                   // }
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => LaundrySummaryPage(
-                        laundryType: widget.laundryType,
-                        selectedMachineSize: selectedMachineSize!,
-                        selectedTemperature: selectedTemperature!,
-                        selectedFabricSoftenerSize: selectedFabricSoftenerSize!,
-                        selectedDetergent: selectedDetergent,
-                        selectedFabricSoftener: selectedFabricSoftener,
-                        detergentQuantity: detergentQuantity,
-                        fabricSoftenerQuantity: fabricSoftenerQuantity,
-                        bringOwnDetergent: bringOwnDetergent,
-                        bringOwnFabricSoftener: bringOwnFabricSoftener,
-                        notes: _notesController.text,
-                        totalPrice: getTotalPrice(),
-                        imageFile: _selectedImage != null
-                            ? File(_selectedImage!.path)
-                            : null,
-                      ),
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => LaundrySummaryPage(
+                  //       laundryType: widget.laundryType,
+                  //       selectedMachineSize: selectedMachineSize!,
+                  //       selectedTemperature: selectedTemperature!,
+                  //       selectedFabricSoftenerSize: selectedFabricSoftenerSize!,
+                  //       selectedDetergent: selectedDetergent,
+                  //       selectedFabricSoftener: selectedFabricSoftener,
+                  //       detergentQuantity: detergentQuantity,
+                  //       fabricSoftenerQuantity: fabricSoftenerQuantity,
+                  //       bringOwnDetergent: bringOwnDetergent,
+                  //       bringOwnFabricSoftener: bringOwnFabricSoftener,
+                  //       notes: _notesController.text,
+                  //       totalPrice: getTotalPrice(),
+                  //       imageFile: _selectedImage != null
+                  //           ? File(_selectedImage!.path)
+                  //           : null,
+                  //     ),
+                  //   ),
+                  // );
                 }
               : null,
           style: ElevatedButton.styleFrom(

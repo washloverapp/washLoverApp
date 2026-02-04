@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_flutter_mapwash/Oders/API/api_saveorder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Status {
@@ -16,18 +14,19 @@ class ApiPost {
     required double lat,
     required double lng,
   }) async {
-    final jsonData = jsonEncode({
-      "app": "washlover",
-      "version": "1.0.0",
-    });
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String token = prefs.getString('token') ?? '';
     String endpoint = prefs.getString('endpoint') ?? '';
     String phone = prefs.getString('phone') ?? '';
 
-    Status status = Status(status: false, messageJson: {});
+    /// 🔥 ดึง order JSON ที่ save ไว้
+    String orderJsonString = prefs.getString('current_order') ?? '{}';
+    print('orderJsonString: $orderJsonString');
 
+    Map<String, dynamic> orderJson = jsonDecode(orderJsonString);
+
+    Status status = Status(status: false, messageJson: {});
     try {
       final header = {
         'Content-Type': 'application/json',
@@ -42,11 +41,14 @@ class ApiPost {
         data: {
           "latitude": lat,
           "longitude": lng,
-          "cutomer_id": phone,
-          "device_id": "tonnnnnnnnn1235323",
-          "oder_app": jsonData,
+          "device_id": orderJson['device_id'] ?? 'not_device_id',
+          "oder_app": orderJsonString, // ✅ ส่ง order เต็ม ๆ
+          "total_price": orderJson['total_price'], // ราคาทั้งหมด
         },
-        options: Options(headers: header, validateStatus: (_) => true),
+        options: Options(
+          headers: header,
+          validateStatus: (_) => true,
+        ),
       );
 
       if (resApi.statusCode == 200) {
