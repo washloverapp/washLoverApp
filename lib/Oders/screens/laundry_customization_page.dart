@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_flutter_mapwash/Oders/API/api_totalOrder.dart';
 import 'package:my_flutter_mapwash/Oders/models/laundry_item.dart';
+import 'package:my_flutter_mapwash/Oders/screens/laundry_summary_page.dart';
 import 'package:my_flutter_mapwash/Oders/services/laundry_service.dart';
+import 'package:my_flutter_mapwash/Payment/walletQrcode.dart';
 import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -475,14 +477,14 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                   // var succ = await _send_update_location();
                   final succ = await _send_update_location();
                   // if (succ.status) {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Qrcode(
-                  //       amountP: getTotalPrice(),
-                  //     ),
-                  //   ),
-                  // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Qrcode(
+                          amountP: getTotalPrice(),
+                        ),
+                      ),
+                    );
                   // }
 
                   // Navigator.push(

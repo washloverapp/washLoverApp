@@ -252,44 +252,100 @@ class ApiTotalorder {
   /// =======================
   /// API POST ITEM
   /// =======================
-  Future<void> sendItemToCart(String job_id, MockItem item,
-      {int qty = 1}) async {
+
+  Future<void> sendItemToCart(
+    String device_id,
+    MockItem item, {
+    int qty = 1,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? '';
-    final endpoint = prefs.getString('endpoint') ?? '';
-    var headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    };
+    String endpoint = prefs.getString('endpoint') ?? '';
 
-    var data = json.encode({
-      "detail": item.detail,
-      "id": item.id,
-      "image": item.image,
-      "name": item.name,
-      "price": item.price,
-      "type": item.type,
-      "qty": qty // ส่ง qty ด้วย
-    });
+    /// 1️⃣ POST เข้า API cart (เหมือนเดิม)
+    final dio = Dio();
+    await dio.post(
+      '$endpoint/api/cart/$device_id',
+      data: {
+        "id": item.id,
+        "name": item.name,
+        "price": item.price,
+        "image": item.image,
+        "type": item.type,
+        "detail": item.detail,
+        "qty": qty,
+      },
+    );
 
-    var dio = Dio();
+    /// 2️⃣ โหลด order เดิม
+    String orderString = prefs.getString('current_order') ?? '{}';
+    Map<String, dynamic> order =
+        orderString == '{}' ? {} : jsonDecode(orderString);
 
-    try {
-      var response = await dio.request(
-        '$endpoint/api/cart/$job_id',
-        options: Options(method: 'POST', headers: headers),
-        data: data,
-      );
+    /// 3️⃣ โครงสร้างพื้นฐาน
+    order['device_id'] ??= device_id;
+    order['items'] ??= {};
 
-      if (response.statusCode == 200) {
-        print("ส่งสำเร็จ: ${json.encode(response.data)}");
-      } else {
-        print("Error: ${response.statusMessage}");
-      }
-    } catch (e) {
-      print("Exception: $e");
+    Map<String, dynamic> items = order['items'];
+
+    /// 4️⃣ บันทึก item ทีละอัน
+    String key = item.id.toString();
+
+    if (items.containsKey(key)) {
+      items[key]['qty'] += qty;
+    } else {
+      items[key] = {
+        "id": item.id,
+        "name": item.name,
+        "price": item.price,
+        "image": item.image,
+        "type": item.type,
+        "detail": item.detail,
+        "qty": qty,
+      };
     }
+
+    /// 5️⃣ เซฟกลับ
+    await prefs.setString('current_order', jsonEncode(order));
   }
+
+  // Future<void> sendItemToCart(String device_id, MockItem item,
+  //     {int qty = 1}) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token') ?? '';
+  //   final endpoint = prefs.getString('endpoint') ?? '';
+  //   var headers = {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': 'Bearer $token'
+  //   };
+
+  //   var data = json.encode({
+  //     "detail": item.detail,
+  //     "id": item.id,
+  //     "image": item.image,
+  //     "name": item.name,
+  //     "price": item.price,
+  //     "type": item.type,
+  //     "qty": qty // ส่ง qty ด้วย
+  //   });
+
+  //   var dio = Dio();
+
+  //   try {
+  //     var response = await dio.request(
+  //       '$endpoint/api/cart/$device_id',
+  //       options: Options(method: 'POST', headers: headers),
+  //       data: data,
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       print("ส่งสำเร็จ: ${json.encode(response.data)}");
+  //     } else {
+  //       print("Error: ${response.statusMessage}");
+  //     }
+  //   } catch (e) {
+  //     print("Exception: $e");
+  //   }
+  // }
 
   /// =======================
   /// ส่ง OrderSummary ทั้งหมด
