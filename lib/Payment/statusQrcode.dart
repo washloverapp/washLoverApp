@@ -102,8 +102,7 @@ class _StatusQrcodePageState extends State<StatusQrcodePage> {
   }
 
   Future<void> _checkPaymentStatus(String orderId) async {
-    final url =
-        "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
+    final url = "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -140,8 +139,7 @@ class _StatusQrcodePageState extends State<StatusQrcodePage> {
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting('th_TH', null);
-    final formattedDate =
-        DateFormat('d MMMM yyyy, E', 'th_TH').format(DateTime.now());
+    final formattedDate = DateFormat('d MMMM yyyy, E', 'th_TH').format(DateTime.now());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -166,22 +164,18 @@ class _StatusQrcodePageState extends State<StatusQrcodePage> {
                       children: [
                         Text(
                           "Payment Details",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         Icon(Icons.share, color: Colors.pink),
                       ],
                     ),
                     SizedBox(height: 4),
-                    Text("รหัสงาน: ${widget.deviceId}",
-                        style: TextStyle(color: Colors.grey)),
+                    Text("รหัสงาน: ${widget.deviceId}", style: TextStyle(color: Colors.grey)),
                     Divider(),
 
                     // Info rows
-                    _buildInfoRow(
-                        "ยูเซอร์", phone, "สถานะ", paymentStatus ?? "-"),
-                    _buildInfoRow("วันที่", formattedDate, "จะหมดเวลา",
-                        "${_formatTime(_remainingSeconds)} น."),
+                    _buildInfoRow("ยูเซอร์", phone, "สถานะ", paymentStatus ?? "-"),
+                    _buildInfoRow("วันที่", formattedDate, "จะหมดเวลา", "${_formatTime(_remainingSeconds)} น."),
                     _buildInfoRow("หมายเลขอ้างอิง", widget.deviceId, "", ""),
 
                     Divider(),
@@ -190,22 +184,15 @@ class _StatusQrcodePageState extends State<StatusQrcodePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("จำนวนเงิน:",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text("จำนวนเงิน:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                         Text("฿ ${widget.totalPrice}",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold)),
+                            style: TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     SizedBox(height: 16),
 
                     // QR Code
-                    qrImage == null
-                        ? Text("กำลังสร้าง QRCODE...")
-                        : Image.network(qrImage!, width: 300, height: 300),
+                    qrImage == null ? Text("กำลังสร้าง QRCODE...") : Image.network(qrImage!, width: 300, height: 300),
                     SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -228,8 +215,7 @@ class _StatusQrcodePageState extends State<StatusQrcodePage> {
                             (route) => false,
                           );
                         }),
-                        _buildButton(
-                            "โอนสำเร็จ", Colors.lightGreen, Colors.white, () {
+                        _buildButton("โอนสำเร็จ", Colors.lightGreen, Colors.white, () {
                           loadStatus();
                         }),
                       ],
@@ -244,8 +230,7 @@ class _StatusQrcodePageState extends State<StatusQrcodePage> {
     );
   }
 
-  Widget _buildInfoRow(
-      String label1, String value1, String label2, String value2) {
+  Widget _buildInfoRow(String label1, String value1, String label2, String value2) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -263,14 +248,12 @@ class _StatusQrcodePageState extends State<StatusQrcodePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(color: Colors.grey)),
-        Text(value,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ],
     );
   }
 
-  Widget _buildButton(
-      String text, Color bgColor, Color textColor, VoidCallback onPressed) {
+  Widget _buildButton(String text, Color bgColor, Color textColor, VoidCallback onPressed) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,

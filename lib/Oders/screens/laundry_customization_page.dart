@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class LaundryCustomizationPage extends StatefulWidget {
-  final String laundryType;
+  final Map<String, dynamic> laundryType;
 
   const LaundryCustomizationPage({
     super.key,
@@ -22,8 +22,7 @@ class LaundryCustomizationPage extends StatefulWidget {
   });
 
   @override
-  State<LaundryCustomizationPage> createState() =>
-      _LaundryCustomizationPageState();
+  State<LaundryCustomizationPage> createState() => _LaundryCustomizationPageState();
 }
 
 class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
@@ -79,43 +78,54 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
       jobId = const Uuid().v4();
     }
     return {
+      // "device_id": 'order_$jobId',
+      // "laundry_type": widget.laundryType,
+      // "machine_size": selectedMachineSize == null
+      //     ? null
+      //     : {
+      //         "id": selectedMachineSize!.id,
+      //         "name": selectedMachineSize!.name,
+      //         "price": selectedMachineSize!.price,
+      //       },
+      // "temperature": selectedTemperature == null
+      //     ? null
+      //     : {
+      //         "id": selectedTemperature!.id,
+      //         "name": selectedTemperature!.name,
+      //         "price": selectedTemperature!.price,
+      //       },
+      // "dryer_size": selectedFabricSoftenerSize == null
+      //     ? null
+      //     : {
+      //         "id": selectedFabricSoftenerSize!.id,
+      //         "name": selectedFabricSoftenerSize!.name,
+      //         "price": selectedFabricSoftenerSize!.price,
+      //       },
+      // "detergent": {
+      //   "id": selectedDetergent?.id,
+      //   "name": selectedDetergent?.name,
+      //   "quantity": detergentQuantity,
+      //   "bring_own": bringOwnDetergent,
+      //   "price_per_piece": _pricePerPiece,
+      // },
+      // "fabric_softener": {
+      //   "id": selectedFabricSoftener?.id,
+      //   "name": selectedFabricSoftener?.name,
+      //   "quantity": fabricSoftenerQuantity,
+      //   "bring_own": bringOwnFabricSoftener,
+      //   "price_per_piece": _pricePerPiece,
+      // },
+      // "notes": _notesController.text,
+      // "total_price": getTotalPrice(),
+      // "image_path": _selectedImage?.path,
+
       "device_id": 'order_$jobId',
       "laundry_type": widget.laundryType,
-      "machine_size": selectedMachineSize == null
-          ? null
-          : {
-              "id": selectedMachineSize!.id,
-              "name": selectedMachineSize!.name,
-              "price": selectedMachineSize!.price,
-            },
-      "temperature": selectedTemperature == null
-          ? null
-          : {
-              "id": selectedTemperature!.id,
-              "name": selectedTemperature!.name,
-              "price": selectedTemperature!.price,
-            },
-      "dryer_size": selectedFabricSoftenerSize == null
-          ? null
-          : {
-              "id": selectedFabricSoftenerSize!.id,
-              "name": selectedFabricSoftenerSize!.name,
-              "price": selectedFabricSoftenerSize!.price,
-            },
-      "detergent": {
-        "id": selectedDetergent?.id,
-        "name": selectedDetergent?.name,
-        "quantity": detergentQuantity,
-        "bring_own": bringOwnDetergent,
-        "price_per_piece": _pricePerPiece,
-      },
-      "fabric_softener": {
-        "id": selectedFabricSoftener?.id,
-        "name": selectedFabricSoftener?.name,
-        "quantity": fabricSoftenerQuantity,
-        "bring_own": bringOwnFabricSoftener,
-        "price_per_piece": _pricePerPiece,
-      },
+      "machine_size": selectedMachineSize,
+      "temperature": selectedTemperature,
+      "dryer_size": selectedFabricSoftenerSize,
+      "detergent": selectedDetergent,
+      "fabric_softener": selectedFabricSoftener,
       "notes": _notesController.text,
       "total_price": getTotalPrice(),
       "image_path": _selectedImage?.path,
@@ -125,6 +135,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
   Future<void> _saveOrderToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('current_order', jsonEncode(_buildOrderJson()));
+    // print(jsonEncode(_buildOrderJson()));
   }
 
   /* -------------------- API -------------------- */
@@ -167,8 +178,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
         fabricSoftenerItems = _laundryService.getItemsByType(items, 'softener');
         machineSizeItems = _laundryService.getItemsByType(items, 'washing');
         temperatureItems = _laundryService.getItemsByType(items, 'temperature');
-        fabricSoftenerSizeItems =
-            _laundryService.getItemsByType(items, 'dryer');
+        fabricSoftenerSizeItems = _laundryService.getItemsByType(items, 'dryer');
         isLoading = false;
       });
     } catch (_) {
@@ -239,10 +249,8 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
     return total;
   }
 
-  bool get isDetergentSelected =>
-      selectedDetergent != null || bringOwnDetergent;
-  bool get isFabricSoftenerSelected =>
-      selectedFabricSoftener != null || bringOwnFabricSoftener;
+  bool get isDetergentSelected => selectedDetergent != null || bringOwnDetergent;
+  bool get isFabricSoftenerSelected => selectedFabricSoftener != null || bringOwnFabricSoftener;
   bool get isMachineSizeSelected => selectedMachineSize != null;
   bool get isTemperatureSelected => selectedTemperature != null;
   bool get isFabricSoftenerSizeSelected => selectedFabricSoftenerSize != null;
@@ -258,6 +266,8 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('widget.laundryType');
+    print(widget.laundryType);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -291,9 +301,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                       children: [
                         // Product Title
                         Text(
-                          widget.laundryType == 'clothes'
-                              ? 'เสื้อผ้า'
-                              : 'ชุดเครื่องนอน/ผ้านวม',
+                          widget.laundryType['name'] ?? '',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -305,9 +313,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.laundryType == 'clothes'
-                                  ? 'Clothes'
-                                  : 'Bedding/Comforters',
+                              widget.laundryType['name_eng'] ?? '',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[600],
@@ -435,8 +441,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                             });
                           },
                           onQuantityChanged: (newQuantity) {
-                            setState(
-                                () => fabricSoftenerQuantity = newQuantity);
+                            setState(() => fabricSoftenerQuantity = newQuantity);
                           },
                         ),
 
@@ -477,14 +482,14 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                   // var succ = await _send_update_location();
                   final succ = await _send_update_location();
                   // if (succ.status) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Qrcode(
-                          amountP: getTotalPrice(),
-                        ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Qrcode(
+                        amountP: getTotalPrice(),
                       ),
-                    );
+                    ),
+                  );
                   // }
 
                   // Navigator.push(
@@ -512,11 +517,8 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                 }
               : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: isAllRequiredFieldsSelected
-                ? Colors.orange[300]
-                : Colors.grey[300],
-            foregroundColor:
-                isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
+            backgroundColor: isAllRequiredFieldsSelected ? Colors.orange[300] : Colors.grey[300],
+            foregroundColor: isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -529,8 +531,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color:
-                  isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
+              color: isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
             ),
           ),
         ),
@@ -700,8 +701,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color:
-                      isSelected ? const Color(0xFF4CAF50) : Colors.grey[400]!,
+                  color: isSelected ? const Color(0xFF4CAF50) : Colors.grey[400]!,
                   width: 2,
                 ),
                 color: Colors.white,
@@ -770,13 +770,9 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    onPressed: quantity > 2
-                        ? () => onQuantityChanged(quantity - 1)
-                        : null,
+                    onPressed: quantity > 2 ? () => onQuantityChanged(quantity - 1) : null,
                     icon: const Icon(Icons.remove_circle_outline),
-                    color: quantity > 2
-                        ? const Color(0xFF4CAF50)
-                        : Colors.grey[400],
+                    color: quantity > 2 ? const Color(0xFF4CAF50) : Colors.grey[400],
                     iconSize: 26,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(
@@ -842,8 +838,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color:
-                      isSelected ? const Color(0xFF4CAF50) : Colors.grey[400]!,
+                  color: isSelected ? const Color(0xFF4CAF50) : Colors.grey[400]!,
                   width: 2,
                 ),
                 color: Colors.white,
@@ -1112,8 +1107,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
                                     ),
                                     const SizedBox(height: 4),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4),
+                                      padding: const EdgeInsets.symmetric(horizontal: 4),
                                       child: Text(
                                         item.detail,
                                         style: TextStyle(

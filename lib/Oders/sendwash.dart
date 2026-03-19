@@ -20,6 +20,7 @@ class sendwash extends StatefulWidget {
 
 class _sendwashState extends State<sendwash> {
   String? selectedType;
+  Map<String, dynamic>? _selectedType;
   TextEditingController noteController = TextEditingController();
   final PageController _pageController = PageController();
   Map<String, dynamic> selectedOptions = {
@@ -74,8 +75,7 @@ class _sendwashState extends State<sendwash> {
       List<dynamic> data = await api_status.fetchstatus();
       final filtered = data.where((e) => e['status'] == 1).toList();
 
-      print(
-          '_loadStatus: ${filtered.isNotEmpty ? filtered[0]['status'] : 'no data'}');
+      print('_loadStatus: ${filtered.isNotEmpty ? filtered[0]['status'] : 'no data'}');
 
       if (filtered.isNotEmpty) {
         if (!mounted) return;
@@ -130,8 +130,7 @@ class _sendwashState extends State<sendwash> {
         double lng;
         if (result['latlng'] is String) {
           String latlngString = result['latlng'];
-          String cleaned =
-              latlngString.replaceAll("LatLng(", "").replaceAll(")", "");
+          String cleaned = latlngString.replaceAll("LatLng(", "").replaceAll(")", "");
           List<String> parts = cleaned.split(',');
           lat = double.parse(parts[0]);
           lng = double.parse(parts[1]);
@@ -151,8 +150,7 @@ class _sendwashState extends State<sendwash> {
 
   Widget _buildClothingType() {
     // ✅ ดึงข้อมูลประเภทเสื้อผ้า
-    List<Map<String, dynamic>> clothingTypes =
-        API_sendwash().getClothingTypes();
+    List<Map<String, dynamic>> clothingTypes = API_sendwash().getClothingTypes();
     return Column(
       children: [
         // ✅ ที่อยู่ (GestureDetector)
@@ -186,9 +184,7 @@ class _sendwashState extends State<sendwash> {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    selectedAddress.isNotEmpty
-                        ? selectedAddress
-                        : 'กำลังค้นหาตำแหน่ง...',
+                    selectedAddress.isNotEmpty ? selectedAddress : 'กำลังค้นหาตำแหน่ง...',
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 13, color: Colors.grey),
@@ -211,8 +207,7 @@ class _sendwashState extends State<sendwash> {
             itemCount: clothingTypes.length,
             itemBuilder: (context, index) {
               var item = clothingTypes[index];
-              bool isSelected =
-                  selectedOptions['clothingType'] == item['value'];
+              bool isSelected = selectedOptions['clothingType'] == item['value'];
               return GestureDetector(
                 onTap: () async {
                   final value = item['value'];
@@ -224,6 +219,7 @@ class _sendwashState extends State<sendwash> {
                     } else if (value == 2) {
                       selectedType = 'bedding';
                     }
+                    _selectedType = item;
                   });
 
                   if (selectedType != null) {
@@ -250,9 +246,7 @@ class _sendwashState extends State<sendwash> {
                       decoration: BoxDecoration(
                         color: isSelected ? Colors.blue[50] : Colors.white,
                         border: Border.all(
-                          color: isSelected
-                              ? Colors.blue
-                              : const Color.fromARGB(255, 227, 227, 227),
+                          color: isSelected ? Colors.blue : const Color.fromARGB(255, 227, 227, 227),
                           width: 1.5,
                         ),
                         borderRadius: BorderRadius.circular(10),
@@ -267,8 +261,7 @@ class _sendwashState extends State<sendwash> {
                               topRight: Radius.circular(8),
                             ),
                             child: AspectRatio(
-                              aspectRatio:
-                                  4 / 3, // ✅ กำหนดอัตราส่วนภาพให้เหมาะสม
+                              aspectRatio: 4 / 3, // ✅ กำหนดอัตราส่วนภาพให้เหมาะสม
                               child: Image.asset(
                                 item['image'],
                                 fit: BoxFit.contain,
@@ -281,8 +274,7 @@ class _sendwashState extends State<sendwash> {
                             child: Text(
                               item['name'],
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                           ),
                           SizedBox(height: 10),
@@ -295,14 +287,12 @@ class _sendwashState extends State<sendwash> {
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Row(
                           children: [
-                            Icon(Icons.water_drop_sharp,
-                                color: Colors.blue[200], size: 16),
+                            Icon(Icons.water_drop_sharp, color: Colors.blue[200], size: 16),
                             SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 closestBranch,
-                                style:
-                                    TextStyle(fontSize: 13, color: Colors.grey),
+                                style: TextStyle(fontSize: 13, color: Colors.grey),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
@@ -328,9 +318,7 @@ class _sendwashState extends State<sendwash> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          closestBranch == 'ไม่พบสาขาที่ใกล้ที่สุด'
-              ? 'ค้นหาสาขาที่ใกล้ที่สุด'
-              : 'เลือกรายการซัก',
+          closestBranch == 'ไม่พบสาขาที่ใกล้ที่สุด' ? 'ค้นหาสาขาที่ใกล้ที่สุด' : 'เลือกรายการซัก',
           style: TextStyle(
             color: const Color.fromARGB(255, 203, 203, 203),
             fontSize: 18,
@@ -383,9 +371,8 @@ class _sendwashState extends State<sendwash> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      LaundryCustomizationPage(
-                                    laundryType: selectedType!,
+                                  builder: (context) => LaundryCustomizationPage(
+                                    laundryType: _selectedType!,
                                   ),
                                 ),
                               );

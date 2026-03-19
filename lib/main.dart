@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 import 'package:my_flutter_mapwash/firebase_msg.dart';
 import 'package:my_flutter_mapwash/firebase_options.dart';
+import 'package:my_flutter_mapwash/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_flutter_mapwash/Login/login_page.dart';
 import 'package:my_flutter_mapwash/api_config.dart';
@@ -59,9 +60,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Widget _startScreen = const Scaffold(
-    body: Center(child: CircularProgressIndicator()),
-  );
+  // Widget _startScreen = const Scaffold(
+  //   body: Center(child: CircularProgressIndicator()),
+  // );
+  //
+
+  Widget _startScreen = SplashScreen();
 
   @override
   void initState() {
@@ -75,6 +79,7 @@ class _MyAppState extends State<MyApp> {
       handleFCMNavigation(message);
     });
     await api_config.loadEndpoint();
+    // await Future.delayed(const Duration(seconds: 1));
     _checkLogin(); // ฟังก์ชันเช็ค login ของคุณ
   }
 

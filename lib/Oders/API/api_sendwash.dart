@@ -8,6 +8,7 @@ class API_sendwash {
       {
         'image': 'assets/images/pha1.jpg',
         'name': 'เสื้อผ้า',
+        'name_eng': 'Clothes',
         'detail': 'เสื้อผ้า',
         'value': 1,
         'quantity': 0,
@@ -17,6 +18,7 @@ class API_sendwash {
       {
         'image': 'assets/images/nuam.png',
         'name': 'ชุดเครื่องนอน/ผ้านวม',
+        'name_eng': 'Bedding/Comforters',
         'detail': 'ชุดเครื่องนอน/ผ้านวม',
         'value': 2,
         'quantity': 0,
@@ -26,10 +28,8 @@ class API_sendwash {
     ];
   }
 
-  static Future<List<Map<String, dynamic>>> getDefaultOptions(
-      String type) async {
-    final url = Uri.parse(
-        'https://washlover-1bef6-default-rtdb.firebaseio.com/mocklist.json');
+  static Future<List<Map<String, dynamic>>> getDefaultOptions(String type) async {
+    final url = Uri.parse('https://washlover-1bef6-default-rtdb.firebaseio.com/mocklist.json');
 
     final response = await http.get(url);
     if (response.statusCode != 200) {
@@ -43,10 +43,7 @@ class API_sendwash {
           .toList();
     }
     if (data is Map) {
-      return data.values
-          .map((item) => Map<String, dynamic>.from(item))
-          .where((item) => item['type'] == type)
-          .toList();
+      return data.values.map((item) => Map<String, dynamic>.from(item)).where((item) => item['type'] == type).toList();
     }
     return [];
   }

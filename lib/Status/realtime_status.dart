@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_flutter_mapwash/DirectionMap/direction_map.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 import 'package:flutter/services.dart';
+import 'package:my_flutter_mapwash/Oders/models/laundry_item.dart';
 import 'package:my_flutter_mapwash/Profile/API/api_profile.dart';
 import 'package:my_flutter_mapwash/Status/API/api_realtime_status.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class realtime_status extends StatefulWidget {
@@ -97,9 +100,10 @@ class _realtime_statusState extends State<realtime_status> {
 
   String? currentStatus;
   String? statusDescription;
-  DraggableScrollableController _sheetController =
-      DraggableScrollableController();
+  DraggableScrollableController _sheetController = DraggableScrollableController();
   double mapHeight = 0.0;
+  Map<String, dynamic> orderData = {};
+  double totalPrice = 0.0;
   @override
   void initState() {
     _sheetController.addListener(() {
@@ -112,6 +116,7 @@ class _realtime_statusState extends State<realtime_status> {
       startRealtimeUpdates();
       getDetal();
       _loadProfile();
+      loadOrder();
     });
   }
 
@@ -121,6 +126,57 @@ class _realtime_statusState extends State<realtime_status> {
     _timer?.cancel();
     stopRealtimeUpdates();
     super.dispose();
+  }
+
+  Future<void> loadOrder() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var data = prefs.getString('current_order') ?? '{}';
+    orderData = jsonDecode(data);
+    print('laundry_type');
+    print(orderData['detergent']);
+
+    LaundryItem? machine_size;
+    LaundryItem? temperature;
+    LaundryItem? dryer_size;
+    LaundryItem? detergent;
+    LaundryItem? fabric_softener;
+
+    List<LaundryItem> list = [];
+    if (orderData['machine_size'] != null) {
+      machine_size = LaundryItem.fromJson(orderData['machine_size']);
+      list.add(machine_size);
+    }
+    if (orderData['temperature'] != null) {
+      temperature = LaundryItem.fromJson(orderData['temperature']);
+      list.add(temperature);
+    }
+
+    if (orderData['dryer_size'] != null) {
+      dryer_size = LaundryItem.fromJson(orderData['dryer_size']);
+      list.add(dryer_size);
+    }
+
+    if (orderData['detergent'] != null) {
+      detergent = LaundryItem.fromJson(orderData['detergent']);
+      list.add(detergent);
+    }
+    if (orderData['fabric_softener'] != null) {
+      fabric_softener = LaundryItem.fromJson(orderData['fabric_softener']);
+      list.add(fabric_softener);
+    }
+
+    print('list-----------WW');
+    print(list);
+    if (list.isNotEmpty) {
+      totalPrice = list
+          .map((city) => city.price) // Map to a List<int>
+          .reduce((value, element) => value + element)
+          .toDouble();
+      print('totalPrice');
+      print(totalPrice);
+    }
+
+    setState(() {});
   }
 
   Future<void> startRealtimeUpdates() async {
@@ -146,8 +202,7 @@ class _realtime_statusState extends State<realtime_status> {
     if (_mapController == null) return;
 
     double tolerance = 0.00001;
-    bool samePoint = ((_lat - _latdri).abs() < tolerance) &&
-        ((_long - _longdri).abs() < tolerance);
+    bool samePoint = ((_lat - _latdri).abs() < tolerance) && ((_long - _longdri).abs() < tolerance);
     setState(() {
       _markers.clear();
       _polylines.clear();
@@ -186,9 +241,8 @@ class _realtime_statusState extends State<realtime_status> {
 
   // ฟังก์ชันหลักสำหรับดึงเส้นทางจาก API
   Future<void> _drawRoute() async {
-    final directionsService = DirectionsService(
-        googleApiKey:
-            'AIzaSyDEds_3tBG5jdPMRLZyBl1EJFo196mjNgs'); // ใส่ API Key ของคุณ
+    final directionsService =
+        DirectionsService(googleApiKey: 'AIzaSyDEds_3tBG5jdPMRLZyBl1EJFo196mjNgs'); // ใส่ API Key ของคุณ
     List<LatLng> routePoints = await directionsService.getRouteCoordinates(
       startLat: _latdri,
       startLng: _longdri,
@@ -288,6 +342,8 @@ class _realtime_statusState extends State<realtime_status> {
     double totalBeforeDiscount = 0.0;
     final member = profileData;
     double sizeH = MediaQuery.sizeOf(context).height;
+    print('orderData');
+    print(orderData);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: headerOrder(
@@ -348,8 +404,7 @@ class _realtime_statusState extends State<realtime_status> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 20.0),
+                        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -366,35 +421,25 @@ class _realtime_statusState extends State<realtime_status> {
                             ),
                             const SizedBox(height: 8.0),
                             ...deliveryStatuses.map((status) {
-                              bool isCurrentOrBefore = _isCurrentOrBefore(
-                                  List<String>.from(status['status']!));
+                              bool isCurrentOrBefore = _isCurrentOrBefore(List<String>.from(status['status']!));
                               return Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 0.0),
+                                margin: const EdgeInsets.symmetric(vertical: 0.0),
                                 child: TimelineTile(
                                   alignment: TimelineAlign.manual,
                                   lineXY: 0.0,
                                   isFirst: status == deliveryStatuses.first,
                                   isLast: status == deliveryStatuses.last,
                                   indicatorStyle: IndicatorStyle(
-                                    color: isCurrentOrBefore
-                                        ? Colors.white
-                                        : Colors.grey,
+                                    color: isCurrentOrBefore ? Colors.white : Colors.grey,
                                     iconStyle: IconStyle(
-                                      iconData: isCurrentOrBefore
-                                          ? Icons.check_circle
-                                          : Icons.cancel,
-                                      color: isCurrentOrBefore
-                                          ? Colors.green
-                                          : const Color.fromARGB(
-                                              101, 158, 158, 158),
+                                      iconData: isCurrentOrBefore ? Icons.check_circle : Icons.cancel,
+                                      color:
+                                          isCurrentOrBefore ? Colors.green : const Color.fromARGB(101, 158, 158, 158),
                                       fontSize: 22.0,
                                     ),
                                   ),
                                   beforeLineStyle: LineStyle(
-                                    color: isCurrentOrBefore
-                                        ? Colors.green
-                                        : Colors.grey,
+                                    color: isCurrentOrBefore ? Colors.green : Colors.grey,
                                     thickness: 2,
                                   ),
                                   endChild: Container(
@@ -404,8 +449,7 @@ class _realtime_statusState extends State<realtime_status> {
                                       left: 5.0,
                                       right: 0.0,
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 7.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 7.0),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[200],
                                       borderRadius: BorderRadius.circular(16.0),
@@ -456,8 +500,7 @@ class _realtime_statusState extends State<realtime_status> {
                                 SizedBox(width: 6),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         member['phone'].toString(),
@@ -479,66 +522,326 @@ class _realtime_statusState extends State<realtime_status> {
                     SliverToBoxAdapter(
                       child: Card(
                         color: Colors.white,
-                        margin:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
-                            children: List.generate(
-                              // orderDetails["order_selects"]?.length ?? 0,
-                              _orderDetails.length ?? 0,
-                              (index) {
-                                final product = _orderDetails[index];
-                                final int qty = product["qty"] ?? 0;
-                                final double price =
-                                    (product["price"] ?? 0).toDouble();
-                                final double totalPrice = price * qty;
-
-                                return Column(
+                            children: [
+                              // Column(
+                              //   children: List.generate(
+                              //     // orderDetails["order_selects"]?.length ?? 0,
+                              //     _orderDetails.length ?? 0,
+                              //     (index) {
+                              //       final product = _orderDetails[index];
+                              //       final int qty = product["qty"] ?? 0;
+                              //       final double price = (product["price"] ?? 0).toDouble();
+                              //       final double totalPrice = price * qty;
+                              //
+                              //       return Column(
+                              //         children: [
+                              //           ListTile(
+                              //             contentPadding: EdgeInsets.zero,
+                              //             leading: Image.asset(
+                              //               product["image"] ?? 'assets/images/default.png',
+                              //               width: 50,
+                              //               height: 50,
+                              //               fit: BoxFit.cover,
+                              //               errorBuilder: (context, error, stackTrace) => Icon(Icons.image),
+                              //             ),
+                              //             title: Text(
+                              //               product["name"] ?? "ไม่มีชื่อสินค้า",
+                              //               style: TextStyle(fontSize: 14),
+                              //               softWrap: true,
+                              //               maxLines: 2,
+                              //               overflow: TextOverflow.ellipsis,
+                              //             ),
+                              //             subtitle: Text(
+                              //               "จำนวน: $qty",
+                              //               style: TextStyle(color: Colors.grey, fontSize: 13),
+                              //             ),
+                              //             trailing: Column(
+                              //               mainAxisAlignment: MainAxisAlignment.center,
+                              //               crossAxisAlignment: CrossAxisAlignment.end,
+                              //               children: [
+                              //                 Text(
+                              //                   "฿${totalPrice.toStringAsFixed(2)}", // ✅ แสดงราคาสุทธิ
+                              //                   style: TextStyle(color: Colors.orange, fontSize: 14),
+                              //                 ),
+                              //               ],
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       );
+                              //     },
+                              //   ),
+                              // ),
+                              if (orderData["laundry_type"] != null)
+                                Column(
                                   children: [
-                                    ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      leading: Image.asset(
-                                        product["image"] ??
-                                            'assets/images/default.png',
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                Icon(Icons.image),
-                                      ),
-                                      title: Text(
-                                        product["name"] ?? "ไม่มีชื่อสินค้า",
-                                        style: TextStyle(fontSize: 14),
-                                        softWrap: true,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      subtitle: Text(
-                                        "จำนวน: $qty",
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 13),
-                                      ),
-                                      trailing: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            "฿${totalPrice.toStringAsFixed(2)}", // ✅ แสดงราคาสุทธิ
-                                            style: TextStyle(
-                                                color: Colors.orange,
-                                                fontSize: 14),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'รายการซัก',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          orderData["laundry_type"]['name'] ?? "",
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              if (orderData["machine_size"] != null)
+                                Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${orderData["machine_size"]['name'] ?? ''}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          '${orderData["machine_size"]['price'].toString()}.-',
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          orderData["machine_size"]['detail'] ?? "",
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              if (orderData["temperature"] != null)
+                                Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${orderData["temperature"]['name'] ?? ''}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          '${orderData["temperature"]['price'].toString()}.-',
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          orderData["temperature"]['detail'] ?? "",
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              if (orderData["dryer_size"] != null)
+                                Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${orderData["dryer_size"]['name'] ?? ''}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          '${orderData["dryer_size"]['price'].toString()}.-',
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          orderData["dryer_size"]['detail'] ?? "",
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              if (orderData["detergent"] != null)
+                                Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'น้ำยาซัก',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          '${orderData["detergent"]['price'].toString()}.-',
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            orderData["detergent"]['name'] ?? "",
+                                            style: TextStyle(fontSize: 14),
+                                            softWrap: true,
+                                            // maxLines: 2,
+                                            overflow: TextOverflow.visible,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              if (orderData["fabric_softener"] != null)
+                                Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'น้ำยาปรับผ้านุ่ม',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          '${orderData["fabric_softener"]['price'].toString()}.-',
+                                          style: TextStyle(fontSize: 14),
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            orderData["fabric_softener"]['name'] ?? "",
+                                            style: TextStyle(fontSize: 14),
+                                            softWrap: true,
+                                            // maxLines: 2,
+                                            overflow: TextOverflow.visible,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              Divider(),
+                              Container(
+                                padding: EdgeInsets.symmetric(vertical: 4.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "ยอดชำระ",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      "฿$totalPrice",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange,
                                       ),
                                     ),
                                   ],
-                                );
-                              },
-                            ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -554,11 +857,9 @@ class _realtime_statusState extends State<realtime_status> {
                               color: Colors.grey[100],
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8), // ทำมุมโค้งให้ Card
+                                borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card
                               ),
-                              margin: EdgeInsets.only(
-                                  bottom: 16), // เพิ่ม margin ใต้ Card
+                              margin: EdgeInsets.only(bottom: 16), // เพิ่ม margin ใต้ Card
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
@@ -572,11 +873,9 @@ class _realtime_statusState extends State<realtime_status> {
                                       ),
                                     ),
                                     Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.0),
+                                      padding: EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("ยอดรวมก่อนส่วนลด"),
                                           Text(
@@ -587,11 +886,9 @@ class _realtime_statusState extends State<realtime_status> {
                                       ),
                                     ),
                                     Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 4.0),
+                                      padding: EdgeInsets.symmetric(vertical: 4.0),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("ค่าจัดส่ง"),
                                           Text(
@@ -602,11 +899,9 @@ class _realtime_statusState extends State<realtime_status> {
                                       ),
                                     ),
                                     Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 4.0),
+                                      padding: EdgeInsets.symmetric(vertical: 4.0),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("ส่วนลด"),
                                           Text(
@@ -618,11 +913,9 @@ class _realtime_statusState extends State<realtime_status> {
                                     ),
                                     Divider(),
                                     Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 4.0),
+                                      padding: EdgeInsets.symmetric(vertical: 4.0),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             "ยอดชำระ",
@@ -652,8 +945,7 @@ class _realtime_statusState extends State<realtime_status> {
                               color: Colors.grey[100],
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8), // ทำมุมโค้งให้ Card
+                                borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card
                               ),
                               margin: EdgeInsets.only(bottom: 16),
                               child: Padding(
@@ -670,15 +962,12 @@ class _realtime_statusState extends State<realtime_status> {
                                     ),
                                     Divider(),
                                     Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.0),
+                                      padding: EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("วิธีการชำระเงิน"),
-                                          Text("qrcode",
-                                              style: TextStyle(fontSize: 16)),
+                                          Text("qrcode", style: TextStyle(fontSize: 16)),
                                         ],
                                       ),
                                     ),
@@ -692,8 +981,7 @@ class _realtime_statusState extends State<realtime_status> {
                               color: Colors.grey[100],
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8), // ทำมุมโค้งให้ Card
+                                borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card
                               ),
                               margin: EdgeInsets.only(bottom: 16),
                               child: Padding(
@@ -716,21 +1004,16 @@ class _realtime_statusState extends State<realtime_status> {
                                             "$deviceId",
                                             style: TextStyle(fontSize: 14),
                                             maxLines: 2, // แสดงได้ 2 บรรทัด
-                                            overflow: TextOverflow
-                                                .ellipsis, // แสดง ... เมื่อข้อความยาว
+                                            overflow: TextOverflow.ellipsis, // แสดง ... เมื่อข้อความยาว
                                           ),
                                         ),
                                         IconButton(
                                           icon: Icon(Icons.copy),
                                           onPressed: () {
-                                            Clipboard.setData(ClipboardData(
-                                                    text: deviceId ?? ''))
-                                                .then((_) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
+                                            Clipboard.setData(ClipboardData(text: deviceId ?? '')).then((_) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
                                                 SnackBar(
-                                                  content: Text(
-                                                      'คัดลอกหมายเลขออเดอร์แล้ว'),
+                                                  content: Text('คัดลอกหมายเลขออเดอร์แล้ว'),
                                                 ),
                                               );
                                             });
@@ -740,11 +1023,9 @@ class _realtime_statusState extends State<realtime_status> {
                                     ),
                                     Divider(),
                                     Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.0),
+                                      padding: EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("วันที่สั่งออเดอร์"),
                                           Text(
@@ -783,8 +1064,7 @@ class _realtime_statusState extends State<realtime_status> {
       );
       // หาค่าของ statusIndex โดยเช็คว่า status ที่ส่งมามีอยู่ใน List ของ 'status'
       int statusIndex = deliveryStatuses.indexWhere(
-        (s) => (s['status'] as List<String>)
-            .any((item) => statusList.contains(item)),
+        (s) => (s['status'] as List<String>).any((item) => statusList.contains(item)),
       );
       // ตรวจสอบว่า statusIndex อยู่ก่อน currentIndex หรือไม่
       return statusIndex <= currentIndex;

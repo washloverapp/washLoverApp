@@ -98,8 +98,7 @@ class _QrcodeState extends State<Qrcode> {
   }
 
   Future<void> generateQR(orderId) async {
-    final url =
-        "https://payment.washlover.com/create-payment-qr?amount=$amount&order_id=$orderId&ref4=$apiKey";
+    final url = "https://payment.washlover.com/create-payment-qr?amount=$amount&order_id=$orderId&ref4=$apiKey";
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -119,8 +118,7 @@ class _QrcodeState extends State<Qrcode> {
   Future<void> checkPaymentStatus(
     orderId,
   ) async {
-    final url =
-        "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
+    final url = "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -232,13 +230,10 @@ class _QrcodeState extends State<Qrcode> {
                       ],
                     ),
                     SizedBox(height: 4),
-                    Text("รหัสงาน: $device_id",
-                        style: TextStyle(color: Colors.grey)),
+                    Text("รหัสงาน: $device_id", style: TextStyle(color: Colors.grey)),
                     Divider(),
-                    buildInfoRow(
-                        "ยูเซอร์", "$phone", "สถานะ", "$paymentStatus"),
-                    buildInfoRow2("วันที่", "$formattedDate", "จะหมดเวลา",
-                        "${_formatTime(_remainingSeconds)} น."),
+                    buildInfoRow("ยูเซอร์", "$phone", "สถานะ", "$paymentStatus"),
+                    buildInfoRow2("วันที่", "$formattedDate", "จะหมดเวลา", "${_formatTime(_remainingSeconds)} น."),
                     buildInfoRow3("หมายเลขอ้างอิง", "$device_id"),
                     Divider(),
                     Row(
@@ -262,9 +257,7 @@ class _QrcodeState extends State<Qrcode> {
                       ],
                     ),
                     SizedBox(height: 16),
-                    qrImage == null
-                        ? Text("กำลังสร้าง QRCODE...")
-                        : Image.network(qrImage!, width: 450, height: 450),
+                    qrImage == null ? Text("กำลังสร้าง QRCODE...") : Image.network(qrImage!, width: 450, height: 450),
                     SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -277,10 +270,8 @@ class _QrcodeState extends State<Qrcode> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        buildButtonCancle(
-                            "ยกเลิก", Colors.grey, Colors.black, context),
-                        buildButtonSuccess(
-                            "โอนสำเร็จ", Colors.lightGreen, Colors.white),
+                        buildButtonCancle("ยกเลิก", Colors.grey, Colors.black, context),
+                        buildButtonSuccess("โอนสำเร็จ", Colors.lightGreen, Colors.white),
                       ],
                     ),
                   ],
@@ -307,8 +298,7 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
-  Widget buildInfoRow(
-      String label1, String value1, String label2, String value2) {
+  Widget buildInfoRow(String label1, String value1, String label2, String value2) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -321,8 +311,7 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
-  Widget buildInfoRow2(
-      String label1, String value1, String label2, String value2) {
+  Widget buildInfoRow2(String label1, String value1, String label2, String value2) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -340,9 +329,7 @@ class _QrcodeState extends State<Qrcode> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(color: Colors.grey)),
-        Text(value,
-            style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red)),
+        Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red)),
       ],
     );
   }
@@ -352,8 +339,7 @@ class _QrcodeState extends State<Qrcode> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(color: Colors.grey)),
-        Text(value,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -371,8 +357,7 @@ class _QrcodeState extends State<Qrcode> {
     );
   }
 
-  Widget buildButtonCancle(
-      String text, Color bgColor, Color textColor, BuildContext context) {
+  Widget buildButtonCancle(String text, Color bgColor, Color textColor, BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: bgColor,
