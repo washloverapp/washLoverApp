@@ -22,8 +22,11 @@ class ApiPost {
 
     /// 🔥 ดึง order JSON ที่ save ไว้
     String orderJsonString = prefs.getString('current_order') ?? '{}';
-
     Map<String, dynamic> orderJson = jsonDecode(orderJsonString);
+
+    print('orderJsonString');
+    print(orderJsonString);
+    print(orderJson);
 
     Status status = Status(status: false, messageJson: {});
     try {
@@ -135,14 +138,9 @@ class ApiTotalorder {
     }
 
     return {
-      "washing": data["washing"] is String
-          ? int.parse(data["washing"])
-          : data["washing"],
-      "dryer":
-          data["dryer"] is String ? int.parse(data["dryer"]) : data["dryer"],
-      "temperature": data["temperature"] is String
-          ? int.parse(data["temperature"])
-          : data["temperature"],
+      "washing": data["washing"] is String ? int.parse(data["washing"]) : data["washing"],
+      "dryer": data["dryer"] is String ? int.parse(data["dryer"]) : data["dryer"],
+      "temperature": data["temperature"] is String ? int.parse(data["temperature"]) : data["temperature"],
       "detergent": parseMap(data["detergent"]),
       "softener": parseMap(data["softener"]),
     };
@@ -157,8 +155,7 @@ class ApiTotalorder {
 
     final washing = findSingleItem(mockList, "washing", selection["washing"]);
     final dryer = findSingleItem(mockList, "dryer", selection["dryer"]);
-    final temperature =
-        findSingleItem(mockList, "temperature", selection["temperature"]);
+    final temperature = findSingleItem(mockList, "temperature", selection["temperature"]);
 
     final detergents = findMultiItems(
       mockList,
@@ -201,11 +198,9 @@ class ApiTotalorder {
     }
   }
 
-  List<SelectedItem> findMultiItems(
-      List<MockItem> list, String type, Map<int, int> selected) {
+  List<SelectedItem> findMultiItems(List<MockItem> list, String type, Map<int, int> selected) {
     return selected.entries.map((entry) {
-      final item = list
-          .firstWhere((e) => e.type == type && e.id == entry.key.toString());
+      final item = list.firstWhere((e) => e.type == type && e.id == entry.key.toString());
       return SelectedItem(item: item, qty: entry.value);
     }).toList();
   }
@@ -214,8 +209,7 @@ class ApiTotalorder {
   /// API FETCH
   /// =======================
   Future<List<MockItem>> fetchMockList() async {
-    const url =
-        "https://washlover-1bef6-default-rtdb.firebaseio.com/mocklist.json";
+    const url = "https://washlover-1bef6-default-rtdb.firebaseio.com/mocklist.json";
     final response = await http.get(Uri.parse(url));
     final List data = json.decode(response.body);
     return data.map((e) => MockItem.fromJson(e)).toList();
@@ -278,8 +272,7 @@ class ApiTotalorder {
 
     /// 2️⃣ โหลด order เดิม
     String orderString = prefs.getString('current_order') ?? '{}';
-    Map<String, dynamic> order =
-        orderString == '{}' ? {} : jsonDecode(orderString);
+    Map<String, dynamic> order = orderString == '{}' ? {} : jsonDecode(orderString);
 
     /// 3️⃣ โครงสร้างพื้นฐาน
     order['device_id'] ??= device_id;
@@ -351,8 +344,7 @@ class ApiTotalorder {
   /// ส่ง OrderSummary ทั้งหมด
   /// =======================
   Future<void> sendOrderItems(OrderSummary order, String job_id) async {
-    if (order.washing != null)
-      await sendItemToCart(job_id, order.washing!, qty: 1);
+    if (order.washing != null) await sendItemToCart(job_id, order.washing!, qty: 1);
     if (order.dryer != null) await sendItemToCart(job_id, order.dryer!, qty: 1);
     if (order.temperature != null)
       await sendItemToCart(

@@ -153,23 +153,23 @@ class _homeState extends State<home> {
               ),
               SizedBox(height: 12),
 
-              InkWell(
-                onTap: () {
-                  api_sendFcmNotify.sendFcmNotify(
-                    'แจ้งเตือนออเดอร์งานจากลูกค้า',
-                    'งานด่วนลูกค้ารอพนักงานรับผ้า',
-                  );
-                },
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
-                    child: Text(
-                      "ส่งแจ้งเตือน",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
+              // InkWell(
+              //   onTap: () {
+              //     api_sendFcmNotify.sendFcmNotify(
+              //       'แจ้งเตือนออเดอร์งานจากลูกค้า',
+              //       'งานด่วนลูกค้ารอพนักงานรับผ้า',
+              //     );
+              //   },
+              //   child: Card(
+              //     child: Padding(
+              //       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+              //       child: Text(
+              //         "ส่งแจ้งเตือน",
+              //         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              //       ),
+              //     ),
+              //   ),
+              // ),
 
               // Service Section Title
               Container(

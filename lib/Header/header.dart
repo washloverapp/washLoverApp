@@ -55,7 +55,7 @@ class _HeaderState extends State<Header> {
       return;
     }
 
-    final bool fcmSent = prefs.getBool('fcm_token_sent') ?? false;
+    // final bool fcmSent = prefs.getBool('fcm_token_sent') ?? false;
 
     if (!mounted) return;
     setState(() {
@@ -63,10 +63,10 @@ class _HeaderState extends State<Header> {
       _notificationEnabled = true;
     });
 
-    if (!fcmSent) {
-      await api_config.saveTokenFcmApi();
-      await prefs.setBool('fcm_token_sent', true);
-    }
+    // if (!fcmSent) {
+    await api_config.saveTokenFcmApi();
+    await prefs.setBool('fcm_token_sent', true);
+    // }
   }
 
   void _showNotificationSetting(BuildContext context) {
@@ -75,23 +75,18 @@ class _HeaderState extends State<Header> {
       barrierDismissible: true,
       builder: (context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: _notificationEnabled
-                      ? Colors.orange.withOpacity(0.15)
-                      : Colors.grey.withOpacity(0.15),
+                  color: _notificationEnabled ? Colors.orange.withOpacity(0.15) : Colors.grey.withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  _notificationEnabled
-                      ? Icons.notifications_active
-                      : Icons.notifications_off,
+                  _notificationEnabled ? Icons.notifications_active : Icons.notifications_off,
                   size: 72,
                   color: _notificationEnabled ? Colors.orange : Colors.grey,
                 ),
@@ -124,8 +119,7 @@ class _HeaderState extends State<Header> {
                 onPressed: _openAppSettings,
                 child: const Text(
                   'ไปที่การตั้งค่า',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -154,7 +148,7 @@ class _HeaderState extends State<Header> {
                     'assets/images/logo/Washloverwhite.png',
                     height: 60,
                   ),
-                  Text( 
+                  Text(
                     _incognito ? 'โหมดไม่ระบุตัวตน' : '',
                     style: const TextStyle(
                       color: Colors.white,
@@ -170,17 +164,13 @@ class _HeaderState extends State<Header> {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: _notificationEnabled
-                                ? const Color(0xFFfdc607)
-                                : Colors.grey,
+                            color: _notificationEnabled ? const Color(0xFFfdc607) : Colors.grey,
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: IconButton(
                             icon: Icon(
-                              _notificationEnabled
-                                  ? Icons.notifications_active
-                                  : Icons.notifications_off,
+                              _notificationEnabled ? Icons.notifications_active : Icons.notifications_off,
                               color: Colors.white,
                               size: 23,
                             ),

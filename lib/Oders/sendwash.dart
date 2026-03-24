@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_flutter_mapwash/Layouts/main_layout.dart';
 // import 'package:http/http.dart' as http;
@@ -7,6 +8,7 @@ import 'package:my_flutter_mapwash/Oders/location_helper.dart';
 import 'package:my_flutter_mapwash/Oders/screens/laundry_customization_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_flutter_mapwash/Oders/utils/laundry_pref_helper.dart';
+import 'package:my_flutter_mapwash/Payment/alert_info.dart';
 import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 // import 'package:my_flutter_mapwash/Oders/total_order.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +22,7 @@ class sendwash extends StatefulWidget {
 
 class _sendwashState extends State<sendwash> {
   String? selectedType;
-  Map<String, dynamic>? _selectedType;
+  Map<String, dynamic> _selectedType = Map<String, dynamic>();
   TextEditingController noteController = TextEditingController();
   final PageController _pageController = PageController();
   Map<String, dynamic> selectedOptions = {
@@ -81,34 +83,23 @@ class _sendwashState extends State<sendwash> {
         if (!mounted) return;
         MainLayout.initialIndex = 4;
         // 🔥 1. แสดง AlertDialog
-        await showDialog(
-          context: context,
-          barrierDismissible: true, // ห้ามกดนอกปิด
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("แจ้งเตือน"),
-              content: const Text(
-                  "พบออเดอร์ที่ยังรอพนังงานรับผ้าของท่าน\nหรือลบออกเดร์ของท่านและเลือกรายการใหม่\nรอพนักงานของเราไปรับผ้าของคุณ"),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const MainLayout()),
-                    (Route<dynamic> route) => false,
-                  ),
-                  child: const Text("ตกลง"),
-                ),
-              ],
-            );
-          },
-        );
-
-        if (!mounted) return;
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const MainLayout()),
-          (Route<dynamic> route) => false,
-        );
+          CupertinoModalPopupRoute(
+            barrierColor: Colors.black54.withOpacity(.5),
+            builder: (context) {
+              return AlertInfo('',
+                  "พบออเดอร์ที่ยังรอพนังงานรับผ้าของท่าน\nหรือลบออกเดร์ของท่านและเลือกรายการใหม่\nรอพนักงานของเราไปรับผ้าของคุณ");
+            },
+          ),
+        ).then((value) async {
+          if (!mounted) return;
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const MainLayout()),
+            (Route<dynamic> route) => false,
+          );
+        });
       }
     } catch (e) {
       print('Error loading status: $e');
@@ -320,80 +311,109 @@ class _sendwashState extends State<sendwash> {
         title: Text(
           closestBranch == 'ไม่พบสาขาที่ใกล้ที่สุด' ? 'ค้นหาสาขาที่ใกล้ที่สุด' : 'เลือกรายการซัก',
           style: TextStyle(
-            color: const Color.fromARGB(255, 203, 203, 203),
+            // color: const Color.fromARGB(255, 203, 203, 203),
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: false,
       ),
-      body: closestBranch == 'ไม่พบสาขาที่ใกล้ที่สุด'
-          ? Center(
-              child: Text(
-                closestBranch,
-                style: TextStyle(fontSize: 20),
-              ),
-            )
-          : PageView(
-              controller: _pageController,
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                _buildClothingType(),
-              ],
-            ),
-      bottomNavigationBar: closestBranch == 'ไม่พบสาขาที่ใกล้ที่สุด'
-          ? null
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        foregroundColor: Colors.grey[800],
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: closestBranch == 'ไม่พบสาขาที่ใกล้ที่สุด'
+                  ? Center(
+                      child: Text(
+                        closestBranch,
+                        style: TextStyle(fontSize: 20),
                       ),
-                      child: const Text('ย้อนกลับ'),
+                    )
+                  : PageView(
+                      controller: _pageController,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        _buildClothingType(),
+                      ],
+                    ),
+            ),
+          ),
+          closestBranch == 'ไม่พบสาขาที่ใกล้ที่สุด'
+              ? Container()
+              : SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _selectedType.isEmpty
+                                  ? null
+                                  : () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LaundryCustomizationPage(
+                                            laundryType: _selectedType,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFFFFC15C),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                shape: StadiumBorder(),
+                                disabledBackgroundColor: Colors.grey[300],
+                                disabledForegroundColor: Colors.grey[500],
+                              ),
+                              child: const Text(
+                                'ถัดไป',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: selectedType != null
-                          ? () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LaundryCustomizationPage(
-                                    laundryType: _selectedType!,
-                                  ),
-                                ),
-                              );
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFC15C),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        disabledBackgroundColor: Colors.grey[300],
-                        disabledForegroundColor: Colors.grey[500],
-                      ),
-                      child: const Text('ถัดไป'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+        ],
+      ),
+      // bottomNavigationBar: closestBranch == 'ไม่พบสาขาที่ใกล้ที่สุด'
+      //     ? null
+      //     : Padding(
+      //         padding: const EdgeInsets.all(20),
+      //         child: ElevatedButton(
+      //           onPressed: _selectedType.isEmpty
+      //               ? null
+      //               : () {
+      //                   Navigator.push(
+      //                     context,
+      //                     MaterialPageRoute(
+      //                       builder: (context) => LaundryCustomizationPage(
+      //                         laundryType: _selectedType,
+      //                       ),
+      //                     ),
+      //                   );
+      //                 },
+      //           style: ElevatedButton.styleFrom(
+      //             backgroundColor: Color(0xFFFFC15C),
+      //             foregroundColor: Colors.white,
+      //             padding: const EdgeInsets.symmetric(vertical: 10),
+      //             shape: StadiumBorder(),
+      //             disabledBackgroundColor: Colors.grey[300],
+      //             disabledForegroundColor: Colors.grey[500],
+      //           ),
+      //           child: const Text(
+      //             'ถัดไป',
+      //             style: TextStyle(fontSize: 18),
+      //           ),
+      //         ),
+      //       ),
     );
   }
 }

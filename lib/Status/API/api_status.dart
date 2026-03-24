@@ -18,26 +18,33 @@ class api_status {
           'Accept': 'application/json',
         },
       );
-      print("$token");
+      // print('data---------2');
+      // print(token);
+      // print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        List<dynamic> listData = [];
-
-        if (data is List) {
-          listData = data;
-        } else if (data is Map && data['data'] != null) {
-          listData = data['data'];
-        }
-
-        // กรองเอา status ที่ไม่เท่ากับ 4
-        final filteredData = listData.where((item) {
-          return item['status'] != 4;
-        }).toList();
-
-        return filteredData;
+        List<dynamic> listData = data;
+        //
+        //   if (data is List) {
+        //     listData = data;
+        //   } else if (data is Map && data['data'] != null) {
+        //     listData = data['data'];
+        //   }
+        //
+        //   // กรองเอา status ที่ไม่เท่ากับ 4
+        //   final filteredData = listData.where((item) {
+        //     return item['status'] != 4;
+        //   }).toList();
+        //
+        //   return filteredData;
+        // } else {
+        //   print("Error: ${response.statusCode}");
+        //   return [];
+        // }
+        // listData = listData.where((x) => x['status'] != 4).toList();
+        return listData;
       } else {
-        print("Error: ${response.statusCode}");
         return [];
       }
     } catch (e) {
@@ -49,8 +56,7 @@ class api_status {
 
 class ApistatusOrder {
   /// ดึงสถานะปลายทางของอุปกรณ์ (device)
-  Future<Map<String, dynamic>?> fetchDestinationStatus(
-      String deviceId, String id) async {
+  Future<Map<String, dynamic>?> fetchDestinationStatus(String deviceId, String id) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
     final endpoint = prefs.getString('endpoint');
@@ -70,8 +76,7 @@ class ApistatusOrder {
         final data = json.decode(response.body);
         return data;
       } else {
-        print(
-            '⚠️ [$id] Error: ${response.statusCode} (${response.reasonPhrase})');
+        print('⚠️ [$id] Error: ${response.statusCode} (${response.reasonPhrase})');
         return null;
       }
     } catch (e) {
@@ -87,6 +92,8 @@ class ApisCartjob {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
     final endpoint = prefs.getString('endpoint');
+
+    print('getCartTotalPrice');
 
     final dio = Dio();
     final headers = {'Authorization': 'Bearer $token'};

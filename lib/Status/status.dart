@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:my_flutter_mapwash/Oders/API/api_saveorder.dart';
 import 'package:my_flutter_mapwash/Payment/statusQrcode.dart';
 import 'package:my_flutter_mapwash/Status/API/api_status.dart';
 import 'package:my_flutter_mapwash/Status/realtime_status.dart';
@@ -67,21 +69,20 @@ class _StatusState extends State<Status> {
     }
   }
 
-  Future<Map<String, dynamic>?> _getFuture(
-      String deviceId, String orderId) async {
+  Future<Map<String, dynamic>?> _getFuture(String deviceId, String orderId) async {
     if (!_futureCache.containsKey(orderId)) {
       _futureCache[orderId] = api.fetchDestinationStatus(deviceId, orderId);
     }
     Map<String, dynamic>? statusData = await _futureCache[orderId];
     status = statusData?['status'] ?? 0;
-    print(status);
+    // print(status);
     return statusData;
   }
 
   String formatDate(String datetime) {
     try {
       DateTime parsedDate = DateTime.parse(datetime);
-      return DateFormat('dd MMMM yyyy, E', 'th_TH').format(parsedDate);
+      return DateFormat('dd-MM-yyyy hh:mm').format(parsedDate);
     } catch (e) {
       return datetime;
     }
@@ -112,21 +113,15 @@ class _StatusState extends State<Status> {
   Color getPaymentStatusColor(String status) {
     status = status.toLowerCase();
 
-    if (status.contains("ชำระเงินเรียบร้อย") ||
-        status.contains("success") ||
-        status.contains("paid")) {
+    if (status.contains("ชำระเงินเรียบร้อย") || status.contains("success") || status.contains("paid")) {
       return Colors.green;
     }
 
-    if (status.contains("รอ") ||
-        status.contains("pending") ||
-        status.contains("ค้างชำระ")) {
+    if (status.contains("รอ") || status.contains("pending") || status.contains("ค้างชำระ")) {
       return Colors.red;
     }
 
-    if (status.contains("ไม่สำเร็จ") ||
-        status.contains("fail") ||
-        status.contains("error")) {
+    if (status.contains("ไม่สำเร็จ") || status.contains("fail") || status.contains("error")) {
       return Colors.red;
     }
 
@@ -148,8 +143,7 @@ class _StatusState extends State<Status> {
   /// 2) เช็คสถานะการชำระเงิน
 
   Future<String> checkPaymentStatus(String orderId) async {
-    final url =
-        "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
+    final url = "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -176,11 +170,13 @@ class _StatusState extends State<Status> {
     required dynamic status,
     required dynamic payment,
     required String paymentStatusText,
+    required int statusInt,
   }) {
     return GestureDetector(
       onTap: () {
         double totalPrice = double.parse(amount);
         _timer?.cancel();
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -226,36 +222,41 @@ class _StatusState extends State<Status> {
         // }
       },
       child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+        color: Colors.white,
+        elevation: 3,
+        // margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: color.withOpacity(0.2),
             child: Icon(icon, color: color),
           ),
-          title: Text(title, style: const TextStyle(fontSize: 14)),
+          title: Text(title, style: const TextStyle(fontSize: 16)),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 datetime,
-                style: const TextStyle(fontSize: 13, color: Colors.grey),
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
               Text(
                 device_id,
-                style: const TextStyle(fontSize: 13, color: Colors.grey),
+                style: const TextStyle(
+                  fontSize: 13,
+                ),
+                maxLines: 1,
               ),
               const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: getPaymentStatusColor(paymentStatusText),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  paymentStatusText,
-                  style: const TextStyle(fontSize: 12, color: Colors.white),
-                ),
-              ),
+              // Container(
+              //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              //   decoration: BoxDecoration(
+              //     color: getPaymentStatusColor(paymentStatusText),
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Text(
+              //     paymentStatusText,
+              //     style: const TextStyle(fontSize: 12, color: Colors.white),
+              //   ),
+              // ),
             ],
           ),
 
@@ -282,17 +283,18 @@ class _StatusState extends State<Status> {
                 ],
               ),
               const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.chat, color: Colors.blueAccent),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatScreen(device_id),
-                    ),
-                  );
-                },
-              ),
+              if (statusInt == 2)
+                IconButton(
+                  icon: const Icon(FontAwesomeIcons.solidMessage, color: Colors.blueAccent),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(device_id),
+                      ),
+                    );
+                  },
+                ),
             ],
           ),
         ),
@@ -330,7 +332,7 @@ class _StatusState extends State<Status> {
         title: const Text(
           "รายการส่งซัก",
           style: TextStyle(
-            color: Color.fromARGB(255, 203, 203, 203),
+            // color: Color.fromARGB(255, 203, 203, 203),
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -343,10 +345,12 @@ class _StatusState extends State<Status> {
             ? _buildEmptyStatus()
             : ListView.builder(
                 itemCount: _statusData.length,
+                shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final order = _statusData[index];
-                  final orderStatus =
-                      int.tryParse(order['status']?.toString() ?? '0') ?? 0;
+                  print('order');
+                  print(order);
+                  final orderStatus = int.tryParse(order['status']?.toString() ?? '0') ?? 0;
 
                   if (orderStatus == 4) return const SizedBox.shrink();
 
@@ -360,11 +364,10 @@ class _StatusState extends State<Status> {
                     builder: (context, snapshotOrder) {
                       String apiText = '...';
                       Color apiColor = statusInfo['color'];
-
+                      int statusInt = 0;
                       if (snapshotOrder.hasData && snapshotOrder.data != null) {
-                        String rawStatus =
-                            snapshotOrder.data!['status']?.toString() ?? '';
-                        int statusInt = int.tryParse(rawStatus) ?? 0;
+                        String rawStatus = snapshotOrder.data!['status']?.toString() ?? '';
+                        statusInt = int.tryParse(rawStatus) ?? 0;
                         final statusFromApi = getStatusInfo(statusInt);
                         apiText = statusFromApi['text'];
                         apiColor = statusFromApi['color'];
@@ -376,11 +379,9 @@ class _StatusState extends State<Status> {
                           String apiText = '...';
                           Color apiColor = statusInfo['color'];
 
-                          if (snapshotOrder.hasData &&
-                              snapshotOrder.data != null) {
-                            String rawStatus =
-                                snapshotOrder.data!['status']?.toString() ?? '';
-                            int statusInt = int.tryParse(rawStatus) ?? 0;
+                          if (snapshotOrder.hasData && snapshotOrder.data != null) {
+                            String rawStatus = snapshotOrder.data!['status']?.toString() ?? '';
+                            statusInt = int.tryParse(rawStatus) ?? 0;
                             final statusFromApi = getStatusInfo(statusInt);
                             apiText = statusFromApi['text'];
                             apiColor = statusFromApi['color'];
@@ -398,8 +399,7 @@ class _StatusState extends State<Status> {
                                 builder: (context, priceSnap) {
                                   String price = '0';
 
-                                  if (priceSnap.connectionState ==
-                                      ConnectionState.waiting) {
+                                  if (priceSnap.connectionState == ConnectionState.waiting) {
                                     price = '...';
                                   } else if (priceSnap.hasData) {
                                     price = priceSnap.data!;
@@ -413,8 +413,7 @@ class _StatusState extends State<Status> {
                                         icon: Icons.online_prediction_sharp,
                                         color: apiColor,
                                         title: apiText,
-                                        datetime:
-                                            formatDate(order['set_at'] ?? ''),
+                                        datetime: formatDate(order['set_at'] ?? ''),
                                         amount: price,
                                         time: formatTime(order['set_at'] ?? ''),
                                         id: orderId,
@@ -422,6 +421,7 @@ class _StatusState extends State<Status> {
                                         status: status,
                                         payment: order['payment'],
                                         paymentStatusText: payText,
+                                        statusInt: statusInt,
                                       ),
                                     ],
                                   );

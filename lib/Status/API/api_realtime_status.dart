@@ -20,8 +20,7 @@ class ApistatusRealtime {
         final data = json.decode(response.body);
         return data;
       } else {
-        print(
-            '⚠️ [$id] Error: ${response.statusCode} (${response.reasonPhrase})');
+        print('⚠️ [$id] Error: ${response.statusCode} (${response.reasonPhrase})');
         return null;
       }
     } catch (e) {
@@ -36,8 +35,7 @@ class ApistatusDriver {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
     final endpoint = prefs.getString('endpoint');
-    final url =
-        Uri.parse('$endpoint/api/get_last_location?device_id=$deviceId');
+    final url = Uri.parse('$endpoint/api/get_last_location?device_id=$deviceId');
 
     try {
       final response = await http.get(
@@ -52,8 +50,7 @@ class ApistatusDriver {
         final data = json.decode(response.body);
         return data;
       } else {
-        print(
-            '⚠️ [$id] Error: ${response.statusCode} (${response.reasonPhrase})');
+        print('⚠️ [$id] Error: ${response.statusCode} (${response.reasonPhrase})');
         return null;
       }
     } catch (e) {
@@ -64,11 +61,14 @@ class ApistatusDriver {
 }
 
 class ApiDetail {
-  Future<List?> stDetail(String deviceId, String id) async {
+  Future<List<dynamic>> stDetail(String deviceId, String id) async {
+    print('stDetail');
+    print(deviceId);
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
     final endpoint = prefs.getString('endpoint');
-    final url = Uri.parse('$endpoint/api/cart/$deviceId');
+    final phone = prefs.getString('phone');
+    final url = Uri.parse('$endpoint/api/cart/$phone');
     try {
       final response = await http.get(
         url,
@@ -77,16 +77,20 @@ class ApiDetail {
           'Accept': 'application/json',
         },
       );
-
+      print('data---0');
+      print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('data');
+        print(data);
 
-        if (data is Map && data['items'] is List) {
-          return List<Map<String, dynamic>>.from(data['items']);
-        } else {
-          print("⚠️ Unexpected response format: $data");
-          return [];
-        }
+        // if (data is Map && data['items'] is List) {
+        //   return List<Map<String, dynamic>>.from(data['items']);
+        // } else {
+        //   print("⚠️ Unexpected response format: $data");
+        //   return [];
+        // }
       } else {
         print('⚠️ Error: ${response.statusCode} (${response.reasonPhrase})');
         return [];
@@ -100,9 +104,10 @@ class ApiDetail {
       //       '⚠️ [$id] Error: ${response.statusCode} (${response.reasonPhrase})');
       //   return null;
       // }
+      return [];
     } catch (e) {
       print('❌ [$id] Error fetching destination status: $e');
-      return null;
+      return [];
     }
   }
 }

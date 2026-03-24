@@ -16,7 +16,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   void initState() {
     super.initState();
     image1 = Image.asset(
-      "assets/images/logo.png",
+      "assets/icons/app_icon.png",
       height: 200,
       width: 200,
       fit: BoxFit.contain,

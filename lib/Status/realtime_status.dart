@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_flutter_mapwash/DirectionMap/direction_map.dart';
 import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 import 'package:flutter/services.dart';
+import 'package:my_flutter_mapwash/Oders/API/api_saveorder.dart';
 import 'package:my_flutter_mapwash/Oders/models/laundry_item.dart';
 import 'package:my_flutter_mapwash/Profile/API/api_profile.dart';
 import 'package:my_flutter_mapwash/Status/API/api_realtime_status.dart';
@@ -96,7 +97,7 @@ class _realtime_statusState extends State<realtime_status> {
     'return_success',
   ];
 
-  List<Map<String, dynamic>> _orderDetails = [];
+  List<dynamic> _orderDetails = [];
 
   String? currentStatus;
   String? statusDescription;
@@ -116,7 +117,7 @@ class _realtime_statusState extends State<realtime_status> {
       startRealtimeUpdates();
       getDetal();
       _loadProfile();
-      loadOrder();
+      // loadOrder();
     });
   }
 
@@ -166,7 +167,7 @@ class _realtime_statusState extends State<realtime_status> {
     }
 
     print('list-----------WW');
-    print(list);
+    print(jsonEncode(list));
     if (list.isNotEmpty) {
       totalPrice = list
           .map((city) => city.price) // Map to a List<int>
@@ -278,8 +279,10 @@ class _realtime_statusState extends State<realtime_status> {
 
   Future<void> getDetal() async {
     final apiDetail = ApiDetail();
-    final dtDetail = await apiDetail.stDetail(widget.deviceId, widget.id);
-    _orderDetails = dtDetail as List<Map<String, dynamic>>;
+    // final dtDetail = await apiDetail.stDetail(widget.deviceId, widget.id);
+    orderData = await APICartSet.getCart();
+
+    setState(() {});
   }
 
   Future<void> fetchRealtimeStatus() async {
@@ -287,7 +290,7 @@ class _realtime_statusState extends State<realtime_status> {
     final apiDriver = ApistatusDriver();
     final data = await apiCustomer.StReal(widget.deviceId, widget.id);
     final dtDri = await apiDriver.stDriver(widget.deviceId, widget.id);
-    print(data);
+    // print(data);
     if (data != null) {
       if (!mounted) return;
       setState(() {
@@ -307,6 +310,7 @@ class _realtime_statusState extends State<realtime_status> {
       });
       _updateMarkersAndPolylines();
       placeName = await getPlaceName(_lat, _long);
+      setState(() {});
     }
   }
 
@@ -343,7 +347,12 @@ class _realtime_statusState extends State<realtime_status> {
     final member = profileData;
     double sizeH = MediaQuery.sizeOf(context).height;
     print('orderData');
+    // print(orderData);
+    print(orderData['total_price']);
     print(orderData);
+    totalPrice = orderData['total_price'] ?? 0;
+    _orderDetails = orderData['items'] ?? [];
+    print(_orderDetails.length);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: headerOrder(
@@ -384,7 +393,7 @@ class _realtime_statusState extends State<realtime_status> {
             controller: _sheetController,
             initialChildSize: 0.7,
             minChildSize: 0.2,
-            maxChildSize: .9,
+            maxChildSize: 1,
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 decoration: const BoxDecoration(
@@ -575,248 +584,60 @@ class _realtime_statusState extends State<realtime_status> {
                               //     },
                               //   ),
                               // ),
-                              if (orderData["laundry_type"] != null)
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'รายการซัก',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
+
+                              Column(
+                                children: [
+                                  for (int i = 0; i < _orderDetails.length; i++)
+                                    Builder(builder: (context) {
+                                      var data = _orderDetails[i];
+                                      return Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  data['name'] ?? '',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  softWrap: true,
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Text(
+                                                ' ${data['price'].toString()}.-',
+                                                style: TextStyle(fontSize: 14),
+                                                softWrap: true,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
                                           ),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          orderData["laundry_type"]['name'] ?? "",
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              if (orderData["machine_size"] != null)
-                                Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '${orderData["machine_size"]['name'] ?? ''}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Expanded(
+                                                child: Text(
+                                                  data['detail'] ?? "",
+                                                  style: TextStyle(fontSize: 14),
+                                                  softWrap: true,
+                                                  // maxLines: 2,
+                                                  overflow: TextOverflow.visible,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          '${orderData["machine_size"]['price'].toString()}.-',
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          orderData["machine_size"]['detail'] ?? "",
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              if (orderData["temperature"] != null)
-                                Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '${orderData["temperature"]['name'] ?? ''}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          '${orderData["temperature"]['price'].toString()}.-',
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          orderData["temperature"]['detail'] ?? "",
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              if (orderData["dryer_size"] != null)
-                                Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '${orderData["dryer_size"]['name'] ?? ''}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          '${orderData["dryer_size"]['price'].toString()}.-',
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          orderData["dryer_size"]['detail'] ?? "",
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              if (orderData["detergent"] != null)
-                                Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'น้ำยาซัก',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          '${orderData["detergent"]['price'].toString()}.-',
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            orderData["detergent"]['name'] ?? "",
-                                            style: TextStyle(fontSize: 14),
-                                            softWrap: true,
-                                            // maxLines: 2,
-                                            overflow: TextOverflow.visible,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              if (orderData["fabric_softener"] != null)
-                                Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'น้ำยาปรับผ้านุ่ม',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          '${orderData["fabric_softener"]['price'].toString()}.-',
-                                          style: TextStyle(fontSize: 14),
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            orderData["fabric_softener"]['name'] ?? "",
-                                            style: TextStyle(fontSize: 14),
-                                            softWrap: true,
-                                            // maxLines: 2,
-                                            overflow: TextOverflow.visible,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                        ],
+                                      );
+                                    }),
+                                ],
+                              ),
+
                               Divider(),
                               Container(
                                 padding: EdgeInsets.symmetric(vertical: 4.0),
@@ -854,7 +675,7 @@ class _realtime_statusState extends State<realtime_status> {
                           children: [
                             // สรุปคำสั่งซื้อ
                             Card(
-                              color: Colors.grey[100],
+                              color: Colors.white,
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card
@@ -942,7 +763,7 @@ class _realtime_statusState extends State<realtime_status> {
 
                             // การชำระเงิน
                             Card(
-                              color: Colors.grey[100],
+                              color: Colors.white,
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card
@@ -978,7 +799,7 @@ class _realtime_statusState extends State<realtime_status> {
 
                             // หมายเลขออเดอร์
                             Card(
-                              color: Colors.grey[100],
+                              color: Colors.white,
                               elevation: 1, // เพิ่มเงาให้ Card
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8), // ทำมุมโค้งให้ Card

@@ -3,8 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class api_config {
   static String endpoint = ''; // ค่าเริ่มต้น
@@ -45,8 +44,9 @@ class api_config {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       platform = 'ios';
     }
-    
-    print(tokenMobile);
+
+    // print('tokenMobile');
+    // print(tokenMobile);
     var subData = {
       'endpoint': "app://${platform}",
       'keys': {'auth': "", 'p256dh': ""},

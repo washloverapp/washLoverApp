@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_flutter_mapwash/Header/headerOrder.dart';
 import 'package:my_flutter_mapwash/Oders/API/api_totalOrder.dart';
 import 'package:my_flutter_mapwash/Oders/models/laundry_item.dart';
 import 'package:my_flutter_mapwash/Oders/screens/laundry_summary_page.dart';
@@ -120,15 +121,15 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
       // "image_path": _selectedImage?.path,
 
       "device_id": 'order_$jobId',
+      "notes": _notesController.text,
+      "total_price": getTotalPrice(),
+      "image_path": _selectedImage?.path,
       "laundry_type": widget.laundryType,
       "machine_size": selectedMachineSize,
       "temperature": selectedTemperature,
       "dryer_size": selectedFabricSoftenerSize,
       "detergent": selectedDetergent,
       "fabric_softener": selectedFabricSoftener,
-      "notes": _notesController.text,
-      "total_price": getTotalPrice(),
-      "image_path": _selectedImage?.path,
     };
   }
 
@@ -140,31 +141,31 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
 
   /* -------------------- API -------------------- */
 
-  Future<Status> _send_update_location() async {
-    Status status = Status(status: false, messageJson: {});
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final lat = prefs.getDouble('lat') ?? 0.0;
-      final lng = prefs.getDouble('lng') ?? 0.0;
-
-      final succ = await ApiPost.updateLocation(lat: lat, lng: lng);
-
-      if (succ.status) {
-        status.status = true;
-        status.messageJson = succ.messageJson;
-
-        final jobId = succ.messageJson['device_id'];
-        final sender = ApiTotalorder();
-        final order = await sender.loadOrderSummary();
-        await sender.clearCart(order, jobId);
-      } else {
-        status.messageJson = succ.messageJson;
-      }
-    } catch (e) {
-      status.messageJson = {"error": e.toString()};
-    }
-    return status;
-  }
+  // Future<Status> _send_update_location() async {
+  //   Status status = Status(status: false, messageJson: {});
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final lat = prefs.getDouble('lat') ?? 0.0;
+  //     final lng = prefs.getDouble('lng') ?? 0.0;
+  //
+  //     final succ = await ApiPost.updateLocation(lat: lat, lng: lng);
+  //
+  //     if (succ.status) {
+  //       status.status = true;
+  //       status.messageJson = succ.messageJson;
+  //
+  //       final jobId = succ.messageJson['device_id'];
+  //       final sender = ApiTotalorder();
+  //       final order = await sender.loadOrderSummary();
+  //       await sender.clearCart(order, jobId);
+  //     } else {
+  //       status.messageJson = succ.messageJson;
+  //     }
+  //   } catch (e) {
+  //     status.messageJson = {"error": e.toString()};
+  //   }
+  //   return status;
+  // }
 
   /* -------------------- DATA LOAD -------------------- */
 
@@ -268,270 +269,299 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
   Widget build(BuildContext context) {
     print('widget.laundryType');
     print(widget.laundryType);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+        // appBar: AppBar(
+        //   backgroundColor: Color(0xFF42A5F5),
+        //   elevation: 5,
+        //   // leading: IconButton(
+        //   //   icon: const Icon(Icons.close, color: Colors.black),
+        //   //   onPressed: () => Navigator.of(context).pop(),
+        //   // ),
+        //   actions: [
+        //     // IconButton(
+        //     //   icon: const Icon(Icons.share, color: Colors.black),
+        //     //   onPressed: () {},
+        //     // ),
+        //     // IconButton(
+        //     //   icon: const Icon(Icons.close, color: Colors.black),
+        //     //   onPressed: () => Navigator.of(context).pop(),
+        //     // ),
+        //   ],
+        // ),
+        appBar: headerOrder(
+          title: 'ตัวเลือก',
+          onBackPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(
-              children: [
-                // Selected Options Images Section
-                _buildSelectedOptionsImages(),
+        body: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  // Selected Options Images Section
+                  _buildSelectedOptionsImages(),
 
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Product Title
-                        Text(
-                          widget.laundryType['name'] ?? '',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Product Title
+                          Text(
+                            widget.laundryType['name'] ?? '',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              widget.laundryType['name_eng'] ?? '',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                widget.laundryType['name_eng'] ?? '',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                ),
                               ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '${getTotalPrice()}',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '${getTotalPrice()}',
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'ราคารวม',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
+                                  Text(
+                                    'ราคารวม',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                ],
+                              ),
+                            ],
+                          ),
 
-                        const SizedBox(height: 32),
+                          const SizedBox(height: 32),
 
-                        // เลือกขนาดเครื่องซัก
-                        _buildSelectionSection(
-                          title: 'เลือกขนาดเครื่องซัก',
-                          isCompleted: isMachineSizeSelected,
-                          items: machineSizeItems,
-                          selectedItem: selectedMachineSize,
-                          onChanged: (item) {
-                            setState(() {
-                              selectedMachineSize = item;
-                            });
-                          },
-                        ),
+                          // เลือกขนาดเครื่องซัก
+                          _buildSelectionSection(
+                            title: 'เลือกขนาดเครื่องซัก',
+                            isCompleted: isMachineSizeSelected,
+                            items: machineSizeItems,
+                            selectedItem: selectedMachineSize,
+                            onChanged: (item) {
+                              setState(() {
+                                selectedMachineSize = item;
+                              });
+                            },
+                          ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // เลือกอุณหภูมิ
-                        _buildSelectionSection(
-                          title: 'เลือกอุณหภูมิ',
-                          isCompleted: isTemperatureSelected,
-                          items: temperatureItems,
-                          selectedItem: selectedTemperature,
-                          onChanged: (item) {
-                            setState(() {
-                              selectedTemperature = item;
-                            });
-                          },
-                        ),
+                          // เลือกอุณหภูมิ
+                          _buildSelectionSection(
+                            title: 'เลือกอุณหภูมิ',
+                            isCompleted: isTemperatureSelected,
+                            items: temperatureItems,
+                            selectedItem: selectedTemperature,
+                            onChanged: (item) {
+                              setState(() {
+                                selectedTemperature = item;
+                              });
+                            },
+                          ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // เลือกขนาดเครื่องอบผ้า
-                        _buildSelectionSection(
-                          title: 'เลือกขนาดเครื่องอบผ้า',
-                          isCompleted: isFabricSoftenerSizeSelected,
-                          items: fabricSoftenerSizeItems,
-                          selectedItem: selectedFabricSoftenerSize,
-                          onChanged: (item) {
-                            setState(() {
-                              selectedFabricSoftenerSize = item;
-                            });
-                          },
-                        ),
+                          // เลือกขนาดเครื่องอบผ้า
+                          _buildSelectionSection(
+                            title: 'เลือกขนาดเครื่องอบผ้า',
+                            isCompleted: isFabricSoftenerSizeSelected,
+                            items: fabricSoftenerSizeItems,
+                            selectedItem: selectedFabricSoftenerSize,
+                            onChanged: (item) {
+                              setState(() {
+                                selectedFabricSoftenerSize = item;
+                              });
+                            },
+                          ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // เลือกน้ำยาซัก
-                        _buildSelectionSectionWithQuantity(
-                          title: 'เลือกน้ำยาซัก',
-                          isCompleted: isDetergentSelected,
-                          items: detergentItems,
-                          selectedItem: selectedDetergent,
-                          quantity: detergentQuantity,
-                          bringOwn: bringOwnDetergent,
-                          onBringOwnChanged: (v) {
-                            setState(() {
-                              bringOwnDetergent = v;
-                              if (v) {
-                                selectedDetergent = null;
-                              }
-                            });
-                          },
-                          onChanged: (item) {
-                            setState(() {
-                              selectedDetergent = item;
-                              if (item != null) bringOwnDetergent = false;
-                              if (item == null) detergentQuantity = 2;
-                            });
-                          },
-                          onQuantityChanged: (newQuantity) {
-                            setState(() => detergentQuantity = newQuantity);
-                          },
-                        ),
+                          // เลือกน้ำยาซัก
+                          _buildSelectionSectionWithQuantity(
+                            title: 'เลือกน้ำยาซัก',
+                            isCompleted: isDetergentSelected,
+                            items: detergentItems,
+                            selectedItem: selectedDetergent,
+                            quantity: detergentQuantity,
+                            bringOwn: bringOwnDetergent,
+                            onBringOwnChanged: (v) {
+                              setState(() {
+                                bringOwnDetergent = v;
+                                if (v) {
+                                  selectedDetergent = null;
+                                }
+                              });
+                            },
+                            onChanged: (item) {
+                              setState(() {
+                                selectedDetergent = item;
+                                if (item != null) bringOwnDetergent = false;
+                                if (item == null) detergentQuantity = 2;
+                              });
+                            },
+                            onQuantityChanged: (newQuantity) {
+                              setState(() => detergentQuantity = newQuantity);
+                            },
+                          ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // เลือกน้ำยาปรับผ้านุ่ม
-                        _buildSelectionSectionWithQuantity(
-                          title: 'เลือกน้ำยาปรับผ้านุ่ม',
-                          isCompleted: isFabricSoftenerSelected,
-                          items: fabricSoftenerItems,
-                          selectedItem: selectedFabricSoftener,
-                          quantity: fabricSoftenerQuantity,
-                          bringOwn: bringOwnFabricSoftener,
-                          onBringOwnChanged: (v) {
-                            setState(() {
-                              bringOwnFabricSoftener = v;
-                              if (v) selectedFabricSoftener = null;
-                            });
-                          },
-                          onChanged: (item) {
-                            setState(() {
-                              selectedFabricSoftener = item;
-                              if (item != null) bringOwnFabricSoftener = false;
-                              if (item == null) fabricSoftenerQuantity = 2;
-                            });
-                          },
-                          onQuantityChanged: (newQuantity) {
-                            setState(() => fabricSoftenerQuantity = newQuantity);
-                          },
-                        ),
+                          // เลือกน้ำยาปรับผ้านุ่ม
+                          _buildSelectionSectionWithQuantity(
+                            title: 'เลือกน้ำยาปรับผ้านุ่ม',
+                            isCompleted: isFabricSoftenerSelected,
+                            items: fabricSoftenerItems,
+                            selectedItem: selectedFabricSoftener,
+                            quantity: fabricSoftenerQuantity,
+                            bringOwn: bringOwnFabricSoftener,
+                            onBringOwnChanged: (v) {
+                              setState(() {
+                                bringOwnFabricSoftener = v;
+                                if (v) selectedFabricSoftener = null;
+                              });
+                            },
+                            onChanged: (item) {
+                              setState(() {
+                                selectedFabricSoftener = item;
+                                if (item != null) bringOwnFabricSoftener = false;
+                                if (item == null) fabricSoftenerQuantity = 2;
+                              });
+                            },
+                            onQuantityChanged: (newQuantity) {
+                              setState(() => fabricSoftenerQuantity = newQuantity);
+                            },
+                          ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // หมายเหตุ
-                        _buildNotesSection(),
+                          // หมายเหตุ
+                          _buildNotesSection(),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // เลือกรูปภาพ
-                        _buildImagePickerSection(),
+                          // เลือกรูปภาพ
+                          _buildImagePickerSection(),
 
-                        const SizedBox(height: 100), // Space for bottom button
-                      ],
+                          const SizedBox(height: 100), // Space for bottom button
+                        ],
+                      ),
                     ),
                   ),
+                ],
+              ),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: const Offset(0, -2),
                 ),
               ],
             ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: ElevatedButton(
-          onPressed: isAllRequiredFieldsSelected
-              ? () async {
-                  await _saveOrderToPrefs();
-                  // var succ = await _send_update_location();
-                  final succ = await _send_update_location();
-                  // if (succ.status) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Qrcode(
-                        amountP: getTotalPrice(),
+            child: ElevatedButton(
+              onPressed: isAllRequiredFieldsSelected
+                  ? () async {
+                      await _saveOrderToPrefs();
+                      // var succ = await _send_update_location();
+
+                      // if (succ.status) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Qrcode(
+                            amountP: getTotalPrice(),
+                          ),
+                        ),
+                      );
+                      // }
+
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => LaundrySummaryPage(
+                      //       laundryType: widget.laundryType,
+                      //       selectedMachineSize: selectedMachineSize!,
+                      //       selectedTemperature: selectedTemperature!,
+                      //       selectedFabricSoftenerSize: selectedFabricSoftenerSize!,
+                      //       selectedDetergent: selectedDetergent,
+                      //       selectedFabricSoftener: selectedFabricSoftener,
+                      //       detergentQuantity: detergentQuantity,
+                      //       fabricSoftenerQuantity: fabricSoftenerQuantity,
+                      //       bringOwnDetergent: bringOwnDetergent,
+                      //       bringOwnFabricSoftener: bringOwnFabricSoftener,
+                      //       notes: _notesController.text,
+                      //       totalPrice: getTotalPrice(),
+                      //       imageFile: _selectedImage != null
+                      //           ? File(_selectedImage!.path)
+                      //           : null,
+                      //     ),
+                      //   ),
+                      // );
+                    }
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isAllRequiredFieldsSelected ? Colors.orange[300] : Colors.grey[300],
+                foregroundColor: isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
+                padding: const EdgeInsets.symmetric(vertical: 0),
+                shape: StadiumBorder(),
+                disabledBackgroundColor: Colors.grey[300],
+                disabledForegroundColor: Colors.grey[500],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'ชำระเงิน  ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        color: isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
                       ),
                     ),
-                  );
-                  // }
-
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => LaundrySummaryPage(
-                  //       laundryType: widget.laundryType,
-                  //       selectedMachineSize: selectedMachineSize!,
-                  //       selectedTemperature: selectedTemperature!,
-                  //       selectedFabricSoftenerSize: selectedFabricSoftenerSize!,
-                  //       selectedDetergent: selectedDetergent,
-                  //       selectedFabricSoftener: selectedFabricSoftener,
-                  //       detergentQuantity: detergentQuantity,
-                  //       fabricSoftenerQuantity: fabricSoftenerQuantity,
-                  //       bringOwnDetergent: bringOwnDetergent,
-                  //       bringOwnFabricSoftener: bringOwnFabricSoftener,
-                  //       notes: _notesController.text,
-                  //       totalPrice: getTotalPrice(),
-                  //       imageFile: _selectedImage != null
-                  //           ? File(_selectedImage!.path)
-                  //           : null,
-                  //     ),
-                  //   ),
-                  // );
-                }
-              : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isAllRequiredFieldsSelected ? Colors.orange[300] : Colors.grey[300],
-            foregroundColor: isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            disabledBackgroundColor: Colors.grey[300],
-            disabledForegroundColor: Colors.grey[500],
-          ),
-          child: Text(
-            'ชำระเงิน - ${getTotalPrice()}',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
+                    Text(
+                      '${getTotalPrice()} ฿',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        color: isAllRequiredFieldsSelected ? Colors.white : Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -546,44 +576,52 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
     required LaundryItem? selectedItem,
     required ValueChanged<LaundryItem?> onChanged,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Card(
+      color: Colors.white,
+      elevation: 3,
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: isCompleted ? Colors.green : Colors.grey[400],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                isCompleted ? 'ใช้สำเร็จ' : 'เลือก 1',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isCompleted ? Colors.green : Colors.grey[400],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    isCompleted ? 'ใช้สำเร็จ' : 'เลือก 1',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 12),
+            ...items.map((item) => _buildRadioOption(
+                  item: item,
+                  selectedItem: selectedItem,
+                  onChanged: onChanged,
+                )),
           ],
         ),
-        const SizedBox(height: 12),
-        ...items.map((item) => _buildRadioOption(
-              item: item,
-              selectedItem: selectedItem,
-              onChanged: onChanged,
-            )),
-      ],
+      ),
     );
   }
 
@@ -598,86 +636,94 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
     required ValueChanged<LaundryItem?> onChanged,
     required ValueChanged<int> onQuantityChanged,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return Card(
+      color: Colors.white,
+      elevation: 3,
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(width: 16),
-            InkWell(
-              onTap: () => onBringOwnChanged(!bringOwn),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: Checkbox(
-                      value: bringOwn,
-                      onChanged: (_) => onBringOwnChanged(!bringOwn),
-                      activeColor: const Color(0xFF4CAF50),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
+            Row(
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'ไม่เลือก',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: isCompleted ? Colors.green : Colors.grey[400],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                isCompleted ? 'ใช้สำเร็จ' : 'เลือก 1',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
                 ),
-              ),
+                const SizedBox(width: 16),
+                InkWell(
+                  onTap: () => onBringOwnChanged(!bringOwn),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Checkbox(
+                          value: bringOwn,
+                          onChanged: (_) => onBringOwnChanged(!bringOwn),
+                          activeColor: const Color(0xFF4CAF50),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'ไม่เลือก',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isCompleted ? Colors.green : Colors.grey[400],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    isCompleted ? 'ใช้สำเร็จ' : 'เลือก 1',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            if (bringOwn)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  'ลูกค้าจะนำมาเอง',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              )
+            else ...[
+              const SizedBox(height: 12),
+              ...items.map((item) => _buildRadioOptionWithQuantity(
+                    item: item,
+                    selectedItem: selectedItem,
+                    quantity: quantity,
+                    onChanged: onChanged,
+                    onQuantityChanged: onQuantityChanged,
+                  )),
+            ],
           ],
         ),
-        if (bringOwn)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              'ลูกค้าจะนำมาเอง',
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[600],
-              ),
-            ),
-          )
-        else ...[
-          const SizedBox(height: 12),
-          ...items.map((item) => _buildRadioOptionWithQuantity(
-                item: item,
-                selectedItem: selectedItem,
-                quantity: quantity,
-                onChanged: onChanged,
-                onQuantityChanged: onQuantityChanged,
-              )),
-        ],
-      ],
+      ),
     );
   }
 
@@ -1035,105 +1081,108 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey[300]!,
-            width: 1,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        color: Colors.white,
+        elevation: 3,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'ตัวเลือกที่เลือกไว้',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: selectedItems.length,
+                  itemBuilder: (context, index) {
+                    final item = selectedItems[index];
+                    return Container(
+                      width: 80,
+                      margin: const EdgeInsets.only(right: 12),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.grey[300]!,
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                item.image,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.grey[200],
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.image,
+                                          size: 32,
+                                          color: Colors.grey[400],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                                          child: Text(
+                                            item.detail,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.grey[700],
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Text(
+                            item.detail,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'ตัวเลือกที่เลือกไว้',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: selectedItems.length,
-              itemBuilder: (context, index) {
-                final item = selectedItems[index];
-                return Container(
-                  width: 80,
-                  margin: const EdgeInsets.only(right: 12),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.grey[300]!,
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.asset(
-                            item.image,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[200],
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.image,
-                                      size: 32,
-                                      color: Colors.grey[400],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                                      child: Text(
-                                        item.detail,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.grey[700],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }
