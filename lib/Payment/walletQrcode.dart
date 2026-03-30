@@ -96,12 +96,17 @@ class _QrcodeState extends State<Qrcode> {
               },
             ),
           ).then((value) async {
+            Future.delayed(const Duration(seconds: 1), () {
+              if (mounted) {
+                Navigator.of(context).pop(true);
+              }
+            });
+            api_sendFcmNotify.sendFcmNotify(
+              'แจ้งเตือนออเดอร์งานจากลูกค้า',
+              'งานด่วนลูกค้ารอพนักงานรับผ้า',
+            );
             final succCart = await APICartSet.sendCartToSet();
             if (succCart) {
-              api_sendFcmNotify.sendFcmNotify(
-                'แจ้งเตือนออเดอร์งานจากลูกค้า',
-                'งานด่วนลูกค้ารอพนักงานรับผ้า',
-              );
               final succ = await _send_update_location();
               if (succ.status) {
                 MainLayout.initialIndex = 4;
@@ -159,30 +164,30 @@ class _QrcodeState extends State<Qrcode> {
     orderId,
   ) async {
     bool succ = false;
-    // final url = "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
-    // final response = await http.get(Uri.parse(url));
-    // if (response.statusCode == 200) {
-    //   final data = json.decode(response.body);
-    //   // print(data["data"]["status"]);
-    //   await Future.delayed(Duration(seconds: 2)); // delay 100ms ต่อจุด
-    //   data["data"]["status"] = "success";
-    //   if (data["data"]["status"] == "success") {
-    //     succ = true;
-    //
-    //     paymentStatus = "🎉 ชำระเงินเรียบร้อยแล้ว";
-    //     setState(() {});
-    //   } else {
-    //     setState(() {
-    //       paymentStatus = "${data["data"]["msg"]}" ?? "รอการชำระเงิน";
-    //     });
-    //   }
-    // } else {
-    //   setState(() {
-    //     paymentStatus = "เช็คสถานะไม่สำเร็จ";
-    //   });
-    // }
-    await Future.delayed(Duration(seconds: 2)); // delay 100ms ต่อจุด
-    succ = true;
+    final url = "https://payment.washlover.com/api/check-payment?ref1=$orderId&ref4=$apiKey";
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      // print(data["data"]["status"]);
+      await Future.delayed(Duration(seconds: 2)); // delay 100ms ต่อจุด
+      data["data"]["status"] = "success";
+      if (data["data"]["status"] == "success") {
+        succ = true;
+
+        paymentStatus = "🎉 ชำระเงินเรียบร้อยแล้ว";
+        setState(() {});
+      } else {
+        setState(() {
+          paymentStatus = "${data["data"]["msg"]}" ?? "รอการชำระเงิน";
+        });
+      }
+    } else {
+      setState(() {
+        paymentStatus = "เช็คสถานะไม่สำเร็จ";
+      });
+    }
+    // await Future.delayed(Duration(seconds: 2)); // delay 100ms ต่อจุด
+    // succ = true;
     return succ;
   }
 

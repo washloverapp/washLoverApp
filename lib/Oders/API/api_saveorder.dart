@@ -24,6 +24,7 @@ class APICartSet {
       // print('orderJsonString');
       // print(orderJsonString);
       print(orderJson);
+      String device_id = orderJson['device_id'] ?? '';
       if (token == null) {
         print("❌ ไม่พบ Token, กรุณา Login ก่อน");
       }
@@ -40,7 +41,7 @@ class APICartSet {
         'Authorization': 'Bearer $token',
       };
       final dio = Dio();
-      final path = '$endpoint/api/cart/$phone';
+      final path = '$endpoint/api/cart/$device_id';
       List listData = [];
       var listJson = orderJson.values.toList();
       print('x-----22');
@@ -48,54 +49,46 @@ class APICartSet {
       for (int i = 0; i < listJson.length; i++) {
         if (i > 4) {
           print(listJson[i]['name'].toString());
+          print(listJson[i]['price'].toString());
+          print(listJson[i]['detail'].toString());
+          print('---------dddd');
           var dataJson = {
             "name": listJson[i]['name'],
             "price": listJson[i]['price'],
             "detail": listJson[i]['detail'],
           };
           listData.add(dataJson);
-
-          final response = await dio.post(
-            path,
-            data: dataJson,
-            options: Options(
-              headers: header,
-              validateStatus: (_) => true,
-            ),
-          );
-
-          if (response.statusCode == 200) {
-            final responseBody = response.data;
-            print('responseBody');
-            print(responseBody);
-            print("✅ ส่งข้อมูลสำเร็จ: $responseBody");
-            ok = true;
-          } else {
-            print("❌ ส่งข้อมูลไม่สำเร็จ (${response.statusCode}): ${response.data}");
-          }
         }
       }
-      print('x-----22');
-      print(listData);
-      // final dio = Dio();
-      // final path = '$endpoint/api/cart/$phone';
-      // final response = await dio.post(
-      //   path,
-      //   data: dataJson,
-      //   options: Options(
-      //     headers: header,
-      //     validateStatus: (_) => true,
-      //   ),
-      // );
-      //
-      // if (response.statusCode == 200) {
-      //   final responseBody = response.data;
-      //   print('responseBody');
-      //   print(responseBody);
-      //   print("✅ ส่งข้อมูลสำเร็จ: $responseBody");
-      // } else {
-      //   print("❌ ส่งข้อมูลไม่สำเร็จ (${response.statusCode}): ${response.data}");
-      // }
+      print('---------listData');
+      // print(jsonEncode(listData));
+      for (var x in listData) {
+        var dataJson = {
+          "name": x['name'],
+          "price": x['price'],
+          "detail": x['detail'],
+        };
+        print(jsonEncode(dataJson));
+        final response = await dio.post(
+          path,
+          data: jsonEncode(dataJson),
+          options: Options(
+            headers: header,
+            validateStatus: (_) => true,
+          ),
+        );
+
+        if (response.statusCode == 200) {
+          final responseBody = response.data;
+          print('responseBody');
+          print(responseBody);
+          print("✅ ส่งข้อมูลสำเร็จ: $responseBody");
+          ok = true;
+        } else {
+          print("❌ ส่งข้อมูลไม่สำเร็จ (${response.statusCode}): ${response.data}");
+        }
+      }
+
       return ok;
     } catch (e) {
       print("⚠️ Error: $e");
@@ -103,20 +96,20 @@ class APICartSet {
     }
   }
 
-  static Future<dynamic> getCart() async {
+  static Future<dynamic> getCart(String deviceId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
       final phone = prefs.getString('phone');
       final endpoint = prefs.getString('endpoint') ?? '';
-      String orderJsonString = prefs.getString('current_order') ?? '{}';
-      Map<String, dynamic> orderJson = jsonDecode(orderJsonString);
+      // String orderJsonString = prefs.getString('current_order') ?? '{}';
+      // Map<String, dynamic> orderJson = jsonDecode(orderJsonString);
 
       print('getCart');
-      print(phone);
+      // print(phone);
       // print('orderJsonString');
       // print(orderJsonString);
-      print(orderJson);
+      // print(orderJson);
       if (token == null) {
         print("❌ ไม่พบ Token, กรุณา Login ก่อน");
       }
@@ -133,7 +126,7 @@ class APICartSet {
         'Authorization': 'Bearer $token',
       };
       final dio = Dio();
-      final path = '$endpoint/api/cart/$phone';
+      final path = '$endpoint/api/cart/$deviceId';
       print(path);
       final response = await dio.get(
         path,

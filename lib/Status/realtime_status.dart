@@ -280,7 +280,7 @@ class _realtime_statusState extends State<realtime_status> {
   Future<void> getDetal() async {
     final apiDetail = ApiDetail();
     // final dtDetail = await apiDetail.stDetail(widget.deviceId, widget.id);
-    orderData = await APICartSet.getCart();
+    orderData = await APICartSet.getCart(widget.deviceId);
 
     setState(() {});
   }
@@ -346,13 +346,13 @@ class _realtime_statusState extends State<realtime_status> {
     double totalBeforeDiscount = 0.0;
     final member = profileData;
     double sizeH = MediaQuery.sizeOf(context).height;
-    print('orderData');
+    // print('orderData');
+    // // print(orderData);
+    // print(orderData['total_price']);
     // print(orderData);
-    print(orderData['total_price']);
-    print(orderData);
     totalPrice = orderData['total_price'] ?? 0;
     _orderDetails = orderData['items'] ?? [];
-    print(_orderDetails.length);
+    // print(_orderDetails.length);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: headerOrder(

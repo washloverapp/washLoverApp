@@ -174,7 +174,6 @@ class _StatusState extends State<Status> {
   }) {
     return GestureDetector(
       onTap: () {
-        double totalPrice = double.parse(amount);
         _timer?.cancel();
 
         Navigator.push(
@@ -338,6 +337,7 @@ class _StatusState extends State<Status> {
           ),
         ),
         centerTitle: false,
+        animateColor: true,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -348,8 +348,8 @@ class _StatusState extends State<Status> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final order = _statusData[index];
-                  print('order');
-                  print(order);
+                  // print('order');
+                  // print(order);
                   final orderStatus = int.tryParse(order['status']?.toString() ?? '0') ?? 0;
 
                   if (orderStatus == 4) return const SizedBox.shrink();

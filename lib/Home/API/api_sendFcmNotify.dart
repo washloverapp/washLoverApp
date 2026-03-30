@@ -19,18 +19,20 @@ class api_sendFcmNotify {
         // data: {'device_id': device_id},
         // options: Options(headers: header, validateStatus: (_) => true),
       );
-      print(resApi.data);
+      print('resApi.data');
+      // print(resApi.data);
       // print(resApi.data['status']);
       // print(resApi.data['data']);
       print(resApi.statusCode);
       if (resApi.statusCode == 200) {
-        List<dynamic> listData = resApi.data['data'];
+        List<dynamic> listData = resApi.data['data'] ?? [];
+        print(listData);
         if (listData.isNotEmpty) {
           for (var x in listData) {
-            print(x);
-            print(x['token']);
-            print(x['customer_id']);
-
+            // print(x);
+            // print(x['token']);
+            // print(x['customer_id']);
+            print('data----------22');
             var dataJson = {
               'customer_id': x['customer_id'],
               'title': '📢 ${title}',
@@ -48,7 +50,7 @@ class api_sendFcmNotify {
             print(resApi);
 
             print(resApi.statusCode);
-            Map<String, dynamic> res = Map<String, dynamic>();
+            // Map<String, dynamic> res = Map<String, dynamic>();
             if (resApi.statusCode == 200) {
               return true;
             } else {

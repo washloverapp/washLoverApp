@@ -136,7 +136,7 @@ class _LaundryCustomizationPageState extends State<LaundryCustomizationPage> {
   Future<void> _saveOrderToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('current_order', jsonEncode(_buildOrderJson()));
-    // print(jsonEncode(_buildOrderJson()));
+    print(jsonEncode(_buildOrderJson()));
   }
 
   /* -------------------- API -------------------- */

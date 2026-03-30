@@ -67,58 +67,65 @@ class _homeState extends State<home> {
           child: Column(
             children: [
               SizedBox(height: 12),
-              Container(
-                padding: EdgeInsets.all(20),
+              // Container(
+              //   padding: EdgeInsets.all(20),
+              //   margin: EdgeInsets.symmetric(horizontal: 15), // ขยับด้านซ้าย-ขวา
+              //   decoration: BoxDecoration(
+              //     color: const Color.fromARGB(255, 250, 250, 250),
+              //     borderRadius: BorderRadius.circular(10),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.black12,
+              //         blurRadius: 5,
+              //         spreadRadius: 0,
+              //         offset: Offset(0, 0),
+              //       ),
+              //     ],
+              //   ),
+              Card(
                 margin: EdgeInsets.symmetric(horizontal: 15), // ขยับด้านซ้าย-ขวา
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 250, 250, 250),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      spreadRadius: 0,
-                      offset: Offset(0, 0),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _walletItem2(
-                      Image.asset(
-                        "assets/images/collectionduck/Artboard14.png",
-                        width: 60,
-                        height: 60,
+                color: Colors.white,
+                elevation: 3,
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _walletItem2(
+                        Image.asset(
+                          "assets/images/collectionduck/Artboard14.png",
+                          width: 60,
+                          height: 60,
+                        ),
+                        "ยอดเงิน",
+                        "${credit}฿",
                       ),
-                      "ยอดเงิน",
-                      "${credit}฿",
-                    ),
-                    _walletItem(
-                        Image.asset(
-                          "assets/images/collectionduck/Artboard21copy5.png",
-                          width: 60,
-                          height: 60,
-                        ),
-                        "Points",
-                        point_h),
-                    _walletItem(
-                        Image.asset(
-                          "assets/images/collectionduck/Artboard17.png",
-                          width: 60,
-                          height: 60,
-                        ),
-                        "คูปอง",
-                        "0"),
-                    _duckItem(
-                        Image.asset(
-                          "assets/images/collectionduck/Artboard37copy8.png",
-                          width: 60,
-                          height: 60,
-                        ),
-                        "เก็บเวล",
-                        "0"),
-                  ],
+                      _walletItem(
+                          Image.asset(
+                            "assets/images/collectionduck/Artboard21copy5.png",
+                            width: 60,
+                            height: 60,
+                          ),
+                          "Points",
+                          point_h),
+                      _walletItem(
+                          Image.asset(
+                            "assets/images/collectionduck/Artboard17.png",
+                            width: 60,
+                            height: 60,
+                          ),
+                          "คูปอง",
+                          "0"),
+                      _duckItem(
+                          Image.asset(
+                            "assets/images/collectionduck/Artboard37copy8.png",
+                            width: 60,
+                            height: 60,
+                          ),
+                          "เก็บเวล",
+                          "0"),
+                    ],
+                  ),
                 ),
               ),
 
@@ -172,12 +179,10 @@ class _homeState extends State<home> {
               // ),
 
               // Service Section Title
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 0),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 250, 250, 250),
-                  borderRadius: BorderRadius.circular(10),
-                ),
+              Card(
+                color: Colors.white,
+                elevation: 3,
+                margin: EdgeInsets.symmetric(horizontal: 15), // ขยับด้านซ้าย-ขวา
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Column(
