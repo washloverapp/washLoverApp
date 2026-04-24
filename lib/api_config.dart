@@ -45,8 +45,8 @@ class api_config {
       platform = 'ios';
     }
 
-    // print('tokenMobile');
-    // print(tokenMobile);
+    print('tokenMobile');
+    print(tokenMobile);
     var subData = {
       'endpoint': "app://${platform}",
       'keys': {'auth': "", 'p256dh': ""},
